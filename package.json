@@ -1,5 +1,5 @@
 {
-  "name": "null",
+  "name": "mango",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -25,7 +25,8 @@
   "dependencies": {
     "discord.js": "^13.8.1",
     "dotenv": "^16.0.1",
-    "glob": "^8.0.3"
+    "glob": "^8.0.3",
+    "mongoose": "^6.4.4"
   },
   "devDependencies": {
     "@types/glob": "^7.2.0",

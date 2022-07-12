@@ -1,9 +1,9 @@
 import { Command } from '../../structures/Command';
-import * as Discord from 'discord.js';
+import Discord from 'discord.js';
 
 export default new Command({
   name: 'ping',
-  description: '',
+  description: "Calculates the bot's ping along with API Latency",
   run: async ({ interaction, client }) => {
     await interaction
       .reply({ content: `Calculating ping...` })
