@@ -22,11 +22,15 @@ export default new Event('guildCreate', async (guild) => {
       text: `Mango Bot`,
       iconURL: client.user.defaultAvatarURL,
     });
-  const staffChat = guild.channels.cache.find(
-    (channel) => channel.name === 'staff-chat'
+
+  const chats = guild.channels.cache.find(
+    (channel) =>
+      channel.name === 'staff-chat' ||
+      channel.name === 'bot-commands' ||
+      channel.name === 'commands'
   );
 
-  const channel = staffChat ? staffChat : guild.systemChannel;
+  const channel = chats ? chats : guild.systemChannel;
 
   (channel as Discord.TextBasedChannel)?.send({ embeds: [embed] });
 });
