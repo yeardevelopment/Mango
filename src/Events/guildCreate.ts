@@ -1,8 +1,10 @@
 import Discord from 'discord.js';
 import { client } from '..';
 import { Event } from '../structures/Event';
+import db from '../utils/models/config';
 
 export default new Event('guildCreate', async (guild) => {
+  guild.me.setNickname('Mango');
   const embed = new Discord.MessageEmbed()
     .setTitle(':pray: Thank you for inviting me!')
     .setDescription('** **')
@@ -33,4 +35,10 @@ export default new Event('guildCreate', async (guild) => {
   const channel = chats ? chats : guild.systemChannel;
 
   (channel as Discord.TextBasedChannel)?.send({ embeds: [embed] });
+
+  const data = await db.findOne({ Guild: guild.id });
+  if (!data)
+    db.create({
+      Guild: guild.id,
+    });
 });

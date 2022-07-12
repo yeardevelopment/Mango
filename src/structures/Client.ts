@@ -33,7 +33,7 @@ export class ExtendedClient extends Client {
       console.log(`Registering commands to ${guildId}`);
     } else {
       this.application?.commands.set(commands);
-      console.log('Registering global commands');
+      console.log('Registering global commands.');
     }
   }
 
@@ -46,7 +46,7 @@ export class ExtendedClient extends Client {
     commandFiles.forEach(async (filePath) => {
       const command: CommandType = await this.importFile(filePath);
       if (!command.name) return;
-      console.log(command);
+      console.log(`${command.name} has been registered.`);
 
       this.commands.set(command.name, command);
       slashCommands.push(command);

@@ -4,6 +4,7 @@ import Discord from 'discord.js';
 export default new Command({
   name: 'ping',
   description: "Calculates the bot's ping along with API Latency",
+  timeout: 5000,
   run: async ({ interaction, client }) => {
     await interaction
       .reply({ content: `Calculating ping...` })

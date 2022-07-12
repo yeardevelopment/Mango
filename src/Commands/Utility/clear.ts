@@ -1,11 +1,9 @@
 import { Command } from '../../structures/Command';
-import Discord, {
-  GuildMember,
-} from 'discord.js';
+import { GuildMember } from 'discord.js';
 
 export default new Command({
   name: 'clear',
-  description: "Calculates the bot's ping along with API Latency",
+  description: 'Deletes multiple messages in the channel',
   options: [
     {
       name: 'amount',
@@ -22,10 +20,11 @@ export default new Command({
       required: false,
     },
   ],
-  run: async ({ interaction, client }) => {
-    let amount = interaction.options.getInteger('amount');
-    let target = interaction.options.getMember('target');
-    let reason = interaction.options.getString('reason');
+  timeout: 5000,
+  run: async ({ interaction, args }) => {
+    let amount = args.getInteger('amount');
+    let target = args.getMember('target');
+    let reason = args.getString('reason');
     if (!reason) reason = 'No reason provided.';
 
     const messages = await interaction.channel.messages.fetch();
@@ -39,7 +38,7 @@ export default new Command({
           i++;
         }
       });
-      await interaction.channel.bulkDelete(filtered, true, ).then((messages) => {
+      await interaction.channel.bulkDelete(filtered, true).then((messages) => {
         interaction.reply({
           content: `Successfully cleared **${messages.size} message${
             messages.size > 1 ? 's' : ''
@@ -72,7 +71,7 @@ export default new Command({
 
         const finalResult = `${deletedMessages.size} message${
           deletedMessages.size > 1 ? 's' : ''
-        } were removed.`;
+        } ${deletedMessages.size > 1 ? 'were' : 'was'} removed.`;
         const deleteCount = `${userMessageMap
           .map(([user, messages]) => `**${user}**: ${messages}`)
           .join('\n')}`;
