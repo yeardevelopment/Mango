@@ -8,7 +8,7 @@ export default new Event('guildMemberAdd', async (member) => {
   const config = await configDB.findOne({ Guild: member.guild.id });
   if (!config || !config.WelcomeChannel) return;
 
-  const data = await db.findOne({ Guild: member.guild.id });
+  const data = await db.findOne({ Guild: member.guild.id, Toggled: true });
   if (!data) return;
 
   if (data.Image) {

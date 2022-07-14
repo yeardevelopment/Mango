@@ -40,9 +40,11 @@ export default new Command({
       });
       await interaction.channel.bulkDelete(filtered, true).then((messages) => {
         interaction.reply({
-          content: `Successfully cleared **${messages.size} message${
-            messages.size > 1 ? 's' : ''
-          }** from **${(target as GuildMember).user.tag}**.`,
+          content: `<:success:996733680422752347> Successfully cleared **${
+            messages.size
+          } message${messages.size > 1 ? 's' : ''}** from **${
+            (target as GuildMember).user.tag
+          }**.`,
         });
       });
     } else {
@@ -64,7 +66,7 @@ export default new Command({
         }
 
         await interaction.editReply({
-          content: 'Successfully cleared.',
+          content: '<:success:996733680422752347> Successfully cleared.',
         });
 
         const userMessageMap = Object.entries(results);

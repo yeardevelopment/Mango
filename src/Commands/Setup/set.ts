@@ -21,6 +21,51 @@ export default new Command({
       ],
     },
     {
+      name: 'staffrole',
+      description:
+        'Sets the role, members of what will be determined as staff members',
+      type: 'SUB_COMMAND',
+      options: [
+        {
+          name: 'role',
+          type: 'ROLE',
+          description:
+            'Role, members of what will be determined as staff members',
+          required: true,
+        },
+      ],
+    },
+    {
+      name: 'tickets-category',
+      description: 'Sets the category where opened tickets will appear in',
+      type: 'SUB_COMMAND',
+      options: [
+        {
+          name: 'category',
+          type: 'CHANNEL',
+          description: 'Category where opened tickets will appear in',
+          channelTypes: ['GUILD_CATEGORY'],
+          required: true,
+        },
+      ],
+    },
+    {
+      name: 'ticket-logs-channel',
+      description:
+        'Sets the channel that will be used for logging closed tickets information',
+      type: 'SUB_COMMAND',
+      options: [
+        {
+          name: 'channel',
+          type: 'CHANNEL',
+          description:
+            'Channel to be used for logging closed tickets information',
+          channelTypes: ['GUILD_TEXT'],
+          required: true,
+        },
+      ],
+    },
+    {
       name: 'welcome-channel',
       description: 'Sets the channel that will be used for welcome messages',
       type: 'SUB_COMMAND',
@@ -61,10 +106,55 @@ export default new Command({
           { $set: { MuteRole: role.id } }
         );
         interaction.reply({
-          content: `Successfully set ${role} as the mute role.`,
+          content: `<:success:996733680422752347> Successfully set ${role} as the mute role.`,
           allowedMentions: {
             roles: [],
           },
+        });
+
+        break;
+      }
+
+      case 'staffrole': {
+        const role = args.getRole('role');
+
+        await db.findOneAndUpdate(
+          { Guild: interaction.guild.id },
+          { $set: { StaffRole: role.id } }
+        );
+        interaction.reply({
+          content: `<:success:996733680422752347> Successfully set ${role} as the staff role.`,
+          allowedMentions: {
+            roles: [],
+          },
+        });
+
+        break;
+      }
+
+      case 'ticket-logs-channel': {
+        const channel = args.getChannel('channel');
+
+        await db.findOneAndUpdate(
+          { Guild: interaction.guild.id },
+          { $set: { TicketLogsChannel: channel.id } }
+        );
+        interaction.reply({
+          content: `<:success:996733680422752347> Successfully set ${channel} as the tickets logging channel.`,
+        });
+
+        break;
+      }
+
+      case 'tickets-category': {
+        const channel = args.getChannel('category');
+
+        await db.findOneAndUpdate(
+          { Guild: interaction.guild.id },
+          { $set: { TicketsCategory: channel.id } }
+        );
+        interaction.reply({
+          content: `<:success:996733680422752347> Successfully set ${channel.name} as the category for tickets.`,
         });
 
         break;
@@ -78,7 +168,7 @@ export default new Command({
           { $set: { WelcomeChannel: channel.id } }
         );
         interaction.reply({
-          content: `Successfully set ${channel} as the greeting channel.`,
+          content: `<:success:996733680422752347> Successfully set ${channel} as the greeting channel.`,
         });
 
         break;
@@ -92,7 +182,7 @@ export default new Command({
           { $set: { MessageLogsChannel: channel.id } }
         );
         interaction.reply({
-          content: `Successfully set ${channel} as the message logs channel.`,
+          content: `<:success:996733680422752347> Successfully set ${channel} as the message logs channel.`,
         });
 
         break;

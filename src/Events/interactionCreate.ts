@@ -1,13 +1,27 @@
 import Discord, {
+  ButtonInteraction,
   Collection,
   CommandInteractionOptionResolver,
+  GuildMemberRoleManager,
+  Message,
+  MessageActionRow,
+  MessageActionRowComponent,
+  MessageButton,
+  TextBasedChannel,
 } from 'discord.js';
 import ms from 'ms';
 import chalk from 'chalk';
 const Timeout = new Collection();
+const Verifying = new Collection();
 import { client } from '..';
 import { Event } from '../structures/Event';
 import { ExtendedInteraction } from '../typings/Command';
+import ticket from '../utils/models/ticket';
+import tickets from '../utils/models/tickets';
+import config from '../utils/models/config';
+import { createTranscript } from 'discord-html-transcripts';
+import { Captcha } from 'captcha-canvas';
+import verification from '../utils/models/verification';
 
 export default new Event('interactionCreate', async (interaction) => {
   if (!interaction.guild) return; // Interactions can only be called used within a guild
@@ -63,6 +77,385 @@ export default new Event('interactionCreate', async (interaction) => {
       }, command.timeout);
     } catch (error) {
       console.error(error);
+    }
+  }
+  if (interaction.isButton()) {
+    const ticketsEnabled = await ticket.findOne({
+      Guild: interaction.guild.id,
+      Toggled: true,
+    });
+    const verificationEnabled = await verification.findOne({
+      Guild: interaction.guild.id,
+      Toggled: true,
+    });
+    if (ticketsEnabled) {
+      const data = await config.findOne({
+        Guild: interaction.guild.id,
+      });
+      async function ticket(category) {
+        if (!data.StaffRole)
+          return (interaction as ButtonInteraction).reply({
+            content:
+              '⚠️ The ticket system is not set up properly yet. Please try again contact staff with this information.',
+            ephemeral: true,
+          });
+        const parentChannel = data.TicketsCategory;
+        const ticketChannel = await tickets.findOne({
+          Guild: interaction.guild.id,
+          Member: interaction.user.id,
+        });
+        if (ticketChannel)
+          return (interaction as ButtonInteraction).reply({
+            content: `You already have a ticket open: <#${ticketChannel.ID}>.`,
+            ephemeral: true,
+          });
+        await (interaction as ButtonInteraction).reply({
+          content: `Your ticket is being processed. Please wait.`,
+          ephemeral: true,
+        });
+        let channel = null;
+        try {
+          channel = await interaction.guild.channels.create(
+            `ticket-${interaction.user.username}`
+          );
+          await tickets.create({
+            Category: category,
+            ID: channel.id,
+            Member: interaction.user.id,
+            Members: [interaction.user.id],
+            Closed: false,
+            Claimed: false,
+            Locked: false,
+          });
+
+          await channel.setParent(parentChannel);
+          await channel.permissionOverwrites.set([
+            {
+              id: interaction.guild.id,
+              deny: ['SEND_MESSAGES', 'VIEW_CHANNEL'],
+            },
+            {
+              id: interaction.user.id,
+              allow: [
+                'SEND_MESSAGES',
+                'VIEW_CHANNEL',
+                'ATTACH_FILES',
+                'READ_MESSAGE_HISTORY',
+                'ADD_REACTIONS',
+              ],
+            },
+            {
+              id: client.user.id,
+              allow: ['SEND_MESSAGES', 'VIEW_CHANNEL'],
+            },
+            {
+              id: data.StaffRole || null,
+              allow: [
+                'SEND_MESSAGES',
+                'VIEW_CHANNEL',
+                'ATTACH_FILES',
+                'READ_MESSAGE_HISTORY',
+                'ADD_REACTIONS',
+              ],
+            },
+          ]);
+        } catch (error) {
+          console.log(error);
+          return (interaction as ButtonInteraction).editReply({
+            content:
+              '**⚠️ Failed to create a ticket.** Please try again later!',
+          });
+        }
+        await (interaction as ButtonInteraction).editReply({
+          content: `We will be right with you! ${channel}`,
+        });
+        const embedticket = new Discord.MessageEmbed()
+          .setTitle(`Welcome to your ticket!`)
+          .addField('Ticket Category', `${category}`)
+          .addField(
+            `Note`,
+            `Please be patient, support will be with you shortly.`
+          )
+          .setColor('#2F3136');
+        let bu1tton = new Discord.MessageButton()
+          .setStyle('DANGER')
+          .setEmoji(`💾`)
+          .setLabel(`Save & Close`)
+          .setCustomId('close');
+        let lock = new Discord.MessageButton()
+          .setStyle('PRIMARY')
+          .setEmoji(`🔒`)
+          .setLabel(`Lock/Unlock`)
+          .setCustomId('lock');
+        let claim = new Discord.MessageButton()
+          .setStyle('SUCCESS')
+          .setEmoji(`🖐️`)
+          .setLabel(`Claim`)
+          .setCustomId('claim');
+        let row = new Discord.MessageActionRow().addComponents([
+          bu1tton,
+          // lock,
+          // claim,
+        ]);
+        channel.send({
+          content: `<@${interaction.user.id}>`,
+          embeds: [embedticket],
+          components: [row],
+        });
+      }
+
+      if (interaction.customId === 'ticket') ticket('✉️ General Support');
+      if (interaction.customId === 'close') {
+        if (
+          !(interaction.member.roles as GuildMemberRoleManager).cache.has(
+            data.StaffRole
+          )
+        )
+          return interaction.reply({
+            content: '⚠ Only staff can close the ticket.',
+            ephemeral: true,
+          });
+        await tickets
+          .findOne({ ID: interaction.channel.id }, async (err, docs) => {
+            if (docs.Closed === true) {
+              return interaction.reply({
+                content: `This ticket is already being closed.`,
+                ephemeral: true,
+              });
+            }
+            let row = new Discord.MessageActionRow().addComponents([
+              new Discord.MessageButton()
+                .setStyle(`SUCCESS`)
+                .setEmoji(`996733680422752347`)
+                .setLabel(`Proceed`)
+                .setCustomId('sure'),
+            ]);
+            interaction.reply({
+              components: [row],
+              embeds: [
+                new Discord.MessageEmbed()
+                  .setTitle('⚠ Are you sure?')
+                  .setDescription(
+                    'Are you sure you want to close this ticket?\nThis action cannot be undone.'
+                  )
+                  .setFooter({
+                    text: `${interaction.guild.name}`,
+                    iconURL: interaction.guild.iconURL({ dynamic: true }),
+                  })
+                  .setColor('RED'),
+              ],
+              ephemeral: true,
+              fetchReply: true,
+            });
+          })
+          .clone();
+      }
+      if (interaction.customId === 'sure') {
+        if (interaction.channel.parentId !== data.TicketsCategory) return;
+        if (
+          !(interaction.member.roles as GuildMemberRoleManager).cache.has(
+            data.StaffRole
+          )
+        )
+          return interaction.reply({
+            content: '⚠ Only staff can close the ticket.',
+            ephemeral: true,
+          });
+        await tickets
+          .findOne({ ID: interaction.channel.id }, async (err, docs) => {
+            if (docs.Closed === true) {
+              return interaction.reply({
+                content: `This ticket is already being closed.`,
+                ephemeral: true,
+              });
+            }
+            interaction.deferUpdate();
+            await tickets.updateOne(
+              { ID: interaction.channel.id },
+              { Closed: true }
+            );
+            const seconds = 5;
+            const startingCounter = 20;
+            let counter = startingCounter;
+            const getText = () => {
+              return `Closing the ticket in ${counter} seconds...`;
+            };
+            const updateCounter = async (msg) => {
+              msg.edit(getText());
+              counter -= seconds;
+              if (counter <= 0) {
+                return;
+              }
+              setTimeout(() => {
+                updateCounter(msg);
+              }, 1000 * seconds);
+            };
+            const msg = await interaction.channel?.send(getText());
+            updateCounter(msg);
+            let member = client.users.cache.get(docs.Members[0]);
+
+            const embed = new Discord.MessageEmbed()
+              .setTitle('Ticket Closed')
+              .setDescription(
+                `**Ticket Name:** \`${interaction.channel.name}\` (${
+                  interaction.channel.id
+                })\n**Ticket Category:** ${docs.Category}\n**Opened By:** \`${
+                  member.tag
+                }\` (${member.id})\n**Closed By:** \`${
+                  interaction.user.tag
+                }\` (${interaction.user.id})\n**Open Time:** <t:${Math.floor(
+                  interaction.channel.createdTimestamp / 1000
+                )}>`
+              )
+              .setTimestamp();
+            const attachment = await createTranscript(interaction.channel, {
+              limit: -1,
+              returnBuffer: false,
+              fileName: `transcript-${interaction.channel.name}.html`,
+            });
+            await (
+              client.channels.cache.get(
+                data.TicketLogsChannel
+              ) as TextBasedChannel
+            ).send({ embeds: [embed], files: [attachment] });
+          })
+          .clone();
+        setTimeout(() => {
+          interaction.channel
+            ?.delete('[Ticket System] Ticket Closed')
+            .then(async (ch) => {
+              tickets
+                .findOne({ ID: ch.id }, async (err, data) => {
+                  if (err) throw err;
+                  if (data) {
+                    await tickets.findOneAndDelete({ ID: ch.id });
+                  }
+                })
+                .clone();
+            });
+        }, 20000);
+      }
+    }
+    if (verificationEnabled) {
+      if (interaction.customId === 'verify') {
+        const data = await verification.findOne({
+          Guild: interaction.guild.id,
+        });
+
+        if (
+          (interaction.member.roles as GuildMemberRoleManager).cache.has(
+            data.Role
+          )
+        )
+          return interaction.reply({
+            content:
+              '<:success:996733680422752347> **You are already verified.**',
+            ephemeral: true,
+          });
+
+        if (Math.floor(interaction.user.createdTimestamp / 1000) < data.Age)
+          return interaction.reply({
+            content: `<:cancel:996733678279462932> You do not meet the minimum account age requirement for this server - ${ms(
+              data.Age,
+              { long: true }
+            )}.`,
+            ephemeral: true,
+          });
+
+        if (Verifying.has(`${interaction.guild.id}-${interaction.user.id}`))
+          return interaction.reply({
+            content: `<:cancel:996733678279462932> You already have a running verification session.`,
+            ephemeral: true,
+          });
+
+        interaction.deferUpdate();
+
+        const captcha = new Captcha();
+        captcha.async = true;
+        captcha.addDecoy();
+        captcha.drawTrace();
+        captcha.drawCaptcha();
+
+        let attachment = new Discord.MessageAttachment(
+          await captcha.png,
+          'captcha.png'
+        );
+
+        const msg = await interaction.user
+          .send({
+            embeds: [
+              new Discord.MessageEmbed()
+                .setTitle(
+                  `<:captcha:997250229948657745> Hello! Are you human? Let's find out!`
+                )
+                .setDescription(
+                  `Please type the captcha above to be able to access this server.\n\n**Additional Notes**:\n<:right:997250588158984393> Type out the traced colored characters from left to right.\n<:decoy:997251026962874388> Ignore the decoy characters spread-around.\n<:lowercase:997251325471502417> You have to consider characters cases (upper/lower case).`
+                )
+                .setColor('PURPLE')
+                .setImage('attachment://captcha.png')
+                .setFooter({ text: 'Verification Period: 2 minutes' }),
+            ],
+            files: [attachment],
+          })
+          .catch((error) => {
+            interaction.followUp({
+              content: `${interaction.user}`,
+              embeds: [
+                new Discord.MessageEmbed()
+                  .setTitle("I couldn't send direct message to you!")
+                  .setDescription(
+                    '⚠ You have DMs turned off. Please turn them on using the instruction below.'
+                  )
+                  .setImage(
+                    'https://i.postimg.cc/0jG6XQVV/how-to-enable-dms.png'
+                  )
+                  .setColor('YELLOW'),
+              ],
+              ephemeral: true,
+            });
+          });
+        if (msg) {
+          Verifying.set(
+            `${interaction.guild.id}-${interaction.user.id}`,
+            Date.now() + 120000
+          );
+          setTimeout(() => {
+            Verifying.delete(`${interaction.guild.id}-${interaction.user.id}`);
+          }, 120000);
+        }
+        try {
+          let filter = (m) => {
+            if (m.author.bot || m.author.id !== interaction.user.id) return;
+            if (m.content === captcha.text) return true;
+            else {
+              m.channel.send({
+                content:
+                  '<:cancel:996733678279462932> You did not pass the verification. Please try again.',
+              });
+            }
+          };
+          let res = await (msg as Message).channel.awaitMessages({
+            filter,
+            max: 1,
+            time: 120000,
+            errors: ['time'],
+          });
+          if (res) {
+            let successEmbed = new Discord.MessageEmbed()
+              .setTitle(`Verification Success`)
+              .setColor('GREEN')
+              .setDescription(`Thank you for verifying!`);
+            (msg as Message).channel.send({
+              embeds: [successEmbed],
+            });
+            (interaction.member.roles as GuildMemberRoleManager).add(data.Role);
+          }
+        } catch (err) {
+          (msg as Message)?.channel.send({
+            content: `Session expired. To start the verification process again, please go to ${interaction.channel}.`,
+          });
+        }
+      }
     }
   }
 });

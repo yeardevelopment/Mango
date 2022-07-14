@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
 
 export default model(
-  'message-logs',
+  'ticket-system',
   new Schema({
     Guild: String,
     Toggled: Boolean,

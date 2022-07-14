@@ -8,55 +8,45 @@ export default new Command({
   description: 'Logs deleted and edited messages to a channel',
   options: [
     {
-      name: 'enable',
-      description: 'Enables the logging of deleted and edited messages',
-      type: 'SUB_COMMAND',
-    },
-    {
-      name: 'disable',
-      description: 'Disables the logging of deleted and edited messages',
+      name: 'toggle',
+      description:
+        'Enables/disables the logging of message edits/deletions in this server',
       type: 'SUB_COMMAND',
     },
   ],
   timeout: 10000,
   run: async ({ interaction, args }) => {
     switch (args.getSubcommand()) {
-      case 'enable': {
-        const channel = args.getChannel('channel') || interaction.channel;
-
-        db.findOne(
-          { Guild: interaction.guild.id },
-          async (error: MongooseError, data) => {
-            if (error) return console.error(error);
-            if (data) data.delete();
-            new db({
-              Guild: interaction.guild.id,
-              Channel: channel.id,
-            }).save();
-            interaction.reply({
-              content: `Set message logging channel to ${channel}.`,
-            });
-          }
-        );
-
-        break;
-      }
-      case 'disable': {
-        await db
-          .findOne({ guild: interaction.guild.id }, async (error, data) => {
-            if (!data)
-              return interaction.reply({
-                content:
-                  '⚠️ Message logging system is not enabled in this server.',
-                ephemeral: true,
-              });
-            await db.findOneAndDelete({ guild: interaction.guild.id });
-            interaction.reply({
-              content: 'Successfully disabled message logging.',
-            });
-          })
-          .clone();
-
+      case 'toggle': {
+        const data = await db.findOne({ Guild: interaction.guild.id });
+        if (data && data.Toggled) {
+          await db.findOneAndUpdate(
+            { Guild: interaction.guild.id },
+            { Toggled: false }
+          );
+          interaction.reply({
+            content:
+              '<:success:996733680422752347> Successfully disabled message logging in this server.',
+          });
+        } else if (data && data.Toggled === false) {
+          await db.findOneAndUpdate(
+            { Guild: interaction.guild.id },
+            { Toggled: true }
+          );
+          interaction.reply({
+            content:
+              '<:success:996733680422752347> Successfully enabled message logging in this server.',
+          });
+        } else {
+          await db.create({
+            Guild: interaction.guild.id,
+            Toggled: true,
+          });
+          interaction.reply({
+            content:
+              '<:success:996733680422752347> Successfully enabled message logging in this server.',
+          });
+        }
         break;
       }
     }

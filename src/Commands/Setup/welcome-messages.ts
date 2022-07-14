@@ -8,74 +8,124 @@ export default new Command({
   description: 'Welcomes new members to the guild',
   options: [
     {
-      name: 'enable',
-      description:
-        'Sets a message to be sent to a channel when a member joins the guild',
+      name: 'toggle',
+      description: 'Enables/disables welcome messages in this server',
       type: 'SUB_COMMAND',
+    },
+    {
+      name: 'message',
+      type: 'SUB_COMMAND',
+      description:
+        "Text to be sent when a member joins the guild; add '@' to mention the joined member",
       options: [
         {
-          name: 'text',
-          type: 'STRING',
+          name: 'message',
           description:
             "Text to be sent when a member joins the guild; add '@' to mention the joined member",
-          required: true,
-        },
-        {
-          name: 'image',
-          type: 'BOOLEAN',
-          description: 'Whether to send a welcoming image or not',
+          type: 'STRING',
           required: true,
         },
       ],
     },
     {
-      name: 'disable',
-      description:
-        'Unsets a message to be sent to a channel when a member joins the guild',
+      name: 'image',
       type: 'SUB_COMMAND',
+      description: 'Whether to send a welcoming image or not',
+      options: [
+        {
+          name: 'image',
+          description: 'Whether to send a welcoming image or not',
+          type: 'BOOLEAN',
+          required: true,
+        },
+      ],
     },
   ],
   timeout: 10000,
   run: async ({ interaction, args }) => {
     switch (args.getSubcommand()) {
-      case 'enable': {
-        const text = args.getString('text');
-        const image = args.getBoolean('image');
-
-        db.findOne(
-          { Guild: interaction.guild.id },
-          async (error: MongooseError, data) => {
-            if (error) return console.error(error);
-            if (data) data.delete();
-            new db({
-              Guild: interaction.guild.id,
-              Text: text,
-              Image: image,
-            }).save();
-            interaction.reply({
-              content: `Updated the welcome message.`,
-            });
-          }
-        );
-
+      case 'toggle': {
+        const data = await db.findOne({ Guild: interaction.guild.id });
+        if (data && data.Toggled) {
+          await db.findOneAndUpdate(
+            { Guild: interaction.guild.id },
+            { Toggled: false }
+          );
+          interaction.reply({
+            content:
+              '<:success:996733680422752347> Successfully disabled welcome messages in this server.',
+          });
+        } else if (data && data.Toggled === false) {
+          await db.findOneAndUpdate(
+            { Guild: interaction.guild.id },
+            { Toggled: true }
+          );
+          interaction.reply({
+            content:
+              '<:success:996733680422752347> Successfully enabled welcome messages in this server.',
+          });
+        } else {
+          await db.create({
+            Guild: interaction.guild.id,
+            Toggled: true,
+          });
+          interaction.reply({
+            content:
+              '<:success:996733680422752347> Successfully enabled welcome messages in this server.',
+          });
+        }
         break;
       }
-      case 'disable': {
-        await db
-          .findOne({ guild: interaction.guild.id }, async (error, data) => {
-            if (!data)
-              return interaction.reply({
-                content:
-                  '⚠️ Welcome message system is not enabled in this server.',
-                ephemeral: true,
-              });
-            await db.findOneAndDelete({ guild: interaction.guild.id });
-            interaction.reply({
-              content: 'Successfully disabled welcome messages.',
-            });
-          })
-          .clone();
 
+      case 'message': {
+        const message = args.getString('message');
+        const data = await db.findOne({ Guild: interaction.guild.id });
+        if (data) {
+          await db.findOneAndUpdate({
+            Guild: interaction.guild.id,
+            Text: message,
+          });
+        } else {
+          await db.create({ Guild: interaction.guild.id, Text: message });
+        }
+        interaction.reply({
+          content:
+            '<:success:996733680422752347> Successfully updated the welcome message in this server.',
+        });
+        break;
+      }
+
+      case 'image': {
+        const boolean = args.getBoolean('image');
+        const data = await db.findOne({ Guild: interaction.guild.id });
+        if (data && data.Image) {
+          await db.findOneAndUpdate(
+            { Guild: interaction.guild.id },
+            { Image: false }
+          );
+          interaction.reply({
+            content:
+              '<:success:996733680422752347> Successfully disabled the welcome image in this server.',
+          });
+        } else if (data && data.Image === false) {
+          await db.findOneAndUpdate(
+            { Guild: interaction.guild.id },
+            { Image: true }
+          );
+          interaction.reply({
+            content:
+              '<:success:996733680422752347> Successfully enabled the welcome image in this server.',
+          });
+        } else {
+          await db.create({
+            Guild: interaction.guild.id,
+            Image: true,
+          });
+          interaction.reply({
+            content:
+              '<:success:996733680422752347> Successfully enabled the welcome image in this server.',
+          });
+        }
         break;
       }
     }

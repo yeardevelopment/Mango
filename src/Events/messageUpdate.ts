@@ -1,4 +1,5 @@
-import db from '../utils/models/messageLogs';
+import messageLogs from '../utils/models/messageLogs';
+import configDB from '../utils/models/config';
 import { MessageEmbed, TextBasedChannel } from 'discord.js';
 import { Event } from '../structures/Event';
 import { getLink } from '../utils/functions/getLink';
@@ -6,27 +7,36 @@ import { client } from '..';
 
 export default new Event('messageUpdate', async (oldMessage, newMessage) => {
   if (oldMessage.content === newMessage.content) return;
-  if (oldMessage.author.bot) return;
-  if (!oldMessage.guild) return;
+  if (oldMessage.author.bot || !oldMessage.guild) return;
 
-  const data = await db.findOne({ Guild: oldMessage.guild.id });
+  const config = await configDB.findOne({
+    Guild: oldMessage.guild.id,
+  });
+  if (!config || !config.MessageLogsChannel) return;
+
+  const data = await messageLogs.findOne({
+    Guild: oldMessage.guild.id,
+    Toggled: true,
+  });
   if (!data) return;
 
-  (client.channels.cache.get(data.Channel) as TextBasedChannel).send({
+  (
+    client.channels.cache.get(config.MessageLogsChannel) as TextBasedChannel
+  ).send({
     embeds: [
       new MessageEmbed()
         .setTitle('📘 Message Edited')
         .setURL(getLink(newMessage))
         .setDescription(
-          `**Edited By:** \`${newMessage.author.tag}\` (${
+          `**Edited By**: \`${newMessage.author.tag}\` (${
             newMessage.author.id
-          })\n**Channel:** ${newMessage.channel} (${
+          })\n**Channel**: ${newMessage.channel} (${
             newMessage.channel.id
-          })\n**Before:** ${
+          })\n**Before**: ${
             oldMessage.content.length > 1024
               ? `${oldMessage.content.slice(0, 1024)}...`
               : oldMessage.content
-          }\n**After:** ${
+          }\n**After**: ${
             newMessage.content.length > 1024
               ? `${newMessage.content.slice(0, 1024)}...`
               : newMessage.content

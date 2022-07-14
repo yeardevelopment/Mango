@@ -6,5 +6,6 @@ export default model(
     Guild: String,
     Text: String,
     Image: Boolean,
+    Toggled: Boolean,
   })
 );
