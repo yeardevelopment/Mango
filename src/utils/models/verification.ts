@@ -4,7 +4,7 @@ export default model(
   'verification',
   new Schema({
     Guild: String,
-    Toggled: Boolean,
+    Toggled: { type: Boolean, default: false },
     Role: String,
     Age: Number,
   })

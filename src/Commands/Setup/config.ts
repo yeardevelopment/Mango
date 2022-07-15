@@ -16,20 +16,7 @@ export default new Command({
           data.MuteRole ? `<@&${data.MuteRole}>` : '*not set*'
         }\n🧑‍💼 **Staff Role**: ${
           data.StaffRole ? `<@&${data.StaffRole}>` : '*not set*'
-        }\n👋 **Welcome Channel**: ${
-          data.WelcomeChannel ? `<#${data.WelcomeChannel}>` : '*not set*'
-        }\n🔨 **Moderation Logs Channel**: ${
-          data.ModerationLogsChannel
-            ? `<#${data.ModerationLogsChannel}>`
-            : '*not set*'
-        }\n💬 **Message Logs Channel**: ${
-          data.MessageLogsChannel
-            ? `<#${data.MessageLogsChannel}>`
-            : '*not set*'
-        }\n🎫 **Ticket Logs Channel**: ${
-          data.TicketLogsChannel ? `<#${data.TicketLogsChannel}>` : '*not set*'
-        }\n🎫 **Tickets Category**: ${
-          data.TicketsCategory ? `<#${data.TicketsCategory}>` : '*not set*'
+        }'
         }`
       )
       .setColor('#2F3136')

@@ -1,6 +1,5 @@
 import { Command } from '../../structures/Command';
 import {
-  GuildMember,
   MessageActionRow,
   MessageButton,
   MessageEmbed,
@@ -40,8 +39,44 @@ export default new Command({
       ],
     },
     {
+      name: 'logs',
+      description:
+        'Sets the channel that will be used for logging closed tickets information',
+      type: 'SUB_COMMAND',
+      options: [
+        {
+          name: 'channel',
+          description:
+            'Channel to be used for logging closed tickets information',
+          channelTypes: ['GUILD_TEXT'],
+          type: 'CHANNEL',
+          required: false,
+        },
+      ],
+    },
+    {
+      name: 'category',
+      description: 'Sets the category where opened tickets will appear in',
+      type: 'SUB_COMMAND',
+      options: [
+        {
+          name: 'category',
+          type: 'CHANNEL',
+          description: 'Category where opened tickets will appear in',
+          channelTypes: ['GUILD_CATEGORY'],
+          required: false,
+        },
+      ],
+    },
+    {
       name: 'toggle',
       description: 'Enables/disables the ticket system in this server',
+      type: 'SUB_COMMAND',
+    },
+    {
+      name: 'settings',
+      description:
+        'Displays the settings of the ticket system for this server.',
       type: 'SUB_COMMAND',
     },
   ],
@@ -117,6 +152,114 @@ export default new Command({
           });
         }
         break;
+      }
+
+      case 'logs': {
+        let channel = args.getChannel('channel');
+        const isChannel = channel ? channel.id : '';
+
+        const data = await db.findOne({ Guild: interaction.guild.id });
+        if (data) {
+          await db.findOneAndUpdate(
+            {
+              Guild: interaction.guild.id,
+            },
+            {
+              LogsChannel: isChannel,
+            }
+          );
+        } else {
+          await db.create({
+            Guild: interaction.guild.id,
+            LogsChannel: isChannel,
+          });
+        }
+        interaction.reply({
+          content: `<:success:996733680422752347> Successfully updated the ticket system settings in this server.`,
+        });
+        break;
+      }
+
+      case 'category': {
+        let channel = args.getChannel('category');
+        const isChannel = channel ? channel.id : '';
+
+        const data = await db.findOne({ Guild: interaction.guild.id });
+        if (data) {
+          await db.findOneAndUpdate(
+            {
+              Guild: interaction.guild.id,
+            },
+            {
+              Category: isChannel,
+            }
+          );
+        } else {
+          await db.create({
+            Guild: interaction.guild.id,
+            Category: isChannel,
+          });
+        }
+        interaction.reply({
+          content: `<:success:996733680422752347> Successfully updated the ticket system settings in this server.`,
+        });
+        break;
+      }
+
+      case 'settings': {
+        const data = await db.findOne({ Guild: interaction.guild.id });
+
+        if (data) {
+          interaction.reply({
+            embeds: [
+              new MessageEmbed()
+                .setTitle('Ticket System | Settings')
+                .setColor('#2F3136')
+                .setDescription(
+                  `${
+                    data.Toggled
+                      ? '<:on:997453570188259369> System is __enabled__.'
+                      : '<:off:997453568908988507> System is __disabled__.'
+                  }\n${
+                    data.LogsChannel
+                      ? `<:on:997453570188259369> Logging channel set to <#${data.LogsChannel}>.`
+                      : '<:off:997453568908988507> Logging channel is unset.'
+                  }\n${
+                    data.Category
+                      ? `<:on:997453570188259369> Tickets category set to <#${data.Category}>.`
+                      : '<:off:997453568908988507> Tickets category is unset.'
+                  }`
+                ),
+            ],
+          });
+        } else {
+          await db.create({
+            Guild: interaction.guild.id,
+          });
+
+          interaction.reply({
+            embeds: [
+              new MessageEmbed()
+                .setTitle('Ticket System | Settings')
+                .setColor('#2F3136')
+                .setDescription(
+                  `${
+                    data.Toggled
+                      ? '<:on:997453570188259369> System is __enabled__.'
+                      : '<:off:997453568908988507> System is __disabled__.'
+                  }\n${
+                    data.LogsChannel
+                      ? `<:on:997453570188259369> Logging channel set to <#${data.LogsChannel}>.`
+                      : '<:off:997453568908988507> Logging channel is unset.'
+                  }\n${
+                    data.Category
+                      ? `<:on:997453570188259369> Tickets category set to <#${data.Category}>.`
+                      : '<:off:997453568908988507> Tickets category is unset.'
+                  }`
+                ),
+            ],
+          });
+        }
       }
     }
   },

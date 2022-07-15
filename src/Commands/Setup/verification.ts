@@ -1,12 +1,12 @@
 import { Command } from '../../structures/Command';
 import {
-  GuildMember,
   MessageActionRow,
   MessageButton,
   MessageEmbed,
   TextBasedChannel,
 } from 'discord.js';
 import db from '../../utils/models/verification';
+import ms from 'ms';
 import { MongooseError } from 'mongoose';
 
 export default new Command({
@@ -66,13 +66,19 @@ export default new Command({
           description:
             'Role that will be given to members after they passed the verification',
           type: 'ROLE',
-          required: true,
+          required: false,
         },
       ],
     },
     {
       name: 'toggle',
       description: 'Enables/disables the verification system in this server',
+      type: 'SUB_COMMAND',
+    },
+    {
+      name: 'settings',
+      description:
+        'Displays the settings of the verification system for this server.',
       type: 'SUB_COMMAND',
     },
   ],
@@ -128,10 +134,12 @@ export default new Command({
 
         const data = await db.findOne({ Guild: interaction.guild.id });
         if (data) {
-          await db.findOneAndUpdate({
-            Guild: interaction.guild.id,
-            Age: days,
-          });
+          await db.findOneAndUpdate(
+            {
+              Guild: interaction.guild.id,
+            },
+            { Age: days }
+          );
         } else {
           await db.create({ Guild: interaction.guild.id, Age: days });
         }
@@ -142,16 +150,21 @@ export default new Command({
         break;
       }
       case 'role': {
-        const role = args.getRole('role');
+        let role = args.getRole('role');
+        const isRole = role ? role.id : '';
 
         const data = await db.findOne({ Guild: interaction.guild.id });
         if (data) {
-          await db.findOneAndUpdate({
-            Guild: interaction.guild.id,
-            Role: role.id,
-          });
+          await db.findOneAndUpdate(
+            {
+              Guild: interaction.guild.id,
+            },
+            {
+              Role: isRole,
+            }
+          );
         } else {
-          await db.create({ Guild: interaction.guild.id, Role: role.id });
+          await db.create({ Guild: interaction.guild.id, Role: isRole });
         }
         interaction.reply({
           content: `<:success:996733680422752347> Successfully updated the verification system settings in this server.`,
@@ -189,6 +202,64 @@ export default new Command({
           });
         }
         break;
+      }
+
+      case 'settings': {
+        const data = await db.findOne({ Guild: interaction.guild.id });
+
+        if (data) {
+          interaction.reply({
+            embeds: [
+              new MessageEmbed()
+                .setTitle('Verification System | Settings')
+                .setColor('#2F3136')
+                .setDescription(
+                  `${
+                    data.Toggled
+                      ? '<:on:997453570188259369> System is __enabled__.'
+                      : '<:off:997453568908988507> System is __disabled__.'
+                  }\n${
+                    data.Age > 0
+                      ? `<:on:997453570188259369> Minimum account age set to __${ms(
+                          data.Age,
+                          { long: true }
+                        )}__.`
+                      : '<:off:997453568908988507> Minimum account age is unset.'
+                  }\n<:verified:997446146282758144> ${
+                    data.Role ? `Role set to <@&${data.Role}>.` : 'No role set.'
+                  }`
+                ),
+            ],
+          });
+        } else {
+          await db.create({
+            Guild: interaction.guild.id,
+          });
+
+          interaction.reply({
+            embeds: [
+              new MessageEmbed()
+                .setTitle('Verification System | Settings')
+                .setColor('#2F3136')
+                .setDescription(
+                  `${
+                    data.Toggled
+                      ? '<:on:997453570188259369> System is __enabled__.'
+                      : '<:off:997453568908988507> System is __disabled__.'
+                  }\n${
+                    data.Age > 0
+                      ? `<:on:997453570188259369> Minimum account age set to __${ms(
+                          data.Age,
+                          { long: true }
+                        )}__.`
+                      : '<:off:997453568908988507> Minimum account age is unset.'
+                  }\n<:verified:997446146282758144> ${
+                    data.Role ? `Role set to <@&${data.Role}>.` : 'No role set.'
+                  }`
+                ),
+            ],
+          });
+        }
       }
     }
   },

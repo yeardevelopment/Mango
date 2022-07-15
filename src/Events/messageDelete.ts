@@ -1,4 +1,3 @@
-import configDB from '../utils/models/config';
 import messageLogs from '../utils/models/messageLogs';
 import { MessageEmbed, TextBasedChannel } from 'discord.js';
 import { Event } from '../structures/Event';
@@ -8,14 +7,11 @@ import { client } from '..';
 export default new Event('messageDelete', async (message) => {
   if (message.author.bot || !message.guild) return;
 
-  const config = await configDB.findOne({
+  const data = await messageLogs.findOne({
     Guild: message.guild.id,
     Toggled: true,
   });
-  if (!config || !config.MessageLogsChannel) return;
-
-  const data = await messageLogs.findOne({ Guild: message.guild.id, Toggled: true });
-  if (!data) return;
+  if (!data || !data.Channel) return;
 
   const Embed = new MessageEmbed()
     .setTitle('📕 Message Deleted')
@@ -50,7 +46,7 @@ export default new Event('messageDelete', async (message) => {
   }
 
   (
-    client.channels.cache.get(config.MessageLogsChannel) as TextBasedChannel
+    client.channels.cache.get(data.Channel) as TextBasedChannel
   ).send({
     embeds: [Embed],
   });

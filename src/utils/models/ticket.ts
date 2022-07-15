@@ -4,6 +4,8 @@ export default model(
   'ticket-system',
   new Schema({
     Guild: String,
-    Toggled: Boolean,
+    Toggled: { type: Boolean, default: false },
+    LogsChannel: String,
+    Category: String,
   })
 );

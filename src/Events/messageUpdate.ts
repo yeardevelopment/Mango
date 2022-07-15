@@ -1,5 +1,4 @@
 import messageLogs from '../utils/models/messageLogs';
-import configDB from '../utils/models/config';
 import { MessageEmbed, TextBasedChannel } from 'discord.js';
 import { Event } from '../structures/Event';
 import { getLink } from '../utils/functions/getLink';
@@ -9,19 +8,14 @@ export default new Event('messageUpdate', async (oldMessage, newMessage) => {
   if (oldMessage.content === newMessage.content) return;
   if (oldMessage.author.bot || !oldMessage.guild) return;
 
-  const config = await configDB.findOne({
-    Guild: oldMessage.guild.id,
-  });
-  if (!config || !config.MessageLogsChannel) return;
-
   const data = await messageLogs.findOne({
     Guild: oldMessage.guild.id,
     Toggled: true,
   });
-  if (!data) return;
+  if (!data || !data.Channel) return;
 
   (
-    client.channels.cache.get(config.MessageLogsChannel) as TextBasedChannel
+    client.channels.cache.get(data.Channel) as TextBasedChannel
   ).send({
     embeds: [
       new MessageEmbed()

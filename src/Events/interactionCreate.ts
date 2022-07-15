@@ -5,8 +5,9 @@ import Discord, {
   GuildMemberRoleManager,
   Message,
   MessageActionRow,
-  MessageActionRowComponent,
+  MessageAttachment,
   MessageButton,
+  MessageEmbed,
   TextBasedChannel,
 } from 'discord.js';
 import ms from 'ms';
@@ -22,6 +23,7 @@ import config from '../utils/models/config';
 import { createTranscript } from 'discord-html-transcripts';
 import { Captcha } from 'captcha-canvas';
 import verification from '../utils/models/verification';
+import moment from 'moment';
 
 export default new Event('interactionCreate', async (interaction) => {
   if (!interaction.guild) return; // Interactions can only be called used within a guild
@@ -31,7 +33,7 @@ export default new Event('interactionCreate', async (interaction) => {
     if (!command)
       return interaction.reply({
         embeds: [
-          new Discord.MessageEmbed()
+          new MessageEmbed()
             .setAuthor({
               name: `Unable to execute the command`,
               iconURL: `https://i.imgur.com/n3QHYJM.png`,
@@ -80,7 +82,7 @@ export default new Event('interactionCreate', async (interaction) => {
     }
   }
   if (interaction.isButton()) {
-    const ticketsEnabled = await ticket.findOne({
+    const ticketSystem = await ticket.findOne({
       Guild: interaction.guild.id,
       Toggled: true,
     });
@@ -88,7 +90,7 @@ export default new Event('interactionCreate', async (interaction) => {
       Guild: interaction.guild.id,
       Toggled: true,
     });
-    if (ticketsEnabled) {
+    if (ticketSystem) {
       const data = await config.findOne({
         Guild: interaction.guild.id,
       });
@@ -99,7 +101,7 @@ export default new Event('interactionCreate', async (interaction) => {
               '⚠️ The ticket system is not set up properly yet. Please try again contact staff with this information.',
             ephemeral: true,
           });
-        const parentChannel = data.TicketsCategory;
+        const parentChannel = ticketSystem.Category;
         const ticketChannel = await tickets.findOne({
           Guild: interaction.guild.id,
           Member: interaction.user.id,
@@ -169,7 +171,7 @@ export default new Event('interactionCreate', async (interaction) => {
         await (interaction as ButtonInteraction).editReply({
           content: `We will be right with you! ${channel}`,
         });
-        const embedticket = new Discord.MessageEmbed()
+        const embedticket = new MessageEmbed()
           .setTitle(`Welcome to your ticket!`)
           .addField('Ticket Category', `${category}`)
           .addField(
@@ -177,22 +179,22 @@ export default new Event('interactionCreate', async (interaction) => {
             `Please be patient, support will be with you shortly.`
           )
           .setColor('#2F3136');
-        let bu1tton = new Discord.MessageButton()
+        let bu1tton = new MessageButton()
           .setStyle('DANGER')
           .setEmoji(`💾`)
           .setLabel(`Save & Close`)
           .setCustomId('close');
-        let lock = new Discord.MessageButton()
+        let lock = new MessageButton()
           .setStyle('PRIMARY')
           .setEmoji(`🔒`)
           .setLabel(`Lock/Unlock`)
           .setCustomId('lock');
-        let claim = new Discord.MessageButton()
+        let claim = new MessageButton()
           .setStyle('SUCCESS')
           .setEmoji(`🖐️`)
           .setLabel(`Claim`)
           .setCustomId('claim');
-        let row = new Discord.MessageActionRow().addComponents([
+        let row = new MessageActionRow().addComponents([
           bu1tton,
           // lock,
           // claim,
@@ -223,8 +225,8 @@ export default new Event('interactionCreate', async (interaction) => {
                 ephemeral: true,
               });
             }
-            let row = new Discord.MessageActionRow().addComponents([
-              new Discord.MessageButton()
+            let row = new MessageActionRow().addComponents([
+              new MessageButton()
                 .setStyle(`SUCCESS`)
                 .setEmoji(`996733680422752347`)
                 .setLabel(`Proceed`)
@@ -233,7 +235,7 @@ export default new Event('interactionCreate', async (interaction) => {
             interaction.reply({
               components: [row],
               embeds: [
-                new Discord.MessageEmbed()
+                new MessageEmbed()
                   .setTitle('⚠ Are you sure?')
                   .setDescription(
                     'Are you sure you want to close this ticket?\nThis action cannot be undone.'
@@ -251,7 +253,7 @@ export default new Event('interactionCreate', async (interaction) => {
           .clone();
       }
       if (interaction.customId === 'sure') {
-        if (interaction.channel.parentId !== data.TicketsCategory) return;
+        if (interaction.channel.parentId !== ticketSystem.Category) return;
         if (
           !(interaction.member.roles as GuildMemberRoleManager).cache.has(
             data.StaffRole
@@ -294,7 +296,7 @@ export default new Event('interactionCreate', async (interaction) => {
             updateCounter(msg);
             let member = client.users.cache.get(docs.Members[0]);
 
-            const embed = new Discord.MessageEmbed()
+            const embed = new MessageEmbed()
               .setTitle('Ticket Closed')
               .setDescription(
                 `**Ticket Name:** \`${interaction.channel.name}\` (${
@@ -315,9 +317,9 @@ export default new Event('interactionCreate', async (interaction) => {
             });
             await (
               client.channels.cache.get(
-                data.TicketLogsChannel
+                ticketSystem.LogsChannel
               ) as TextBasedChannel
-            ).send({ embeds: [embed], files: [attachment] });
+            )?.send({ embeds: [embed], files: [attachment] });
           })
           .clone();
         setTimeout(() => {
@@ -353,7 +355,7 @@ export default new Event('interactionCreate', async (interaction) => {
             ephemeral: true,
           });
 
-        if (Math.floor(interaction.user.createdTimestamp / 1000) < data.Age)
+        if (Date.now() - Number(interaction.user.createdAt) < data.Age)
           return interaction.reply({
             content: `<:cancel:996733678279462932> You do not meet the minimum account age requirement for this server - ${ms(
               data.Age,
@@ -364,7 +366,7 @@ export default new Event('interactionCreate', async (interaction) => {
 
         if (Verifying.has(`${interaction.guild.id}-${interaction.user.id}`))
           return interaction.reply({
-            content: `<:cancel:996733678279462932> You already have a running verification session.`,
+            content: `<:cancel:996733678279462932> You already have a verification session running in [your DMs](https://discord.com/channels/@me/${client.user.id}).`,
             ephemeral: true,
           });
 
@@ -376,7 +378,7 @@ export default new Event('interactionCreate', async (interaction) => {
         captcha.drawTrace();
         captcha.drawCaptcha();
 
-        let attachment = new Discord.MessageAttachment(
+        let attachment = new MessageAttachment(
           await captcha.png,
           'captcha.png'
         );
@@ -384,7 +386,7 @@ export default new Event('interactionCreate', async (interaction) => {
         const msg = await interaction.user
           .send({
             embeds: [
-              new Discord.MessageEmbed()
+              new MessageEmbed()
                 .setTitle(
                   `<:captcha:997250229948657745> Hello! Are you human? Let's find out!`
                 )
@@ -401,7 +403,7 @@ export default new Event('interactionCreate', async (interaction) => {
             interaction.followUp({
               content: `${interaction.user}`,
               embeds: [
-                new Discord.MessageEmbed()
+                new MessageEmbed()
                   .setTitle("I couldn't send direct message to you!")
                   .setDescription(
                     '⚠ You have DMs turned off. Please turn them on using the instruction below.'
@@ -415,6 +417,10 @@ export default new Event('interactionCreate', async (interaction) => {
             });
           });
         if (msg) {
+          interaction.followUp({
+            content: `Verification session started in [your DMs](<https://discord.com/channels/@me/${msg.channelId}>).`,
+            ephemeral: true,
+          });
           Verifying.set(
             `${interaction.guild.id}-${interaction.user.id}`,
             Date.now() + 120000
@@ -441,7 +447,7 @@ export default new Event('interactionCreate', async (interaction) => {
             errors: ['time'],
           });
           if (res) {
-            let successEmbed = new Discord.MessageEmbed()
+            let successEmbed = new MessageEmbed()
               .setTitle(`Verification Success`)
               .setColor('GREEN')
               .setDescription(`Thank you for verifying!`);

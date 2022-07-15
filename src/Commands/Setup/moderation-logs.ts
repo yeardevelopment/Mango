@@ -1,28 +1,28 @@
 import { Command } from '../../structures/Command';
-import db from '../../utils/models/messageLogs';
+import db from '../../utils/models/modLogs';
 import { MongooseError } from 'mongoose';
 import { MessageEmbed } from 'discord.js';
 
 export default new Command({
-  name: 'message-logs',
-  description: 'Logs deleted and edited messages to a channel',
+  name: 'moderation-logs',
+  description: 'Logs moderation actions',
   options: [
     {
       name: 'toggle',
       description:
-        'Enables/disables the logging of message edits/deletions in this server',
+        'Enables/disables the moderation logging system in this server',
       type: 'SUB_COMMAND',
     },
     {
       name: 'channel',
       description:
-        'Sets the channel that will be used for logging message edits/deletions in this server',
+        'Sets the channel that will be used for logging moderation actions this server',
       type: 'SUB_COMMAND',
       options: [
         {
           name: 'channel',
           description:
-            'Channel to be used for for logging message edits/deletions in this server',
+            'Channel to be used for for logging moderation actions in this server',
           channelTypes: ['GUILD_TEXT'],
           type: 'CHANNEL',
           required: false,
@@ -48,7 +48,7 @@ export default new Command({
           );
           interaction.reply({
             content:
-              '<:success:996733680422752347> Successfully disabled message logs in this server.',
+              '<:success:996733680422752347> Successfully disabled moderation logs in this server.',
           });
         } else if (data && data.Toggled === false) {
           await db.findOneAndUpdate(
@@ -57,7 +57,7 @@ export default new Command({
           );
           interaction.reply({
             content:
-              '<:success:996733680422752347> Successfully enabled message logs in this server.',
+              '<:success:996733680422752347> Successfully enabled moderation logs in this server.',
           });
         } else {
           await db.create({
@@ -66,7 +66,7 @@ export default new Command({
           });
           interaction.reply({
             content:
-              '<:success:996733680422752347> Successfully enabled message logs in this server.',
+              '<:success:996733680422752347> Successfully enabled moderation logs in this server.',
           });
         }
         break;
@@ -88,7 +88,7 @@ export default new Command({
         }
         interaction.reply({
           content:
-            '<:success:996733680422752347> Successfully updated the message logging settings in this server.',
+            '<:success:996733680422752347> Successfully updated the moderation logging settings in this server.',
         });
         break;
       }
@@ -100,7 +100,7 @@ export default new Command({
           interaction.reply({
             embeds: [
               new MessageEmbed()
-                .setTitle('Message Logging System | Settings')
+                .setTitle('Moderation Logging System | Settings')
                 .setColor('#2F3136')
                 .setDescription(
                   `${
@@ -118,12 +118,13 @@ export default new Command({
         } else {
           await db.create({
             Guild: interaction.guild.id,
+            
           });
 
           interaction.reply({
             embeds: [
               new MessageEmbed()
-                .setTitle('Message Logging System | Settings')
+                .setTitle('Moderation Logging System | Settings')
                 .setColor('#2F3136')
                 .setDescription(
                   `${

@@ -4,6 +4,7 @@ export default model(
   'message-logs',
   new Schema({
     Guild: String,
-    Toggled: Boolean,
+    Toggled: { type: Boolean, default: false },
+    Channel: String,
   })
 );

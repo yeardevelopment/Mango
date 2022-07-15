@@ -3,11 +3,11 @@ import {
   CommandInteraction,
   MessageEmbed,
   TextBasedChannel,
+  User,
 } from 'discord.js';
 import { getLink } from './getLink';
 import db from '../models/config';
 import modLogs from '../models/modLogs';
-import { User } from 'discord.js';
 
 export async function modlogs(
   {
@@ -31,8 +31,9 @@ export async function modlogs(
   });
   if (!data) return;
 
-  const docs = await db.findOne({ Guild: interaction.guild.id });
-  if (!docs.ModerationLogsChannel) return;
+  const configDB = await db.findOne({
+    Guild: interaction.guild.id,
+  });
 
   await db.findOneAndUpdate(
     { Guild: interaction.guild.id },
@@ -54,15 +55,13 @@ export async function modlogs(
         interaction
       )})`
     )
-    .setFooter({ text: `Case #${docs.CaseCount}` })
+    .setFooter({ text: `Case #${configDB.CaseCount}` })
     .setTimestamp()
     .setThumbnail(Member.displayAvatarURL({ dynamic: true }));
 
   await (
-    interaction.guild.channels.cache.get(
-      docs.ModerationLogsChannel
-    ) as TextBasedChannel
-  ).send({ embeds: [logsEmbed] });
+    interaction.guild.channels.cache.get(data.Channel) as TextBasedChannel
+  )?.send({ embeds: [logsEmbed] });
 
   let dmEmbed = new MessageEmbed()
     .setTitle(`New Moderation Action Executed Towards You`)
@@ -75,7 +74,7 @@ export async function modlogs(
     )
     .setColor(Color)
     .setFooter({
-      text: `Case #${docs.CaseCount}`,
+      text: `Case #${configDB.CaseCount}`,
     })
     .setTimestamp();
 

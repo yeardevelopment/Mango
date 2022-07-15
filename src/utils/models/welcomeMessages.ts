@@ -5,7 +5,8 @@ export default model(
   new Schema({
     Guild: String,
     Text: String,
-    Image: Boolean,
-    Toggled: Boolean,
+    Image: { type: Boolean, default: false },
+    Toggled: { type: Boolean, default: false },
+    Channel: String,
   })
 );

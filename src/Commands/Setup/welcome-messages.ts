@@ -1,5 +1,5 @@
 import { Command } from '../../structures/Command';
-import { GuildMember } from 'discord.js';
+import { GuildMember, MessageEmbed } from 'discord.js';
 import db from '../../utils/models/welcomeMessages';
 import { MongooseError } from 'mongoose';
 
@@ -27,18 +27,31 @@ export default new Command({
         },
       ],
     },
+    // {
+    //   name: 'image',
+    //   type: 'SUB_COMMAND',
+    //   description: 'Enables/disables the welcome image in this server',
+    // },
     {
-      name: 'image',
+      name: 'channel',
+      description:
+        'Sets the channel that will be used for sending welcome messages',
       type: 'SUB_COMMAND',
-      description: 'Whether to send a welcoming image or not',
       options: [
         {
-          name: 'image',
-          description: 'Whether to send a welcoming image or not',
-          type: 'BOOLEAN',
-          required: true,
+          name: 'channel',
+          description: 'Channel to be used for for sending welcome messages',
+          channelTypes: ['GUILD_TEXT'],
+          type: 'CHANNEL',
+          required: false,
         },
       ],
+    },
+    {
+      name: 'settings',
+      description:
+        'Displays the settings of the welcome system for this server.',
+      type: 'SUB_COMMAND',
     },
   ],
   timeout: 10000,
@@ -81,10 +94,12 @@ export default new Command({
         const message = args.getString('message');
         const data = await db.findOne({ Guild: interaction.guild.id });
         if (data) {
-          await db.findOneAndUpdate({
-            Guild: interaction.guild.id,
-            Text: message,
-          });
+          await db.findOneAndUpdate(
+            {
+              Guild: interaction.guild.id,
+            },
+            { Text: message }
+          );
         } else {
           await db.create({ Guild: interaction.guild.id, Text: message });
         }
@@ -95,8 +110,28 @@ export default new Command({
         break;
       }
 
+      case 'channel': {
+        const channel = args.getChannel('channel');
+        const isChannel = channel ? channel.id : '';
+        const data = await db.findOne({ Guild: interaction.guild.id });
+        if (data) {
+          await db.findOneAndUpdate(
+            {
+              Guild: interaction.guild.id,
+            },
+            { Channel: isChannel }
+          );
+        } else {
+          await db.create({ Guild: interaction.guild.id, Channel: isChannel });
+        }
+        interaction.reply({
+          content:
+            '<:success:996733680422752347> Successfully updated the welcome message in this server.',
+        });
+        break;
+      }
+
       case 'image': {
-        const boolean = args.getBoolean('image');
         const data = await db.findOne({ Guild: interaction.guild.id });
         if (data && data.Image) {
           await db.findOneAndUpdate(
@@ -127,6 +162,62 @@ export default new Command({
           });
         }
         break;
+      }
+
+      case 'settings': {
+        const data = await db.findOne({ Guild: interaction.guild.id });
+
+        if (data) {
+          interaction.reply({
+            embeds: [
+              new MessageEmbed()
+                .setTitle('Welcome System | Settings')
+                .setColor('#2F3136')
+                .setDescription(
+                  `${
+                    data.Toggled
+                      ? '<:on:997453570188259369> System is __enabled__.'
+                      : '<:off:997453568908988507> System is __disabled__.'
+                  }\n${
+                    data.Channel
+                      ? `<:on:997453570188259369> Channel set to <#${data.Channel}>.`
+                      : '<:off:997453568908988507> Channel is unset.'
+                  }\n${
+                    data.Text
+                      ? `<:on:997453570188259369> Message set to \`${data.Text}\`.`
+                      : '<:off:997453568908988507> Message is unset.'
+                  }`
+                ),
+            ],
+          });
+        } else {
+          await db.create({
+            Guild: interaction.guild.id,
+          });
+
+          interaction.reply({
+            embeds: [
+              new MessageEmbed()
+                .setTitle('Welcome System | Settings')
+                .setColor('#2F3136')
+                .setDescription(
+                  `${
+                    data.Toggled
+                      ? '<:on:997453570188259369> System is __enabled__.'
+                      : '<:off:997453568908988507> System is __disabled__.'
+                  }\n${
+                    data.Channel
+                      ? `<:on:997453570188259369> Channel set to <#${data.Channel}>.`
+                      : '<:off:997453568908988507> Channel is unset.'
+                  }\n${
+                    data.Text
+                      ? `<:on:997453570188259369> Message set to \`${data.Text}\`.`
+                      : '<:off:997453568908988507> Message is unset.'
+                  }`
+                ),
+            ],
+          });
+        }
       }
     }
   },
