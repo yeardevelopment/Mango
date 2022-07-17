@@ -33,16 +33,6 @@ export default new Event('guildMemberAdd', async (member) => {
       member.user.displayAvatarURL({ format: 'jpg' })
     );
 
-    // Draw the avatar
-    ctx.beginPath();
-    ctx.arc(322, 280, 208, 0, Math.PI * 2, true); // Position of the avatar
-    ctx.closePath();
-    ctx.shadowColor = '#000000';
-    ctx.shadowBlur = 16;
-    ctx.clip();
-
-    ctx.drawImage(avatar, 114, 72, 500, 500);
-
     // Checks username length and draws text depending on it
     if (username.length >= 14) {
       ctx.font = '70 px Coolvetica';
@@ -71,6 +61,16 @@ export default new Event('guildMemberAdd', async (member) => {
     ctx.shadowColor = '#000000';
     ctx.shadowBlur = 7;
     ctx.fillText('Enjoy your stay!', 1177, 398);
+
+    // Draw the avatar
+    ctx.beginPath();
+    ctx.arc(322, 280, 208, 0, Math.PI * 2, true); // Position of the avatar
+    ctx.closePath();
+    ctx.shadowColor = '#000000';
+    ctx.shadowBlur = 16;
+    ctx.clip();
+
+    ctx.drawImage(avatar, 114, 72, 500, 500);
 
     const attachment = new MessageAttachment(
       canvas.toBuffer(),
