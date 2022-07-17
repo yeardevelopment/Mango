@@ -35,13 +35,13 @@ export default new Event('guildMemberAdd', async (member) => {
 
     // Checks username length and draws text depending on it
     if (username.length >= 14) {
-      ctx.font = '70 px Coolvetica';
+      ctx.font = '70px Coolvetica';
       ctx.fillStyle = '#ffffff';
       ctx.shadowColor = '#000000';
       ctx.shadowBlur = 7;
       ctx.fillText(username, 322, 546);
     } else {
-      ctx.font = '93 px Coolvetica';
+      ctx.font = '93px Coolvetica';
       ctx.fillStyle = '#ffffff';
       ctx.shadowColor = '#000000';
       ctx.shadowBlur = 7;
@@ -49,14 +49,14 @@ export default new Event('guildMemberAdd', async (member) => {
     }
 
     // Draws the WELCOME! text
-    ctx.font = '195 px Panton-BlackCaps';
+    ctx.font = '195px Panton-BlackCaps';
     ctx.fillStyle = '#ffffff';
     ctx.shadowColor = '#000000';
     ctx.shadowBlur = 7;
     ctx.fillText('WELCOME!', 1177, 287);
 
     // Draws the Enjoy your stay! text
-    ctx.font = '99 px Coolvetica';
+    ctx.font = '99px Coolvetica';
     ctx.fillStyle = '#ffffff';
     ctx.shadowColor = '#000000';
     ctx.shadowBlur = 7;
