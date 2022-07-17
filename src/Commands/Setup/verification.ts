@@ -111,7 +111,7 @@ export default new Command({
               .setFooter({
                 text: 'You will need to have your direct messages enabled.',
               })
-              .setColor('#2F3136'),
+              .setColor('#ea664b'),
           ],
           components: [
             new MessageActionRow().setComponents(
@@ -212,7 +212,7 @@ export default new Command({
             embeds: [
               new MessageEmbed()
                 .setTitle('Verification System | Settings')
-                .setColor('#2F3136')
+                .setColor('#ea664b')
                 .setDescription(
                   `${
                     data.Toggled
@@ -240,7 +240,7 @@ export default new Command({
             embeds: [
               new MessageEmbed()
                 .setTitle('Verification System | Settings')
-                .setColor('#2F3136')
+                .setColor('#ea664b')
                 .setDescription(
                   `${
                     data.Toggled

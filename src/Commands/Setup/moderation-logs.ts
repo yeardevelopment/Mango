@@ -101,7 +101,7 @@ export default new Command({
             embeds: [
               new MessageEmbed()
                 .setTitle('Moderation Logging System | Settings')
-                .setColor('#2F3136')
+                .setColor('#ea664b')
                 .setDescription(
                   `${
                     data.Toggled
@@ -118,14 +118,13 @@ export default new Command({
         } else {
           await db.create({
             Guild: interaction.guild.id,
-            
           });
 
           interaction.reply({
             embeds: [
               new MessageEmbed()
                 .setTitle('Moderation Logging System | Settings')
-                .setColor('#2F3136')
+                .setColor('#ea664b')
                 .setDescription(
                   `${
                     data.Toggled

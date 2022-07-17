@@ -16,10 +16,9 @@ export default new Command({
           data.MuteRole ? `<@&${data.MuteRole}>` : '*not set*'
         }\n🧑‍💼 **Staff Role**: ${
           data.StaffRole ? `<@&${data.StaffRole}>` : '*not set*'
-        }'
         }`
       )
-      .setColor('#2F3136')
+      .setColor('#ea664b')
       .setFooter({ text: 'Use /set command to change the settings.' });
 
     interaction.reply({

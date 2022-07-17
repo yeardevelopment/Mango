@@ -172,7 +172,7 @@ export default new Command({
             embeds: [
               new MessageEmbed()
                 .setTitle('Welcome System | Settings')
-                .setColor('#2F3136')
+                .setColor('#ea664b')
                 .setDescription(
                   `${
                     data.Toggled
@@ -199,7 +199,7 @@ export default new Command({
             embeds: [
               new MessageEmbed()
                 .setTitle('Welcome System | Settings')
-                .setColor('#2F3136')
+                .setColor('#ea664b')
                 .setDescription(
                   `${
                     data.Toggled

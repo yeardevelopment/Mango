@@ -106,7 +106,7 @@ export default new Command({
             new MessageEmbed()
               .setTitle(title)
               .setDescription(description)
-              .setColor('#2F3136'),
+              .setColor('#ea664b'),
           ],
           components: [
             new MessageActionRow().setComponents(
@@ -214,7 +214,7 @@ export default new Command({
             embeds: [
               new MessageEmbed()
                 .setTitle('Ticket System | Settings')
-                .setColor('#2F3136')
+                .setColor('#ea664b')
                 .setDescription(
                   `${
                     data.Toggled
@@ -241,7 +241,7 @@ export default new Command({
             embeds: [
               new MessageEmbed()
                 .setTitle('Ticket System | Settings')
-                .setColor('#2F3136')
+                .setColor('#ea664b')
                 .setDescription(
                   `${
                     data.Toggled

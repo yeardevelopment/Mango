@@ -94,7 +94,7 @@ export default new Event('interactionCreate', async (interaction) => {
       const data = await config.findOne({
         Guild: interaction.guild.id,
       });
-      async function ticket(category) {
+      async function ticket(category: string) {
         if (!data.StaffRole)
           return (interaction as ButtonInteraction).reply({
             content:
@@ -178,7 +178,7 @@ export default new Event('interactionCreate', async (interaction) => {
             `Note`,
             `Please be patient, support will be with you shortly.`
           )
-          .setColor('#2F3136');
+          .setColor('#ea664b');
         let bu1tton = new MessageButton()
           .setStyle('DANGER')
           .setEmoji(`💾`)
@@ -299,13 +299,13 @@ export default new Event('interactionCreate', async (interaction) => {
             const embed = new MessageEmbed()
               .setTitle('Ticket Closed')
               .setDescription(
-                `**Ticket Name:** \`${interaction.channel.name}\` (${
+                `**Ticket Name**: \`${interaction.channel.name}\` (${
                   interaction.channel.id
-                })\n**Ticket Category:** ${docs.Category}\n**Opened By:** \`${
+                })\n**Ticket Category**: ${docs.Category}\n**Opened By**: \`${
                   member.tag
-                }\` (${member.id})\n**Closed By:** \`${
+                }\` (${member.id})\n**Closed By**: \`${
                   interaction.user.tag
-                }\` (${interaction.user.id})\n**Open Time:** <t:${Math.floor(
+                }\` (${interaction.user.id})\n**Open Time**: <t:${Math.floor(
                   interaction.channel.createdTimestamp / 1000
                 )}>`
               )
