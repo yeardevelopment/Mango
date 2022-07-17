@@ -41,7 +41,7 @@ export default new Event('guildMemberAdd', async (member) => {
     ctx.shadowBlur = 16;
     ctx.clip();
 
-    ctx.drawImage(avatar, 322, 280, 500, 500);
+    ctx.drawImage(avatar, 114, 72, 500, 500);
 
     // Checks username length and draws text depending on it
     if (username.length >= 14) {
@@ -49,28 +49,28 @@ export default new Event('guildMemberAdd', async (member) => {
       ctx.fillStyle = '#ffffff';
       ctx.shadowColor = '#000000';
       ctx.shadowBlur = 7;
-      ctx.fillText(username, 322.42, 546.79);
+      ctx.fillText(username, 322, 546);
     } else {
       ctx.font = '93 px Coolvetica';
       ctx.fillStyle = '#ffffff';
       ctx.shadowColor = '#000000';
       ctx.shadowBlur = 7;
-      ctx.fillText(username, 322.42, 546.79);
+      ctx.fillText(username, 322, 546);
     }
 
     // Draws the WELCOME! text
-    ctx.font = '195.35 px Panton-BlackCaps';
+    ctx.font = '195 px Panton-BlackCaps';
     ctx.fillStyle = '#ffffff';
     ctx.shadowColor = '#000000';
     ctx.shadowBlur = 7;
-    ctx.fillText('WELCOME!', 1177, 287.55);
+    ctx.fillText('WELCOME!', 1177, 287);
 
     // Draws the Enjoy your stay! text
-    ctx.font = '99.71 px Coolvetica';
+    ctx.font = '99 px Coolvetica';
     ctx.fillStyle = '#ffffff';
     ctx.shadowColor = '#000000';
     ctx.shadowBlur = 7;
-    ctx.fillText('Enjoy your stay!', 1177, 398.46);
+    ctx.fillText('Enjoy your stay!', 1177, 398);
 
     const attachment = new MessageAttachment(
       canvas.toBuffer(),
