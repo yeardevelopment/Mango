@@ -4,6 +4,6 @@ import { ExtendedClient } from './structures/Client';
 
 export const client = new ExtendedClient();
 
-import './Handlers/errors';
+export * from './Handlers/errors';
 
 client.start();
