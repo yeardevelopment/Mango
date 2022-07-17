@@ -27,11 +27,11 @@ export default new Command({
         },
       ],
     },
-    // {
-    //   name: 'image',
-    //   type: 'SUB_COMMAND',
-    //   description: 'Enables/disables the welcome image in this server',
-    // },
+    {
+      name: 'image',
+      type: 'SUB_COMMAND',
+      description: 'Enables/disables the welcome image in this server',
+    },
     {
       name: 'channel',
       description:
