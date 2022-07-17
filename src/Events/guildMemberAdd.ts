@@ -37,37 +37,33 @@ export default new Event('guildMemberAdd', async (member) => {
     if (username.length >= 14) {
       ctx.font = '70px Coolvetica';
       ctx.fillStyle = '#ffffff';
-      ctx.shadowColor = '#000000';
-      ctx.shadowBlur = 7;
-      ctx.fillText(username, 46, 513);
+      ctx.fillText(username, 46, 546.79);
     } else {
       ctx.font = '92.89px Coolvetica';
       ctx.fillStyle = '#ffffff';
-      ctx.shadowColor = '#000000';
-      ctx.shadowBlur = 7;
-      ctx.fillText(username, 46, 513);
+      ctx.fillText(username, 46, 546.79);
     }
 
     // Draws the WELCOME! text
-    ctx.font = '195.35px Panton-BlackCaps';
+    ctx.font = '195px Panton-BlackCaps';
     ctx.fillStyle = '#ffffff';
     ctx.shadowColor = '#000000';
     ctx.shadowBlur = 7;
-    ctx.fillText('WELCOME!', 658, 204);
+    ctx.fillText('WELCOME!', 658, 287.55);
 
     // Draws the Enjoy your stay! text
     ctx.font = '99px Coolvetica';
     ctx.fillStyle = '#ffffff';
     ctx.shadowColor = '#000000';
     ctx.shadowBlur = 7;
-    ctx.fillText('Enjoy your stay!', 818, 362);
+    ctx.fillText('Enjoy your stay!', 818, 398.46);
 
     // Draw the avatar
-    ctx.shadowColor = '#000000';
-    ctx.shadowBlur = 16;
     ctx.beginPath();
     ctx.arc(339, 280, 208, 0, Math.PI * 2, true); // Position of the avatar
     ctx.closePath();
+    ctx.shadowColor = '#000000';
+    ctx.shadowBlur = 16;
     ctx.clip();
 
     ctx.drawImage(avatar, 130, 71, 417, 417);
