@@ -63,11 +63,11 @@ export default new Event('guildMemberAdd', async (member) => {
     ctx.fillText('Enjoy your stay!', 818, 362);
 
     // Draw the avatar
+    ctx.shadowColor = '#000000';
+    ctx.shadowBlur = 16;
     ctx.beginPath();
     ctx.arc(339, 280, 208, 0, Math.PI * 2, true); // Position of the avatar
     ctx.closePath();
-    ctx.shadowColor = '#000000';
-    ctx.shadowBlur = 16;
     ctx.clip();
 
     ctx.drawImage(avatar, 130, 71, 417, 417);
