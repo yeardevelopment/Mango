@@ -1,6 +1,6 @@
 # Mango
 
-An uprising multifunctional Discord bot.
+An uprising multifunctional Discord bot written in TypeScript. Currently in pre-release.
 
 ## Support
 
