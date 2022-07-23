@@ -1,5 +1,5 @@
 import { Command } from '../../structures/Command';
-import { GuildMember } from 'discord.js';
+import { ApplicationCommandOptionType, GuildMember } from 'discord.js';
 
 export default new Command({
   name: 'clear',
@@ -7,7 +7,7 @@ export default new Command({
   options: [
     {
       name: 'amount',
-      type: 'INTEGER',
+      type: ApplicationCommandOptionType.Integer,
       description: 'The amount of messages that are going to be deleted.',
       minValue: 1,
       maxValue: 100,
@@ -15,11 +15,12 @@ export default new Command({
     },
     {
       name: 'target',
-      type: 'USER',
+      type: ApplicationCommandOptionType.User,
       description: 'Select a target to clear their messages in the channel.',
       required: false,
     },
   ],
+  permissions: 'ManageMessages',
   timeout: 5000,
   run: async ({ interaction, args }) => {
     let amount = args.getInteger('amount');

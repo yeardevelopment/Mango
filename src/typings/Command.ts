@@ -3,6 +3,7 @@ import {
   CommandInteraction,
   CommandInteractionOptionResolver,
   GuildMember,
+  PermissionResolvable,
 } from 'discord.js';
 import { ExtendedClient } from '../structures/Client';
 
@@ -29,5 +30,8 @@ type RunFunction = (options: RunOptions) => any;
 
 export type CommandType = {
   timeout?: number;
+  premiumOnly?: boolean;
+  ownerOnly?: boolean;
+  permissions?: PermissionResolvable;
   run: RunFunction;
 } & ChatInputApplicationCommandData;

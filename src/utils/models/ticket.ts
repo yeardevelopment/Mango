@@ -5,6 +5,7 @@ export default model(
   new Schema({
     Guild: String,
     Toggled: { type: Boolean, default: false },
+    StaffRole: String,
     LogsChannel: String,
     Category: String,
   })

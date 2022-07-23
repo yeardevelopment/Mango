@@ -1,13 +1,9 @@
 import { Schema, model } from 'mongoose';
 
 export default model(
-  'config',
+  'premium-guilds',
   new Schema({
     Guild: String,
-    MuteRole: String,
-    CaseCount: {
-      default: 0,
-      type: Number,
-    },
+    Expire: Number,
   })
 );

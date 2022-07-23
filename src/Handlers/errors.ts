@@ -1,6 +1,5 @@
-const Discord = require('discord.js');
 import { client } from '..';
-export default async () => {
+export function error(): void {
   client.on('error', (error) => {
     console.error('[Error Handling System] Discord Error');
     console.error(error);
@@ -25,4 +24,4 @@ export default async () => {
     console.error('[Error Handling System] Warning');
     console.error(warning);
   });
-};
+}

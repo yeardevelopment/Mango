@@ -1,5 +1,5 @@
 import messageLogs from '../utils/models/messageLogs';
-import { MessageEmbed, TextBasedChannel } from 'discord.js';
+import { EmbedBuilder, TextBasedChannel } from 'discord.js';
 import { Event } from '../structures/Event';
 import { getLink } from '../utils/functions/getLink';
 import { client } from '..';
@@ -9,23 +9,21 @@ export default new Event('messageUpdate', async (oldMessage, newMessage) => {
   if (oldMessage.author.bot || !oldMessage.guild) return;
 
   const data = await messageLogs.findOne({
-    Guild: oldMessage.guild.id,
+    Guild: oldMessage.guildId,
     Toggled: true,
   });
-  if (!data || !data.Channel) return;
+  if (!data || !data?.Channel) return;
 
-  (
-    client.channels.cache.get(data.Channel) as TextBasedChannel
-  ).send({
+  (client.channels.cache.get(data.Channel) as TextBasedChannel).send({
     embeds: [
-      new MessageEmbed()
+      new EmbedBuilder()
         .setTitle('📘 Message Edited')
         .setURL(getLink(newMessage))
         .setDescription(
           `**Edited By**: \`${newMessage.author.tag}\` (${
             newMessage.author.id
           })\n**Channel**: ${newMessage.channel} (${
-            newMessage.channel.id
+            newMessage.channelId
           })\n**Before**: ${
             oldMessage.content.length > 1024
               ? `${oldMessage.content.slice(0, 1024)}...`
@@ -36,7 +34,7 @@ export default new Event('messageUpdate', async (oldMessage, newMessage) => {
               : newMessage.content
           }`
         )
-        .setColor('GREEN')
+        .setColor('#00FF00')
         .setFooter({ text: `Message ID: ${newMessage.id}` })
         .setTimestamp(),
     ],

@@ -1,13 +1,10 @@
-
 # Mango
 
 An uprising multifunctional Discord bot.
 
-
 ## Support
 
 For support, join our [Official Discord Support server](https://discord.gg/B8Fs6Qe6Eq).
-
 
 ## License
 
@@ -24,15 +21,17 @@ For support, join our [Official Discord Support server](https://discord.gg/B8Fs6
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Affero General Public License for more details.
 
-
 ## Acknowledgements
 
- - [canvas](https://github.com/Automattic/node-canvas)
- - [captcha-canvas](https://github.com/Shashank3736/captcha-canvas)
- - [chalk](https://github.com/chalk/chalk)
- - [discord-html-transcripts](https://github.com/ItzDerock/discord-html-transcripts)
- - [discord.js](https://github.com/discordjs/discord.js)
- - [dotenv](https://github.com/motdotla/dotenv)
- - [glob](https://github.com/isaacs/node-glob)
- - [mc-names](https://github.com/tekoh/mc-names)
- 
+- [canvas](https://github.com/Automattic/node-canvas)
+- [captcha-canvas](https://github.com/Shashank3736/captcha-canvas)
+- [chalk](https://github.com/chalk/chalk)
+- [discord-arts](https://www.npmjs.com/package/discord-arts)
+- [discord-html-transcripts](https://github.com/ItzDerock/discord-html-transcripts)
+- [discord.js](https://github.com/discordjs/discord.js)
+- [dotenv](https://github.com/motdotla/dotenv)
+- [glob](https://github.com/isaacs/node-glob)
+- [mc-names](https://github.com/tekoh/mc-names)
+- [mongoose](https://github.com/Automattic/mongoose)
+- [ms](https://github.com/vercel/ms)
+- [request](https://github.com/request/request)

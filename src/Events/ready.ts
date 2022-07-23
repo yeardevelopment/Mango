@@ -1,4 +1,4 @@
-import Discord from 'discord.js';
+import Discord, { ActivityType } from 'discord.js';
 import mongoose from 'mongoose';
 import chalk from 'chalk';
 import 'dotenv/config';
@@ -18,7 +18,7 @@ export default new Event('ready', async (client) => {
     if (index === arrayOfStatuses.length) index = 0;
     const status1 = arrayOfStatuses[index];
     client.user.setPresence({
-      activities: [{ name: status1, type: 'WATCHING' }],
+      activities: [{ name: status1, type: ActivityType.Watching }],
       status: 'online',
     });
     index++;

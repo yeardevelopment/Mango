@@ -4,11 +4,14 @@ import Discord, {
   CommandInteractionOptionResolver,
   GuildMemberRoleManager,
   Message,
-  MessageActionRow,
-  MessageAttachment,
-  MessageButton,
-  MessageEmbed,
+  ActionRowBuilder,
+  AttachmentBuilder,
+  ButtonBuilder,
+  EmbedBuilder,
   TextBasedChannel,
+  InteractionType,
+  ButtonStyle,
+  PermissionsBitField,
 } from 'discord.js';
 import ms from 'ms';
 import chalk from 'chalk';
@@ -17,23 +20,22 @@ const Verifying = new Collection();
 import { client } from '..';
 import { Event } from '../structures/Event';
 import { ExtendedInteraction } from '../typings/Command';
+import premiumGuilds from '../utils/models/premiumGuilds';
 import ticket from '../utils/models/ticket';
 import tickets from '../utils/models/tickets';
-import config from '../utils/models/config';
 import { createTranscript } from 'discord-html-transcripts';
 import { Captcha } from 'captcha-canvas';
 import verification from '../utils/models/verification';
-import moment from 'moment';
 
 export default new Event('interactionCreate', async (interaction) => {
   if (!interaction.guild) return; // Interactions can only be called used within a guild
 
-  if (interaction.isCommand()) {
+  if (interaction.type === InteractionType.ApplicationCommand) {
     const command = client.commands.get(interaction.commandName);
     if (!command)
       return interaction.reply({
         embeds: [
-          new MessageEmbed()
+          new EmbedBuilder()
             .setAuthor({
               name: `Unable to execute the command`,
               iconURL: `https://i.imgur.com/n3QHYJM.png`,
@@ -41,10 +43,53 @@ export default new Event('interactionCreate', async (interaction) => {
             .setDescription(
               `An error occurred while trying to execute the command`
             )
-            .setColor('RED'),
+            .setColor('#ff0000'),
         ],
         ephemeral: true,
       });
+
+    if (command.ownerOnly) {
+      if (
+        !(
+          interaction.user.id === '820266709378269194' ||
+          interaction.user.id === '713008151661772812'
+        )
+      )
+        return interaction.reply({
+          content: '⚠️ You cannot use this command.',
+          ephemeral: true,
+        });
+    }
+
+    if (command.premiumOnly) {
+      const data = await premiumGuilds.findOne({ Guild: interaction.guildId });
+      if (Date.now() > data.Expire) {
+        data.delete();
+        return interaction.reply({
+          embeds: [
+            new EmbedBuilder()
+              .setTitle('This is a Mango Premium command')
+              .setDescription(
+                'This command only works within servers that are subscribed to Mango Premium. You can ask owners to subscribe to it.'
+              )
+              .setColor('#ff0000'),
+          ],
+        });
+      }
+    }
+
+    if (command.permissions) {
+      if (
+        !(interaction.member.permissions as PermissionsBitField).has(
+          command.permissions
+        )
+      )
+        return interaction.reply({
+          content:
+            '**✋ Hold on!**\nYou do not have permission to use this command.',
+          ephemeral: true,
+        });
+    }
 
     if (command.timeout) {
       if (Timeout.has(`${command.name}${interaction.user.id}`))
@@ -83,19 +128,16 @@ export default new Event('interactionCreate', async (interaction) => {
   }
   if (interaction.isButton()) {
     const ticketSystem = await ticket.findOne({
-      Guild: interaction.guild.id,
+      Guild: interaction.guildId,
       Toggled: true,
     });
     const verificationEnabled = await verification.findOne({
-      Guild: interaction.guild.id,
+      Guild: interaction.guildId,
       Toggled: true,
     });
     if (ticketSystem) {
-      const data = await config.findOne({
-        Guild: interaction.guild.id,
-      });
-      async function ticket(category: string) {
-        if (!data.StaffRole)
+      async function ticket(category: string): Promise<any> {
+        if (!ticketSystem.StaffRole)
           return (interaction as ButtonInteraction).reply({
             content:
               '⚠️ The ticket system is not set up properly yet. Please try again contact staff with this information.',
@@ -103,7 +145,7 @@ export default new Event('interactionCreate', async (interaction) => {
           });
         const parentChannel = ticketSystem.Category;
         const ticketChannel = await tickets.findOne({
-          Guild: interaction.guild.id,
+          Guild: interaction.guildId,
           Member: interaction.user.id,
         });
         if (ticketChannel)
@@ -117,9 +159,10 @@ export default new Event('interactionCreate', async (interaction) => {
         });
         let channel = null;
         try {
-          channel = await interaction.guild.channels.create(
-            `ticket-${interaction.user.username}`
-          );
+          channel = await interaction.guild.channels.create({
+            name: `ticket-${interaction.user.username}`,
+            reason: 'Ticket opened',
+          });
           await tickets.create({
             Category: category,
             ID: channel.id,
@@ -133,7 +176,7 @@ export default new Event('interactionCreate', async (interaction) => {
           await channel.setParent(parentChannel);
           await channel.permissionOverwrites.set([
             {
-              id: interaction.guild.id,
+              id: interaction.guildId,
               deny: ['SEND_MESSAGES', 'VIEW_CHANNEL'],
             },
             {
@@ -151,7 +194,7 @@ export default new Event('interactionCreate', async (interaction) => {
               allow: ['SEND_MESSAGES', 'VIEW_CHANNEL'],
             },
             {
-              id: data.StaffRole || null,
+              id: ticketSystem.StaffRole || null,
               allow: [
                 'SEND_MESSAGES',
                 'VIEW_CHANNEL',
@@ -171,30 +214,32 @@ export default new Event('interactionCreate', async (interaction) => {
         await (interaction as ButtonInteraction).editReply({
           content: `We will be right with you! ${channel}`,
         });
-        const embedticket = new MessageEmbed()
+        const embedticket = new EmbedBuilder()
           .setTitle(`Welcome to your ticket!`)
-          .addField('Ticket Category', `${category}`)
-          .addField(
-            `Note`,
-            `Please be patient, support will be with you shortly.`
-          )
+          .addFields([{ name: 'Ticket Category', value: category }])
+          .addFields([
+            {
+              name: `Note`,
+              value: `Please be patient, support will be with you shortly.`,
+            },
+          ])
           .setColor('#ea664b');
-        let bu1tton = new MessageButton()
-          .setStyle('DANGER')
+        let bu1tton = new ButtonBuilder()
+          .setStyle(ButtonStyle.Danger)
           .setEmoji(`💾`)
           .setLabel(`Save & Close`)
           .setCustomId('close');
-        let lock = new MessageButton()
-          .setStyle('PRIMARY')
+        let lock = new ButtonBuilder()
+          .setStyle(ButtonStyle.Primary)
           .setEmoji(`🔒`)
           .setLabel(`Lock/Unlock`)
           .setCustomId('lock');
-        let claim = new MessageButton()
-          .setStyle('SUCCESS')
+        let claim = new ButtonBuilder()
+          .setStyle(ButtonStyle.Success)
           .setEmoji(`🖐️`)
           .setLabel(`Claim`)
           .setCustomId('claim');
-        let row = new MessageActionRow().addComponents([
+        let row = new ActionRowBuilder().addComponents([
           bu1tton,
           // lock,
           // claim,
@@ -210,7 +255,7 @@ export default new Event('interactionCreate', async (interaction) => {
       if (interaction.customId === 'close') {
         if (
           !(interaction.member.roles as GuildMemberRoleManager).cache.has(
-            data.StaffRole
+            ticketSystem.StaffRole
           )
         )
           return interaction.reply({
@@ -218,33 +263,33 @@ export default new Event('interactionCreate', async (interaction) => {
             ephemeral: true,
           });
         await tickets
-          .findOne({ ID: interaction.channel.id }, async (err, docs) => {
+          .findOne({ ID: interaction.channelId }, async (err, docs) => {
             if (docs.Closed === true) {
               return interaction.reply({
-                content: `This ticket is already being closed.`,
+                content: 'This ticket is already being closed.',
                 ephemeral: true,
               });
             }
-            let row = new MessageActionRow().addComponents([
-              new MessageButton()
-                .setStyle(`SUCCESS`)
-                .setEmoji(`996733680422752347`)
+            let row = new ActionRowBuilder().addComponents([
+              new ButtonBuilder()
+                .setStyle(ButtonStyle.Success)
+                .setEmoji({ name: 'success', id: '996733680422752347' })
                 .setLabel(`Proceed`)
                 .setCustomId('sure'),
             ]);
             interaction.reply({
-              components: [row],
+              components: [row as ActionRowBuilder<ButtonBuilder>],
               embeds: [
-                new MessageEmbed()
+                new EmbedBuilder()
                   .setTitle('⚠ Are you sure?')
                   .setDescription(
                     'Are you sure you want to close this ticket?\nThis action cannot be undone.'
                   )
                   .setFooter({
                     text: `${interaction.guild.name}`,
-                    iconURL: interaction.guild.iconURL({ dynamic: true }),
+                    iconURL: interaction.guild.iconURL(),
                   })
-                  .setColor('RED'),
+                  .setColor('#ff0000'),
               ],
               ephemeral: true,
               fetchReply: true,
@@ -256,7 +301,7 @@ export default new Event('interactionCreate', async (interaction) => {
         if (interaction.channel.parentId !== ticketSystem.Category) return;
         if (
           !(interaction.member.roles as GuildMemberRoleManager).cache.has(
-            data.StaffRole
+            ticketSystem.StaffRole
           )
         )
           return interaction.reply({
@@ -264,7 +309,7 @@ export default new Event('interactionCreate', async (interaction) => {
             ephemeral: true,
           });
         await tickets
-          .findOne({ ID: interaction.channel.id }, async (err, docs) => {
+          .findOne({ ID: interaction.channelId }, async (err, docs) => {
             if (docs.Closed === true) {
               return interaction.reply({
                 content: `This ticket is already being closed.`,
@@ -273,7 +318,7 @@ export default new Event('interactionCreate', async (interaction) => {
             }
             interaction.deferUpdate();
             await tickets.updateOne(
-              { ID: interaction.channel.id },
+              { ID: interaction.channelId },
               { Closed: true }
             );
             const seconds = 5;
@@ -296,11 +341,11 @@ export default new Event('interactionCreate', async (interaction) => {
             updateCounter(msg);
             let member = client.users.cache.get(docs.Members[0]);
 
-            const embed = new MessageEmbed()
+            const embed = new EmbedBuilder()
               .setTitle('Ticket Closed')
               .setDescription(
                 `**Ticket Name**: \`${interaction.channel.name}\` (${
-                  interaction.channel.id
+                  interaction.channelId
                 })\n**Ticket Category**: ${docs.Category}\n**Opened By**: \`${
                   member.tag
                 }\` (${member.id})\n**Closed By**: \`${
@@ -313,6 +358,7 @@ export default new Event('interactionCreate', async (interaction) => {
             const attachment = await createTranscript(interaction.channel, {
               limit: -1,
               returnBuffer: false,
+              saveImages: true,
               fileName: `transcript-${interaction.channel.name}.html`,
             });
             await (
@@ -325,15 +371,9 @@ export default new Event('interactionCreate', async (interaction) => {
         setTimeout(() => {
           interaction.channel
             ?.delete('[Ticket System] Ticket Closed')
-            .then(async (ch) => {
-              tickets
-                .findOne({ ID: ch.id }, async (err, data) => {
-                  if (err) throw err;
-                  if (data) {
-                    await tickets.findOneAndDelete({ ID: ch.id });
-                  }
-                })
-                .clone();
+            .then(async (channel) => {
+              const data = await tickets.findOne({ ID: channel.id });
+              if (data) data.delete();
             });
         }, 20000);
       }
@@ -341,7 +381,7 @@ export default new Event('interactionCreate', async (interaction) => {
     if (verificationEnabled) {
       if (interaction.customId === 'verify') {
         const data = await verification.findOne({
-          Guild: interaction.guild.id,
+          Guild: interaction.guildId,
         });
 
         if (
@@ -364,7 +404,7 @@ export default new Event('interactionCreate', async (interaction) => {
             ephemeral: true,
           });
 
-        if (Verifying.has(`${interaction.guild.id}-${interaction.user.id}`))
+        if (Verifying.has(`${interaction.guildId}-${interaction.user.id}`))
           return interaction.reply({
             content: `<:cancel:996733678279462932> You already have a verification session running in [your DMs](https://discord.com/channels/@me/${client.user.id}).`,
             ephemeral: true,
@@ -378,22 +418,21 @@ export default new Event('interactionCreate', async (interaction) => {
         captcha.drawTrace();
         captcha.drawCaptcha();
 
-        let attachment = new MessageAttachment(
-          await captcha.png,
-          'captcha.png'
-        );
+        let attachment = new AttachmentBuilder(await captcha.png, {
+          name: 'captcha.png',
+        });
 
         const msg = await interaction.user
           .send({
             embeds: [
-              new MessageEmbed()
+              new EmbedBuilder()
                 .setTitle(
                   `<:captcha:997250229948657745> Hello! Are you human? Let's find out!`
                 )
                 .setDescription(
                   `Please type the captcha above to be able to access this server.\n\n**Additional Notes**:\n<:right:997250588158984393> Type out the traced colored characters from left to right.\n<:decoy:997251026962874388> Ignore the decoy characters spread-around.\n<:lowercase:997251325471502417> You have to consider characters cases (upper/lower case).`
                 )
-                .setColor('PURPLE')
+                .setColor('#6a0dad')
                 .setImage('attachment://captcha.png')
                 .setFooter({ text: 'Verification Period: 2 minutes' }),
             ],
@@ -403,7 +442,7 @@ export default new Event('interactionCreate', async (interaction) => {
             interaction.followUp({
               content: `${interaction.user}`,
               embeds: [
-                new MessageEmbed()
+                new EmbedBuilder()
                   .setTitle("I couldn't send direct message to you!")
                   .setDescription(
                     '⚠ You have DMs turned off. Please turn them on using the instruction below.'
@@ -411,7 +450,7 @@ export default new Event('interactionCreate', async (interaction) => {
                   .setImage(
                     'https://i.postimg.cc/0jG6XQVV/how-to-enable-dms.png'
                   )
-                  .setColor('YELLOW'),
+                  .setColor('#ffff00'),
               ],
               ephemeral: true,
             });
@@ -422,11 +461,11 @@ export default new Event('interactionCreate', async (interaction) => {
             ephemeral: true,
           });
           Verifying.set(
-            `${interaction.guild.id}-${interaction.user.id}`,
+            `${interaction.guildId}-${interaction.user.id}`,
             Date.now() + 120000
           );
           setTimeout(() => {
-            Verifying.delete(`${interaction.guild.id}-${interaction.user.id}`);
+            Verifying.delete(`${interaction.guildId}-${interaction.user.id}`);
           }, 120000);
         }
         try {
@@ -447,9 +486,9 @@ export default new Event('interactionCreate', async (interaction) => {
             errors: ['time'],
           });
           if (res) {
-            let successEmbed = new MessageEmbed()
+            let successEmbed = new EmbedBuilder()
               .setTitle(`Verification Success`)
-              .setColor('GREEN')
+              .setColor('#00FF00')
               .setDescription(`Thank you for verifying!`);
             (msg as Message).channel.send({
               embeds: [successEmbed],

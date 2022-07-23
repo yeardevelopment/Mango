@@ -1,21 +1,20 @@
-import { MessageEmbed } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { Command } from '../../structures/Command';
 import db from '../../utils/models/config';
 
 export default new Command({
   name: 'settings',
   description: "Displays the bot's configuration for this server",
+  permissions: 'ManageGuild',
   timeout: 10000,
   run: async ({ interaction }) => {
-    const data = await db.findOne({ Guild: interaction.guild.id });
+    const data = await db.findOne({ Guild: interaction.guildId });
 
-    const Embed = new MessageEmbed()
+    const Embed = new EmbedBuilder()
       .setTitle('Settings')
       .setDescription(
         `🔇 **Mute Role**: ${
           data.MuteRole ? `<@&${data.MuteRole}>` : '*not set*'
-        }\n🧑‍💼 **Staff Role**: ${
-          data.StaffRole ? `<@&${data.StaffRole}>` : '*not set*'
         }`
       )
       .setColor('#ea664b')

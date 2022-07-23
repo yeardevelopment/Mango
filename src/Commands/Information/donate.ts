@@ -2,20 +2,20 @@ import { Command } from '../../structures/Command';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 
 export default new Command({
-  name: 'support',
-  description: 'Join the official Mango Support Server',
+  name: 'donate',
+  description: 'Support Mango by subscribing to Mango Premium',
   timeout: 5000,
   run: async ({ interaction }) => {
     interaction.reply({
       content:
-        'Click the button below to join the Official Mango support server.',
+        'We would be very thankful to you if you subscribed to Mango Premium. Subscribe by clicking the button below.',
       components: [
         new ActionRowBuilder().setComponents(
           new ButtonBuilder()
-            .setLabel('Support Server')
-            .setEmoji({ name: 'support', id: '996734485120962591' })
+            .setLabel('Donate')
+            .setEmoji({ name: 'patreon', id: '999782274180587540' })
             .setStyle(ButtonStyle.Link)
-            .setURL('https://discord.gg/QeKcwprdCY'),
+            .setURL('https://www.patreon.com/yeardevelopment'),
           new ButtonBuilder()
             .setLabel('Invite Mango')
             .setEmoji({ name: 'invite', id: '997622250587033661' })

@@ -1,30 +1,34 @@
 import { Command } from '../../structures/Command';
 import db from '../../utils/models/modLogs';
-import { MongooseError } from 'mongoose';
-import { MessageEmbed } from 'discord.js';
+import {
+  ApplicationCommandOptionType,
+  ChannelType,
+  EmbedBuilder,
+} from 'discord.js';
 
 export default new Command({
   name: 'moderation-logs',
   description: 'Logs moderation actions',
+  permissions: 'ManageGuild',
   options: [
     {
       name: 'toggle',
       description:
         'Enables/disables the moderation logging system in this server',
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
     },
     {
       name: 'channel',
       description:
         'Sets the channel that will be used for logging moderation actions this server',
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       options: [
         {
           name: 'channel',
           description:
             'Channel to be used for for logging moderation actions in this server',
-          channelTypes: ['GUILD_TEXT'],
-          type: 'CHANNEL',
+          channelTypes: [ChannelType.GuildText],
+          type: ApplicationCommandOptionType.Channel,
           required: false,
         },
       ],
@@ -33,18 +37,18 @@ export default new Command({
       name: 'settings',
       description:
         'Displays the settings of the moderation logging system for this server.',
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
     },
   ],
   timeout: 10000,
   run: async ({ interaction, args }) => {
     switch (args.getSubcommand()) {
       case 'toggle': {
-        const data = await db.findOne({ Guild: interaction.guild.id });
+        const data = await db.findOne({ Guild: interaction.guildId });
         if (data && data.Toggled) {
           await db.findOneAndUpdate(
-            { Guild: interaction.guild.id },
-            { Toggled: false }
+            { Guild: interaction.guildId },
+            { $set: { Toggled: false } }
           );
           interaction.reply({
             content:
@@ -52,8 +56,8 @@ export default new Command({
           });
         } else if (data && data.Toggled === false) {
           await db.findOneAndUpdate(
-            { Guild: interaction.guild.id },
-            { Toggled: true }
+            { Guild: interaction.guildId },
+            { $set: { Toggled: true } }
           );
           interaction.reply({
             content:
@@ -61,7 +65,7 @@ export default new Command({
           });
         } else {
           await db.create({
-            Guild: interaction.guild.id,
+            Guild: interaction.guildId,
             Toggled: true,
           });
           interaction.reply({
@@ -75,16 +79,16 @@ export default new Command({
       case 'channel': {
         const channel = args.getChannel('channel');
         const isChannel = channel ? channel.id : '';
-        const data = await db.findOne({ Guild: interaction.guild.id });
+        const data = await db.findOne({ Guild: interaction.guildId });
         if (data) {
           await db.findOneAndUpdate(
             {
-              Guild: interaction.guild.id,
+              Guild: interaction.guildId,
             },
-            { Channel: isChannel }
+            { $set: { Channel: isChannel } }
           );
         } else {
-          await db.create({ Guild: interaction.guild.id, Channel: isChannel });
+          await db.create({ Guild: interaction.guildId, Channel: isChannel });
         }
         interaction.reply({
           content:
@@ -94,12 +98,12 @@ export default new Command({
       }
 
       case 'settings': {
-        const data = await db.findOne({ Guild: interaction.guild.id });
+        const data = await db.findOne({ Guild: interaction.guildId });
 
         if (data) {
           interaction.reply({
             embeds: [
-              new MessageEmbed()
+              new EmbedBuilder()
                 .setTitle('Moderation Logging System | Settings')
                 .setColor('#ea664b')
                 .setDescription(
@@ -117,12 +121,12 @@ export default new Command({
           });
         } else {
           await db.create({
-            Guild: interaction.guild.id,
+            Guild: interaction.guildId,
           });
 
           interaction.reply({
             embeds: [
-              new MessageEmbed()
+              new EmbedBuilder()
                 .setTitle('Moderation Logging System | Settings')
                 .setColor('#ea664b')
                 .setDescription(

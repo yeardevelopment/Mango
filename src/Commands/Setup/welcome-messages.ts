@@ -1,7 +1,10 @@
 import { Command } from '../../structures/Command';
-import { GuildMember, MessageEmbed } from 'discord.js';
+import {
+  EmbedBuilder,
+  ApplicationCommandOptionType,
+  ChannelType,
+} from 'discord.js';
 import db from '../../utils/models/welcomeMessages';
-import { MongooseError } from 'mongoose';
 
 export default new Command({
   name: 'welcome',
@@ -10,11 +13,11 @@ export default new Command({
     {
       name: 'toggle',
       description: 'Enables/disables welcome messages in this server',
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
     },
     {
       name: 'message',
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       description:
         "Text to be sent when a member joins the guild; add '@' to mention the joined member",
       options: [
@@ -22,27 +25,29 @@ export default new Command({
           name: 'message',
           description:
             "Text to be sent when a member joins the guild; add '@' to mention the joined member",
-          type: 'STRING',
+          type: ApplicationCommandOptionType.String,
           required: true,
+          min_length: 1,
+          max_length: 256,
         },
       ],
     },
     {
       name: 'image',
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       description: 'Enables/disables the welcome image in this server',
     },
     {
       name: 'channel',
       description:
         'Sets the channel that will be used for sending welcome messages',
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       options: [
         {
           name: 'channel',
           description: 'Channel to be used for for sending welcome messages',
-          channelTypes: ['GUILD_TEXT'],
-          type: 'CHANNEL',
+          channelTypes: [ChannelType.GuildText],
+          type: ApplicationCommandOptionType.Channel,
           required: false,
         },
       ],
@@ -51,18 +56,19 @@ export default new Command({
       name: 'settings',
       description:
         'Displays the settings of the welcome system for this server.',
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
     },
   ],
+  permissions: 'ManageGuild',
   timeout: 10000,
   run: async ({ interaction, args }) => {
     switch (args.getSubcommand()) {
       case 'toggle': {
-        const data = await db.findOne({ Guild: interaction.guild.id });
+        const data = await db.findOne({ Guild: interaction.guildId });
         if (data && data.Toggled) {
           await db.findOneAndUpdate(
-            { Guild: interaction.guild.id },
-            { Toggled: false }
+            { Guild: interaction.guildId },
+            { $set: { Toggled: false } }
           );
           interaction.reply({
             content:
@@ -70,8 +76,8 @@ export default new Command({
           });
         } else if (data && data.Toggled === false) {
           await db.findOneAndUpdate(
-            { Guild: interaction.guild.id },
-            { Toggled: true }
+            { Guild: interaction.guildId },
+            { $set: { Toggled: true } }
           );
           interaction.reply({
             content:
@@ -79,7 +85,7 @@ export default new Command({
           });
         } else {
           await db.create({
-            Guild: interaction.guild.id,
+            Guild: interaction.guildId,
             Toggled: true,
           });
           interaction.reply({
@@ -92,16 +98,16 @@ export default new Command({
 
       case 'message': {
         const message = args.getString('message');
-        const data = await db.findOne({ Guild: interaction.guild.id });
+        const data = await db.findOne({ Guild: interaction.guildId });
         if (data) {
           await db.findOneAndUpdate(
             {
-              Guild: interaction.guild.id,
+              Guild: interaction.guildId,
             },
-            { Text: message }
+            { $set: { Text: message } }
           );
         } else {
-          await db.create({ Guild: interaction.guild.id, Text: message });
+          await db.create({ Guild: interaction.guildId, Text: message });
         }
         interaction.reply({
           content:
@@ -113,16 +119,16 @@ export default new Command({
       case 'channel': {
         const channel = args.getChannel('channel');
         const isChannel = channel ? channel.id : '';
-        const data = await db.findOne({ Guild: interaction.guild.id });
+        const data = await db.findOne({ Guild: interaction.guildId });
         if (data) {
           await db.findOneAndUpdate(
             {
-              Guild: interaction.guild.id,
+              Guild: interaction.guildId,
             },
-            { Channel: isChannel }
+            { $set: { Channel: isChannel } }
           );
         } else {
-          await db.create({ Guild: interaction.guild.id, Channel: isChannel });
+          await db.create({ Guild: interaction.guildId, Channel: isChannel });
         }
         interaction.reply({
           content:
@@ -132,11 +138,11 @@ export default new Command({
       }
 
       case 'image': {
-        const data = await db.findOne({ Guild: interaction.guild.id });
+        const data = await db.findOne({ Guild: interaction.guildId });
         if (data && data.Image) {
           await db.findOneAndUpdate(
-            { Guild: interaction.guild.id },
-            { Image: false }
+            { Guild: interaction.guildId },
+            { $set: { Image: false } }
           );
           interaction.reply({
             content:
@@ -144,8 +150,8 @@ export default new Command({
           });
         } else if (data && data.Image === false) {
           await db.findOneAndUpdate(
-            { Guild: interaction.guild.id },
-            { Image: true }
+            { Guild: interaction.guildId },
+            { $set: { Image: true } }
           );
           interaction.reply({
             content:
@@ -153,7 +159,7 @@ export default new Command({
           });
         } else {
           await db.create({
-            Guild: interaction.guild.id,
+            Guild: interaction.guildId,
             Image: true,
           });
           interaction.reply({
@@ -165,12 +171,12 @@ export default new Command({
       }
 
       case 'settings': {
-        const data = await db.findOne({ Guild: interaction.guild.id });
+        const data = await db.findOne({ Guild: interaction.guildId });
 
         if (data) {
           interaction.reply({
             embeds: [
-              new MessageEmbed()
+              new EmbedBuilder()
                 .setTitle('Welcome System | Settings')
                 .setColor('#ea664b')
                 .setDescription(
@@ -192,12 +198,12 @@ export default new Command({
           });
         } else {
           await db.create({
-            Guild: interaction.guild.id,
+            Guild: interaction.guildId,
           });
 
           interaction.reply({
             embeds: [
-              new MessageEmbed()
+              new EmbedBuilder()
                 .setTitle('Welcome System | Settings')
                 .setColor('#ea664b')
                 .setDescription(

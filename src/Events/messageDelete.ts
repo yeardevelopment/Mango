@@ -1,5 +1,5 @@
 import messageLogs from '../utils/models/messageLogs';
-import { MessageEmbed, TextBasedChannel } from 'discord.js';
+import { EmbedBuilder, TextBasedChannel } from 'discord.js';
 import { Event } from '../structures/Event';
 import { getLink } from '../utils/functions/getLink';
 import { client } from '..';
@@ -8,12 +8,12 @@ export default new Event('messageDelete', async (message) => {
   if (message.author.bot || !message.guild) return;
 
   const data = await messageLogs.findOne({
-    Guild: message.guild.id,
+    Guild: message.guildId,
     Toggled: true,
   });
-  if (!data || !data.Channel) return;
+  if (!data || !data?.Channel) return;
 
-  const Embed = new MessageEmbed()
+  const Embed = new EmbedBuilder()
     .setTitle('📕 Message Deleted')
     .setColor('#000000')
     .setFooter({ text: `Message ID: ${message.id}` })
@@ -24,7 +24,7 @@ export default new Event('messageDelete', async (message) => {
       `**Sent By**: \`${message.author.tag}\` (${
         message.author.id
       })\n**Channel**: ${message.channel} (${
-        message.channel.id
+        message.channelId
       })\n**Content**: ${
         message.content.length > 2048
           ? `${message.content.slice(0, 2048)}...`
@@ -36,7 +36,7 @@ export default new Event('messageDelete', async (message) => {
       `**Sent By**: \`${message.author.tag}\` (${
         message.author.id
       })\n**Channel**: ${message.channel} (${
-        message.channel.id
+        message.channelId
       })\n**Content**: ${
         message.content.length > 2048
           ? `${message.content.slice(0, 2048)}...`
@@ -45,9 +45,7 @@ export default new Event('messageDelete', async (message) => {
     );
   }
 
-  (
-    client.channels.cache.get(data.Channel) as TextBasedChannel
-  ).send({
+  (client.channels.cache.get(data.Channel) as TextBasedChannel).send({
     embeds: [Embed],
   });
 });

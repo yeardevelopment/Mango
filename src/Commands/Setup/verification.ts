@@ -1,13 +1,15 @@
 import { Command } from '../../structures/Command';
 import {
-  MessageActionRow,
-  MessageButton,
-  MessageEmbed,
+  ActionRowBuilder,
+  ApplicationCommandOptionType,
+  ButtonBuilder,
+  ButtonStyle,
+  ChannelType,
+  EmbedBuilder,
   TextBasedChannel,
 } from 'discord.js';
 import db from '../../utils/models/verification';
 import ms from 'ms';
-import { MongooseError } from 'mongoose';
 
 export default new Command({
   name: 'verification',
@@ -17,26 +19,30 @@ export default new Command({
       name: 'panel',
       description:
         'Sends verification panel that can be used by people to verify themselves',
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       options: [
         {
           name: 'channel',
           description: 'Channel the panel to be sent to',
-          type: 'CHANNEL',
-          channelTypes: ['GUILD_TEXT'],
+          type: ApplicationCommandOptionType.Channel,
+          channelTypes: [ChannelType.GuildText],
           required: true,
         },
         {
           name: 'title',
           description: 'Optional title for the panel embed',
-          type: 'STRING',
+          type: ApplicationCommandOptionType.String,
           required: false,
+          min_length: 1,
+          max_length: 256,
         },
         {
           name: 'description',
           description: 'Optional description for the panel embed',
-          type: 'STRING',
+          type: ApplicationCommandOptionType.String,
           required: false,
+          min_length: 1,
+          max_length: 4096,
         },
       ],
     },
@@ -44,13 +50,13 @@ export default new Command({
       name: 'age',
       description:
         'The minimum age of an account for it to be eligible for verification',
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       options: [
         {
           name: 'days',
           description:
             'The minimum age required in days; 0 disables the age requirement',
-          type: 'INTEGER',
+          type: ApplicationCommandOptionType.Integer,
           required: true,
         },
       ],
@@ -59,13 +65,13 @@ export default new Command({
       name: 'role',
       description:
         'Role that will be given to members after they passed the verification',
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       options: [
         {
           name: 'role',
           description:
             'Role that will be given to members after they passed the verification',
-          type: 'ROLE',
+          type: ApplicationCommandOptionType.Role,
           required: false,
         },
       ],
@@ -73,21 +79,22 @@ export default new Command({
     {
       name: 'toggle',
       description: 'Enables/disables the verification system in this server',
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
     },
     {
       name: 'settings',
       description:
         'Displays the settings of the verification system for this server.',
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
     },
   ],
+  permissions: 'ManageGuild',
   timeout: 10000,
   run: async ({ interaction, args }) => {
     switch (args.getSubcommand()) {
       case 'panel': {
         const data = await db.findOne({
-          Guild: interaction.guild.id,
+          Guild: interaction.guildId,
           Toggled: true,
         });
         if (!data || !data.Toggled)
@@ -105,7 +112,7 @@ export default new Command({
 
         (channel as TextBasedChannel).send({
           embeds: [
-            new MessageEmbed()
+            new EmbedBuilder()
               .setTitle(title)
               .setDescription(description)
               .setFooter({
@@ -114,13 +121,13 @@ export default new Command({
               .setColor('#ea664b'),
           ],
           components: [
-            new MessageActionRow().setComponents(
-              new MessageButton()
+            new ActionRowBuilder().setComponents(
+              new ButtonBuilder()
                 .setLabel('Verify')
-                .setEmoji('996733683593662485')
-                .setStyle('PRIMARY')
+                .setEmoji({ name: 'puzzle', id: '996733683593662485' })
+                .setStyle(ButtonStyle.Primary)
                 .setCustomId('verify')
-            ),
+            ) as ActionRowBuilder<ButtonBuilder>,
           ],
         });
         interaction.reply({
@@ -132,16 +139,16 @@ export default new Command({
         const age = args.getInteger('days');
         const days = age * 24 * 60 * 60 * 1000;
 
-        const data = await db.findOne({ Guild: interaction.guild.id });
+        const data = await db.findOne({ Guild: interaction.guildId });
         if (data) {
           await db.findOneAndUpdate(
             {
-              Guild: interaction.guild.id,
+              Guild: interaction.guildId,
             },
-            { Age: days }
+            { $set: { Age: days } }
           );
         } else {
-          await db.create({ Guild: interaction.guild.id, Age: days });
+          await db.create({ Guild: interaction.guildId, Age: days });
         }
         interaction.reply({
           content:
@@ -153,18 +160,18 @@ export default new Command({
         let role = args.getRole('role');
         const isRole = role ? role.id : '';
 
-        const data = await db.findOne({ Guild: interaction.guild.id });
+        const data = await db.findOne({ Guild: interaction.guildId });
         if (data) {
           await db.findOneAndUpdate(
             {
-              Guild: interaction.guild.id,
+              Guild: interaction.guildId,
             },
             {
-              Role: isRole,
+              $set: { Role: isRole },
             }
           );
         } else {
-          await db.create({ Guild: interaction.guild.id, Role: isRole });
+          await db.create({ Guild: interaction.guildId, Role: isRole });
         }
         interaction.reply({
           content: `<:success:996733680422752347> Successfully updated the verification system settings in this server.`,
@@ -172,11 +179,11 @@ export default new Command({
         break;
       }
       case 'toggle': {
-        const data = await db.findOne({ Guild: interaction.guild.id });
+        const data = await db.findOne({ Guild: interaction.guildId });
         if (data && data.Toggled) {
           await db.findOneAndUpdate(
-            { Guild: interaction.guild.id },
-            { Toggled: false }
+            { Guild: interaction.guildId },
+            { $set: { Toggled: false } }
           );
           interaction.reply({
             content:
@@ -184,8 +191,8 @@ export default new Command({
           });
         } else if (data && data.Toggled === false) {
           await db.findOneAndUpdate(
-            { Guild: interaction.guild.id },
-            { Toggled: true }
+            { Guild: interaction.guildId },
+            { $set: { Toggled: true } }
           );
           interaction.reply({
             content:
@@ -193,7 +200,7 @@ export default new Command({
           });
         } else {
           await db.create({
-            Guild: interaction.guild.id,
+            Guild: interaction.guildId,
             Toggled: true,
           });
           interaction.reply({
@@ -205,12 +212,12 @@ export default new Command({
       }
 
       case 'settings': {
-        const data = await db.findOne({ Guild: interaction.guild.id });
+        const data = await db.findOne({ Guild: interaction.guildId });
 
         if (data) {
           interaction.reply({
             embeds: [
-              new MessageEmbed()
+              new EmbedBuilder()
                 .setTitle('Verification System | Settings')
                 .setColor('#ea664b')
                 .setDescription(
@@ -233,12 +240,12 @@ export default new Command({
           });
         } else {
           await db.create({
-            Guild: interaction.guild.id,
+            Guild: interaction.guildId,
           });
 
           interaction.reply({
             embeds: [
-              new MessageEmbed()
+              new EmbedBuilder()
                 .setTitle('Verification System | Settings')
                 .setColor('#ea664b')
                 .setDescription(
