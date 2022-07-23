@@ -26,7 +26,6 @@ For support, join our [Official Discord Support server](https://discord.gg/B8Fs6
 - [canvas](https://github.com/Automattic/node-canvas)
 - [captcha-canvas](https://github.com/Shashank3736/captcha-canvas)
 - [chalk](https://github.com/chalk/chalk)
-- [discord-arts](https://www.npmjs.com/package/discord-arts)
 - [discord-html-transcripts](https://github.com/ItzDerock/discord-html-transcripts)
 - [discord.js](https://github.com/discordjs/discord.js)
 - [dotenv](https://github.com/motdotla/dotenv)

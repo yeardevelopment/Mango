@@ -8,7 +8,6 @@ import {
 import 'dotenv/config';
 import { listRoles } from '../../utils/functions/listRoles';
 import { getUserBanner } from '../../utils/functions/getUserBanner';
-import { profileImage } from 'discord-arts';
 
 export default new Command({
   name: 'userinfo',
@@ -27,10 +26,6 @@ export default new Command({
     const target = args.getUser('user') || interaction.user;
     const isMember = interaction.guild.members.cache.get(target.id);
     const banner: string = await getUserBanner(target);
-    const bufferImg = await profileImage(target);
-    const attachment = new AttachmentBuilder(bufferImg, {
-      name: 'profile.png',
-    });
     const embed = new EmbedBuilder()
       .setTitle(
         `${target.username}${
@@ -97,7 +92,6 @@ export default new Command({
 
     interaction.editReply({
       embeds: [embed],
-      files: [attachment]
     });
   },
 });
