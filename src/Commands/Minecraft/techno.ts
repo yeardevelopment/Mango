@@ -66,7 +66,7 @@ export default new Command({
       }
       try {
         body = JSON.parse(body);
-        let player_name = body.name;
+        let player_name: string = body.name;
 
         const skin = await loadImage(
           `https://mc-heads.net/skin/${player_name}.png`
@@ -74,7 +74,9 @@ export default new Command({
         const crown = await loadImage(
           join(__dirname, `../../../Images/crown.png`)
         );
-        const coat = await loadImage(join(__dirname, `../../../Images/coat.png`));
+        const coat = await loadImage(
+          join(__dirname, `../../../Images/coat.png`)
+        );
 
         const canvas = createCanvas(64, 64);
         const ctx = canvas.getContext('2d');

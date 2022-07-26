@@ -68,7 +68,7 @@ export default new Command({
 
         const row = new ActionRowBuilder().addComponents([button]);
 
-        interaction.reply({
+        await interaction.reply({
           embeds: [embed],
           components: [row as ActionRowBuilder<ButtonBuilder>],
         });

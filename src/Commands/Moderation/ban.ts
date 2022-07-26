@@ -2,13 +2,11 @@ import { Command } from '../../structures/Command';
 import Discord, {
   ButtonStyle,
   Message,
-  EmbedFooterData,
   ButtonBuilder,
   ActionRowBuilder,
   ApplicationCommandOptionType,
   EmbedBuilder,
 } from 'discord.js';
-import { modlogs } from '../../utils/functions/modLogs';
 
 export default new Command({
   name: 'ban',
@@ -39,6 +37,7 @@ export default new Command({
       required: false,
     },
   ],
+  permissions: 'BanMembers',
   timeout: 10000,
   run: async ({ interaction, client, args }) => {
     let target = args.getUser('member');
@@ -73,9 +72,7 @@ export default new Command({
       });
     }
 
-    let reason = args.getString('reason');
-
-    if (!reason) reason = 'No reason provided.';
+    let reason = args.getString('reason') || 'No reason provided.';
 
     let proceedButton = new Discord.ButtonBuilder()
       .setStyle(ButtonStyle.Success)
@@ -121,7 +118,7 @@ export default new Command({
         await inter.followUp({
           content: `**🔨 ${inter.user.tag}** banned **${target.tag}**.\nReason: *${reason}*`,
         });
-        await modlogs(
+        await client.modLogs(
           {
             Member: target,
             Action: 'Ban',

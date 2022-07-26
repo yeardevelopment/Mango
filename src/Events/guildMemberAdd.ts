@@ -70,7 +70,7 @@ export default new Event('guildMemberAdd', async (member) => {
     ctx.arc(339, 280, 208, 0, Math.PI * 2, true); // Position of the avatar
     ctx.closePath();
     ctx.shadowColor = '#000000';
-    ctx.shadowBlur = 16;
+    ctx.shadowBlur = 8;
     ctx.clip();
 
     ctx.drawImage(avatar, 130, 71, 417, 417);

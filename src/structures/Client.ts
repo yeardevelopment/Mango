@@ -8,12 +8,15 @@ import { CommandType } from '../typings/Command';
 import glob from 'glob';
 import { promisify } from 'util';
 import { RegisterCommandsOptions } from '../typings/client';
+import { modlogs } from '../utils/functions/modLogs';
 import { Event } from './Event';
 
 const globPromise = promisify(glob);
 
 export class ExtendedClient extends Client {
   commands: Collection<string, CommandType> = new Collection();
+  config = import('../Configuration/config.json');
+  modLogs = modlogs;
 
   constructor() {
     super({ intents: 32767 });

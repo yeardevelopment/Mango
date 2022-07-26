@@ -7,7 +7,7 @@ export default new Command({
   description: 'Sets configuration settings for the guild',
   options: [
     {
-      name: 'muterole',
+      name: 'mute-role',
       description:
         'Sets the role that will be used for mute command and automatical mutes',
       type: ApplicationCommandOptionType.Subcommand,
@@ -16,7 +16,7 @@ export default new Command({
           name: 'role',
           type: ApplicationCommandOptionType.Role,
           description: 'Role to be used for mute command and automatical mutes',
-          required: true,
+          required: false,
         },
       ],
     },
@@ -25,20 +25,26 @@ export default new Command({
   timeout: 10000,
   run: async ({ interaction, args }) => {
     switch (args.getSubcommand()) {
-      case 'muterole': {
-        const role = args.getRole('role');
+      case 'mute-role': {
+        let role = args.getRole('role');
+        const isRole = role ? role.id : '';
 
-        await db.findOneAndUpdate(
-          { Guild: interaction.guildId },
-          { $set: { MuteRole: role.id } }
-        );
+        const data = await db.findOne({ Guild: interaction.guildId });
+        if (data) {
+          await db.findOneAndUpdate(
+            {
+              Guild: interaction.guildId,
+            },
+            {
+              $set: { MuteRole: isRole },
+            }
+          );
+        } else {
+          await db.create({ Guild: interaction.guildId, MuteRole: isRole });
+        }
         interaction.reply({
-          content: `<:success:996733680422752347> Successfully set ${role} as the mute role.`,
-          allowedMentions: {
-            roles: [],
-          },
+          content: `<:success:996733680422752347> Successfully updated the mute role.`,
         });
-
         break;
       }
     }

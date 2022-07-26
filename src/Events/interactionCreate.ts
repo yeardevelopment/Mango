@@ -26,6 +26,7 @@ import tickets from '../utils/models/tickets';
 import { createTranscript } from 'discord-html-transcripts';
 import { Captcha } from 'captcha-canvas';
 import verification from '../utils/models/verification';
+import { capitalizeWords } from '../utils/functions/capitalizeWords';
 
 export default new Event('interactionCreate', async (interaction) => {
   if (!interaction.guild) return; // Interactions can only be called used within a guild
@@ -49,12 +50,7 @@ export default new Event('interactionCreate', async (interaction) => {
       });
 
     if (command.ownerOnly) {
-      if (
-        !(
-          interaction.user.id === '820266709378269194' ||
-          interaction.user.id === '713008151661772812'
-        )
-      )
+      if (!(await client.config).owners.includes(interaction.user.id))
         return interaction.reply({
           content: '⚠️ You cannot use this command.',
           ephemeral: true,
@@ -85,8 +81,13 @@ export default new Event('interactionCreate', async (interaction) => {
         )
       )
         return interaction.reply({
-          content:
-            '**✋ Hold on!**\nYou do not have permission to use this command.',
+          content: `**✋ Hold on!**\nYou need to have \`${capitalizeWords(
+            (command.permissions as string)
+              .replaceAll(/([A-Z])/g, ' $1')
+              .toLowerCase()
+              .replaceAll('guild', 'server')
+              .substring(1)
+          )}\` permission to use this command.`,
           ephemeral: true,
         });
     }
@@ -94,7 +95,7 @@ export default new Event('interactionCreate', async (interaction) => {
     if (command.timeout) {
       if (Timeout.has(`${command.name}${interaction.user.id}`))
         return await interaction.reply({
-          content: `**:stop_sign: Chill there!**\nYou are on a \`${ms(
+          content: `**🛑 Chill there!**\nYou are on a \`${ms(
             (Timeout.get(`${command.name}${interaction.user.id}`) as number) -
               Date.now(),
             { long: true }
@@ -102,6 +103,7 @@ export default new Event('interactionCreate', async (interaction) => {
           ephemeral: true,
         });
     }
+
     try {
       command.run({
         args: interaction.options as CommandInteractionOptionResolver,
@@ -205,7 +207,7 @@ export default new Event('interactionCreate', async (interaction) => {
             },
           ]);
         } catch (error) {
-          console.log(error);
+          console.error(error);
           return (interaction as ButtonInteraction).editReply({
             content:
               '**⚠️ Failed to create a ticket.** Please try again later!',
@@ -346,14 +348,15 @@ export default new Event('interactionCreate', async (interaction) => {
               .setDescription(
                 `**Ticket Name**: \`${interaction.channel.name}\` (${
                   interaction.channelId
-                })\n**Ticket Category**: ${docs.Category}\n**Opened By**: \`${
-                  member.tag
-                }\` (${member.id})\n**Closed By**: \`${
-                  interaction.user.tag
-                }\` (${interaction.user.id})\n**Open Time**: <t:${Math.floor(
+                })\n**Opened By**: \`${member.tag}\` (${
+                  member.id
+                })\n**Closed By**: \`${interaction.user.tag}\` (${
+                  interaction.user.id
+                })\n**Open Time**: <t:${Math.floor(
                   interaction.channel.createdTimestamp / 1000
                 )}>`
               )
+              .setColor('#7dd1b2')
               .setTimestamp();
             const attachment = await createTranscript(interaction.channel, {
               limit: -1,

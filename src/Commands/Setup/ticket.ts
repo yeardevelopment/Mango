@@ -219,7 +219,7 @@ export default new Command({
           await db.create({ Guild: interaction.guildId, StaffRole: isRole });
         }
         interaction.reply({
-          content: `<:success:996733680422752347> Successfully updated the verification system settings in this server.`,
+          content: `<:success:996733680422752347> Successfully updated the ticket system settings in this server.`,
         });
         break;
       }
