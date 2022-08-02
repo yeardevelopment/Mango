@@ -64,7 +64,7 @@ export default new Command({
     await client.modLogs(
       {
         Action: 'Unban',
-        Color: '#00FF00',
+        Color: '#009A44',
         Member: target,
         Reason: reason,
       },

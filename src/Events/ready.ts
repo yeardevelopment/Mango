@@ -3,6 +3,11 @@ import mongoose from 'mongoose';
 import chalk from 'chalk';
 import 'dotenv/config';
 import { Event } from '../structures/Event';
+import DB from '../utils/models/clientStatus';
+
+async function getMemoryUsage() {
+  return process.memoryUsage().heapUsed / Number((1024 * 1024).toFixed(2));
+}
 
 export default new Event('ready', async (client) => {
   console.log(
@@ -23,6 +28,7 @@ export default new Event('ready', async (client) => {
     });
     index++;
   }, 10000);
+
   if (!process.env.MONGO_URI) return;
   await mongoose
     .connect(process.env.MONGO_URI || '', {
@@ -34,4 +40,24 @@ export default new Event('ready', async (client) => {
       );
     })
     .catch((error) => console.error(error));
+
+  let memArray = [];
+
+  setInterval(async () => {
+    memArray.push(await getMemoryUsage());
+
+    if (memArray.length >= 14) memArray.shift();
+
+    await DB.findOneAndUpdate(
+      {
+        Client: true,
+      },
+      {
+        Memory: memArray,
+      },
+      {
+        upsert: true,
+      }
+    );
+  }, 10000);
 });

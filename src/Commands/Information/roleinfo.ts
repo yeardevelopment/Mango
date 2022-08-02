@@ -77,9 +77,8 @@ export default new Command({
             fArr
               .sort()
               .join(', ')
-              .replaceAll(/([A-Z])/g, '-$1')
+              .replaceAll(/([A-Z])/g, ' $1')
               .toLowerCase()
-              .replaceAll('-', ' ')
               .replaceAll('guild', 'server')
           ) || 'None'
         }`

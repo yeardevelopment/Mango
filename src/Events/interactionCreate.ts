@@ -491,7 +491,7 @@ export default new Event('interactionCreate', async (interaction) => {
           if (res) {
             let successEmbed = new EmbedBuilder()
               .setTitle(`Verification Success`)
-              .setColor('#00FF00')
+              .setColor('#009A44')
               .setDescription(`Thank you for verifying!`);
             (msg as Message).channel.send({
               embeds: [successEmbed],

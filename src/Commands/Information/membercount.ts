@@ -1,5 +1,5 @@
 import { Command } from '../../structures/Command';
-import Discord from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 
 export default new Command({
   name: 'membercount',
@@ -17,7 +17,7 @@ export default new Command({
             member.presence?.status === 'dnd'
         );
         const veryTotal = totalOnline.size;
-        const Embed = new Discord.EmbedBuilder()
+        const Embed = new EmbedBuilder()
           .setTitle('Member Count')
           .setDescription(
             `**Total Members:** ${interaction.guild.memberCount}\n**Online Members:** ${veryTotal}`
