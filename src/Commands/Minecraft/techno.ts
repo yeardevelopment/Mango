@@ -95,6 +95,7 @@ export default new Command({
           case 'both': {
             ctx.drawImage(coat, 0, 0, 64, 64);
             ctx.drawImage(crown, 0, 0, 64, 64);
+            break;
           }
         }
 

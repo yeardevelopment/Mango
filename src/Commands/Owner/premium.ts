@@ -137,6 +137,7 @@ export default new Command({
               .setColor('#ea664b'),
           ],
         });
+        break;
       }
     }
   },

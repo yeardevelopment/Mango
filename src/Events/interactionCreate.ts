@@ -159,7 +159,7 @@ export default new Event('interactionCreate', async (interaction) => {
           content: `Your ticket is being processed. Please wait.`,
           ephemeral: true,
         });
-        let channel = null;
+        let channel: TextBasedChannel | null = null;
         try {
           channel = await interaction.guild.channels.create({
             name: `ticket-${interaction.user.username}`,
@@ -179,30 +179,30 @@ export default new Event('interactionCreate', async (interaction) => {
           await channel.permissionOverwrites.set([
             {
               id: interaction.guildId,
-              deny: ['SEND_MESSAGES', 'VIEW_CHANNEL'],
+              deny: ['SendMessages', 'ViewChannel'],
             },
             {
               id: interaction.user.id,
               allow: [
-                'SEND_MESSAGES',
-                'VIEW_CHANNEL',
-                'ATTACH_FILES',
-                'READ_MESSAGE_HISTORY',
-                'ADD_REACTIONS',
+                'SendMessages',
+                'ViewChannel',
+                'AttachFiles',
+                'ReadMessageHistory',
+                'AddReactions',
               ],
             },
             {
               id: client.user.id,
-              allow: ['SEND_MESSAGES', 'VIEW_CHANNEL'],
+              allow: ['SendMessages', 'ViewChannel'],
             },
             {
               id: ticketSystem.StaffRole || null,
               allow: [
-                'SEND_MESSAGES',
-                'VIEW_CHANNEL',
-                'ATTACH_FILES',
-                'READ_MESSAGE_HISTORY',
-                'ADD_REACTIONS',
+                'SendMessages',
+                'ViewChannel',
+                'AttachFiles',
+                'ReadMessageHistory',
+                'AddReactions',
               ],
             },
           ]);
@@ -249,7 +249,7 @@ export default new Event('interactionCreate', async (interaction) => {
         channel.send({
           content: `<@${interaction.user.id}>`,
           embeds: [embedticket],
-          components: [row],
+          components: [row as ActionRowBuilder<ButtonBuilder>],
         });
       }
 

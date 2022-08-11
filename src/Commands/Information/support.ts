@@ -8,7 +8,7 @@ export default new Command({
   run: async ({ interaction }) => {
     interaction.reply({
       content:
-        'Click the button below to join the Official Mango support server.',
+        'Click the button below to join the official Mango support server.',
       components: [
         new ActionRowBuilder().setComponents(
           new ButtonBuilder()
