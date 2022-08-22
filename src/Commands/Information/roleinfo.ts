@@ -73,14 +73,14 @@ export default new Command({
         )}> (<t:${Math.floor(
           (target as Role).createdTimestamp / 1000
         )}:R>)\n**Key Permissions**: ${
-          capitalizeWords(
-            fArr
+          capitalizeWords({
+            string: fArr
               .sort()
               .join(', ')
               .replaceAll(/([A-Z])/g, ' $1')
               .toLowerCase()
-              .replaceAll('guild', 'server')
-          ) || 'None'
+              .replaceAll('guild', 'server'),
+          }) || 'None'
         }`
       )
       .setFooter({ text: `ID: ${(target as Role).id}` })

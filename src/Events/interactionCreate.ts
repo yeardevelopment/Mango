@@ -81,13 +81,13 @@ export default new Event('interactionCreate', async (interaction) => {
         )
       )
         return interaction.reply({
-          content: `**✋ Hold on!**\nYou need to have \`${capitalizeWords(
-            (command.permissions as string)
+          content: `**✋ Hold on!**\nYou need to have \`${capitalizeWords({
+            string: (command.permissions as string)
               .replaceAll(/([A-Z])/g, ' $1')
               .toLowerCase()
               .replaceAll('guild', 'server')
-              .substring(1)
-          )}\` permission to use this command.`,
+              .substring(1),
+          })}\` permission to use this command.`,
           ephemeral: true,
         });
     }
@@ -138,11 +138,11 @@ export default new Event('interactionCreate', async (interaction) => {
       Toggled: true,
     });
     if (ticketSystem) {
-      async function ticket(category: string): Promise<any> {
+      async function ticket({ category }: { category: string }): Promise<any> {
         if (!ticketSystem.StaffRole)
           return (interaction as ButtonInteraction).reply({
             content:
-              '⚠️ The ticket system is not set up properly yet. Please try again contact staff with this information.',
+              '⚠️ The ticket system is not set up properly yet. Please contact staff with this information.',
             ephemeral: true,
           });
         const parentChannel = ticketSystem.Category;
@@ -152,11 +152,11 @@ export default new Event('interactionCreate', async (interaction) => {
         });
         if (ticketChannel)
           return (interaction as ButtonInteraction).reply({
-            content: `You already have a ticket open: <#${ticketChannel.ID}>.`,
+            content: `<:cancel:996733678279462932> You already have a ticket open: <#${ticketChannel.ID}>.`,
             ephemeral: true,
           });
         await (interaction as ButtonInteraction).reply({
-          content: `Your ticket is being processed. Please wait.`,
+          content: `<:loading:1011290361450221718> Your ticket is being processed. Please wait.`,
           ephemeral: true,
         });
         let channel: TextBasedChannel | null = null;
@@ -253,7 +253,8 @@ export default new Event('interactionCreate', async (interaction) => {
         });
       }
 
-      if (interaction.customId === 'ticket') ticket('✉️ General Support');
+      if (interaction.customId === 'ticket')
+        ticket({ category: '✉️ General Support' });
       if (interaction.customId === 'close') {
         if (
           !(interaction.member.roles as GuildMemberRoleManager).cache.has(
@@ -287,10 +288,6 @@ export default new Event('interactionCreate', async (interaction) => {
                   .setDescription(
                     'Are you sure you want to close this ticket?\nThis action cannot be undone.'
                   )
-                  .setFooter({
-                    text: `${interaction.guild.name}`,
-                    iconURL: interaction.guild.iconURL(),
-                  })
                   .setColor('#ff0000'),
               ],
               ephemeral: true,
@@ -326,21 +323,27 @@ export default new Event('interactionCreate', async (interaction) => {
             const seconds = 5;
             const startingCounter = 20;
             let counter = startingCounter;
-            const getText = () => {
-              return `Closing the ticket in ${counter} seconds...`;
-            };
-            const updateCounter = async (msg) => {
+            function getText(): string {
+              return `Closing the ticket  ${counter} seconds...`;
+            }
+            async function updateCounter({ msg }: { msg }): Promise<void> {
               msg.edit(getText());
               counter -= seconds;
               if (counter <= 0) {
                 return;
               }
               setTimeout(() => {
-                updateCounter(msg);
+                updateCounter({ msg });
               }, 1000 * seconds);
-            };
+            }
+            const attachment = await createTranscript(interaction.channel, {
+              limit: -1,
+              returnBuffer: false,
+              saveImages: true,
+              fileName: `transcript-${interaction.channel.name}.html`,
+            });
             const msg = await interaction.channel?.send(getText());
-            updateCounter(msg);
+            updateCounter({ msg });
             let member = client.users.cache.get(docs.Members[0]);
 
             const embed = new EmbedBuilder()
@@ -356,14 +359,8 @@ export default new Event('interactionCreate', async (interaction) => {
                   interaction.channel.createdTimestamp / 1000
                 )}>`
               )
-              .setColor('#7dd1b2')
+              .setColor('#ea664b')
               .setTimestamp();
-            const attachment = await createTranscript(interaction.channel, {
-              limit: -1,
-              returnBuffer: false,
-              saveImages: true,
-              fileName: `transcript-${interaction.channel.name}.html`,
-            });
             await (
               client.channels.cache.get(
                 ticketSystem.LogsChannel
@@ -393,8 +390,7 @@ export default new Event('interactionCreate', async (interaction) => {
           )
         )
           return interaction.reply({
-            content:
-              '<:success:996733680422752347> **You are already verified.**',
+            content: '<:success:996733680422752347> You are already verified.',
             ephemeral: true,
           });
 
@@ -409,7 +405,7 @@ export default new Event('interactionCreate', async (interaction) => {
 
         if (Verifying.has(`${interaction.guildId}-${interaction.user.id}`))
           return interaction.reply({
-            content: `<:cancel:996733678279462932> You already have a verification session running in [your DMs](https://discord.com/channels/@me/${client.user.id}).`,
+            content: `<:cancel:996733678279462932> You already have a verification session running in your DMs.`,
             ephemeral: true,
           });
 
@@ -433,7 +429,7 @@ export default new Event('interactionCreate', async (interaction) => {
                   `<:captcha:997250229948657745> Hello! Are you human? Let's find out!`
                 )
                 .setDescription(
-                  `Please type the captcha above to be able to access this server.\n\n**Additional Notes**:\n<:right:997250588158984393> Type out the traced colored characters from left to right.\n<:decoy:997251026962874388> Ignore the decoy characters spread-around.\n<:lowercase:997251325471502417> You have to consider characters cases (upper/lower case).`
+                  `Please type the captcha below to be able to access \`${interaction.guild.name}\`.\n\n**Additional Notes**:\n<:right:997250588158984393> Type out the traced colored characters from left to right.\n<:decoy:997251026962874388> Ignore the decoy characters spread-around.\n<:lowercase:997251325471502417> You have to consider characters cases (upper/lower case).`
                 )
                 .setColor('#6a0dad')
                 .setImage('attachment://captcha.png')
@@ -446,12 +442,12 @@ export default new Event('interactionCreate', async (interaction) => {
               content: `${interaction.user}`,
               embeds: [
                 new EmbedBuilder()
-                  .setTitle("I couldn't send direct message to you!")
+                  .setTitle('Could Not Send Direct Message to You')
                   .setDescription(
                     '⚠ You have DMs turned off. Please turn them on using the instruction below.'
                   )
                   .setImage(
-                    'https://i.postimg.cc/0jG6XQVV/how-to-enable-dms.png'
+                    'https://i.postimg.cc/T3wNzCtp/How-to-turn-on-DMs.png'
                   )
                   .setColor('#ffff00'),
               ],
@@ -492,7 +488,7 @@ export default new Event('interactionCreate', async (interaction) => {
             let successEmbed = new EmbedBuilder()
               .setTitle(`Verification Success`)
               .setColor('#009A44')
-              .setDescription(`Thank you for verifying!`);
+              .setDescription('You successfully passed the verification.');
             (msg as Message).channel.send({
               embeds: [successEmbed],
             });
@@ -500,7 +496,7 @@ export default new Event('interactionCreate', async (interaction) => {
           }
         } catch (err) {
           (msg as Message)?.channel.send({
-            content: `Session expired. To start the verification process again, please go to ${interaction.channel}.`,
+            content: `Session expired. To start the verification process again, please go back to ${interaction.channel}.`,
           });
         }
       }

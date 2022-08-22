@@ -1,6 +1,6 @@
 import { GuildMember } from 'discord.js';
 
-export function listRoles(member: GuildMember): string {
+export function listRoles({ member }: { member: GuildMember }): string {
   const roles = member.roles.cache
     .sort((a, b) => b.position - a.position)
     .map((role) => role.toString())

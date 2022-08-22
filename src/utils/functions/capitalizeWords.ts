@@ -1,4 +1,4 @@
-export function capitalizeWords(string: string): string {
+export function capitalizeWords({ string }: { string: string }): string {
   let splitStr = string.toLowerCase().split(' ');
   for (let i = 0; i < splitStr.length; i++) {
     splitStr[i] =

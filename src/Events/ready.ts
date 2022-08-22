@@ -5,7 +5,7 @@ import 'dotenv/config';
 import { Event } from '../structures/Event';
 import DB from '../utils/models/clientStatus';
 
-async function getMemoryUsage() {
+async function getMemoryUsage(): Promise<number> {
   return process.memoryUsage().heapUsed / Number((1024 * 1024).toFixed(2));
 }
 

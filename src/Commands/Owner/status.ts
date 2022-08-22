@@ -222,7 +222,9 @@ export default new Command({
         {
           name: `<:icon_reply:962547429914337300> DATABASE`,
           value: `
-                **\`•\` Connection**: ${switchTo(connection.readyState)}
+                **\`•\` Connection**: ${switchTo({
+                  val: connection.readyState,
+                })}
                 `,
           inline: true,
         },
@@ -243,7 +245,7 @@ export default new Command({
   },
 });
 
-function switchTo(val) {
+function switchTo({ val }: { val: number }) {
   var status: string;
   switch (val) {
     case 0:

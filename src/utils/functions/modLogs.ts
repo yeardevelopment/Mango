@@ -52,7 +52,7 @@ export async function modlogs(
       `**Member**: \`${Member.tag}\` (${
         Member.id
       })\n**Action**: ${Action}\n${duration}**Reason**: ${Reason}\n**Link**: [Click here](${getLink(
-        interaction
+        { value: interaction }
       )})`
     )
     .setFooter({ text: `Case #${configDB.CaseCount}` })
@@ -69,7 +69,7 @@ export async function modlogs(
       `**Moderator**: \`${interaction.user.tag}\` (${
         interaction.user.id
       })\n**Action**: ${Action}\n${duration}**Reason**: ${Reason}\n**Link**: [Click here](${getLink(
-        interaction
+        { value: interaction }
       )})`
     )
     .setColor(Color)

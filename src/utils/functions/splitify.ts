@@ -1,3 +1,3 @@
-export function splitify(number: number): string {
+export function splitify({ number }: { number: number }): string {
   return Number(number).toLocaleString('en-US');
 }

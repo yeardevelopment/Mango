@@ -2,7 +2,7 @@ import { User } from 'discord.js';
 import axios from 'axios';
 import 'dotenv/config';
 
-export async function getUserBanner(user: User): Promise<string> {
+export async function getUserBanner({ user }: { user: User }): Promise<string> {
   let url: string;
   await axios
     .get(`https://discord.com/api/users/${user.id}`, {

@@ -57,7 +57,7 @@ export default new Command({
 
     const uuidURL = `https://api.mojang.com/users/profiles/minecraft/${username}`;
 
-    request(uuidURL, async function (err, response, body): Promise<any> {
+    request(uuidURL, async (err, response, body): Promise<any> => {
       if (err) {
         return interaction.reply({
           content: `⚠ There is no Minecraft player with that username.`,

@@ -18,7 +18,7 @@ export default new Event('messageUpdate', async (oldMessage, newMessage) => {
     embeds: [
       new EmbedBuilder()
         .setTitle('📘 Message Edited')
-        .setURL(getLink(newMessage))
+        .setURL(getLink({ value: newMessage }))
         .setDescription(
           `**Edited By**: \`${newMessage.author.tag}\` (${
             newMessage.author.id

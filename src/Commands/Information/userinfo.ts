@@ -25,7 +25,7 @@ export default new Command({
     await interaction.deferReply();
     const target = args.getUser('user') || interaction.user;
     const isMember = interaction.guild.members.cache.get(target.id);
-    const banner: string = await getUserBanner(target);
+    const banner: string = await getUserBanner({ user: target });
     const embed = new EmbedBuilder()
       .setTitle(
         `${target.username}${
@@ -62,7 +62,7 @@ export default new Command({
             : ''
         } ${
           target.displayAvatarURL().endsWith('.gif') ||
-          (await getUserBanner(target)) ||
+          (await getUserBanner({ user: target })) ||
           target.discriminator === '0001'
             ? '<:nitro:998584423433908224>'
             : ''
@@ -84,7 +84,7 @@ export default new Command({
                   .replace('offline', 'Offline') || 'Offline'
               }\n**Game**: ${
                 isMember.presence?.activities[1] || 'None'
-              }\n**Roles**: ${listRoles(isMember)}`
+              }\n**Roles**: ${listRoles({ member: isMember })}`
             : ''
         }`
       )

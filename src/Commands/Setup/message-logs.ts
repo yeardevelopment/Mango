@@ -35,7 +35,7 @@ export default new Command({
     {
       name: 'settings',
       description:
-        'Displays the settings of the moderation logging system for this server.',
+        'Displays the settings of the moderation logging system for this server',
       type: ApplicationCommandOptionType.Subcommand,
     },
   ],
