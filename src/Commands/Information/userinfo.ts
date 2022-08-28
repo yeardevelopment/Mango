@@ -7,7 +7,6 @@ import {
 } from 'discord.js';
 import 'dotenv/config';
 import { listRoles } from '../../utils/functions/listRoles';
-import { getUserBanner } from '../../utils/functions/getUserBanner';
 
 export default new Command({
   name: 'userinfo',
@@ -24,8 +23,9 @@ export default new Command({
   run: async ({ interaction, args }) => {
     await interaction.deferReply();
     const target = args.getUser('user') || interaction.user;
+    await target.fetch();
+    await target.fetchFlags();
     const isMember = interaction.guild.members.cache.get(target.id);
-    const banner: string = await getUserBanner({ user: target });
     const embed = new EmbedBuilder()
       .setTitle(
         `${target.username}${
@@ -62,7 +62,7 @@ export default new Command({
             : ''
         } ${
           target.displayAvatarURL().endsWith('.gif') ||
-          (await getUserBanner({ user: target })) ||
+          target.bannerURL() ||
           target.discriminator === '0001'
             ? '<:nitro:998584423433908224>'
             : ''
@@ -82,13 +82,19 @@ export default new Command({
                   .replace('online', 'Online')
                   .replace('idle', 'Idle')
                   .replace('offline', 'Offline') || 'Offline'
-              }\n**Game**: ${
+              }\n**Activity**: ${
                 isMember.presence?.activities[1] || 'None'
               }\n**Roles**: ${listRoles({ member: isMember })}`
             : ''
-        }`
+        }\n**Link**: [Click here ›](https://lookup.guru/${target.id})`
       )
-      .setImage(banner || null);
+      .setImage(
+        target.bannerURL({ size: 4096 }) ||
+          `https://singlecolorimage.com/get/${target.hexAccentColor?.slice(
+            1
+          )}/600x240` ||
+          null
+      );
 
     interaction.editReply({
       embeds: [embed],

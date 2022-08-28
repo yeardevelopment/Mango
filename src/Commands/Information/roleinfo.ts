@@ -57,7 +57,7 @@ export default new Command({
 
     const icon = !target.icon
       ? 'None'
-      : `[Click here](${(target as Role).iconURL()})`;
+      : `[Click here ›](${(target as Role).iconURL()})`;
 
     const embed = new EmbedBuilder()
       .setTitle(`Role Information`)

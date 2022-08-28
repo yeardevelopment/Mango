@@ -1,8 +1,11 @@
 import Discord, {
   ActionRowBuilder,
+  AttachmentBuilder,
   ButtonBuilder,
   ButtonStyle,
+  EmbedBuilder,
 } from 'discord.js';
+import { join } from 'path';
 import { client } from '..';
 import { Event } from '../structures/Event';
 import db from '../utils/models/config';
@@ -12,30 +15,35 @@ export default new Event('guildCreate', async (guild) => {
   const chats = guild.channels.cache.find(
     (channel) =>
       channel.name.includes('staff-chat') ||
+      channel.name.includes('admin-chat') ||
       channel.name === 'bot-commands' ||
       channel.name === 'commands'
   );
 
   const channel = chats ? chats : guild.systemChannel;
 
+  const attachment = new AttachmentBuilder(
+    join(__dirname, `../../Images/thankyou.png`),
+    {
+      name: 'thankyou.png',
+    }
+  );
+
   (channel as Discord.TextBasedChannel)?.send({
     embeds: [
-      new Discord.EmbedBuilder()
+      new EmbedBuilder()
         .setTitle(':pray: Thank you for inviting me!')
-        .setDescription('\u200B')
+        .setDescription(
+          "Mango is focused on efficiency and performance. It's designed to be an easy-to-use and user-friendly bot to provide you with the best experience. We aim to make it more and more comfortable for you to use our Services and we welcome any suggestions from you in our [Discord server](https://discord.gg/B8Fs6Qe6Eq).\n\n**It is highly recommended to set up the bot now using the `/set` command.**"
+        )
         .setColor('#ea664b')
-        .addFields([
-          {
-            name: ':robot: About Mango:',
-            value:
-              "Mango is focused on efficiency and performance. It's designed to be an easy-to-use and user-friendly bot to provide you with the best experience. We aim to make it more and more comfortable for you to use our Services and we welcome any suggestions from you in our [Discord server](https://discord.gg/B8Fs6Qe6Eq).\n\n**It is highly recommended to set up the bot now using the `/set` command.**",
-          },
-        ])
+        .setImage('attachment://thankyou.png')
         .setFooter({
           text: client.user.username,
-          iconURL: client.user.defaultAvatarURL,
+          iconURL: client.user.displayAvatarURL(),
         }),
     ],
+    files: [attachment],
     components: [
       new ActionRowBuilder().addComponents([
         new ButtonBuilder()

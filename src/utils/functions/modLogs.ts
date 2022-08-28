@@ -51,7 +51,7 @@ export async function modlogs(
     .setDescription(
       `**Member**: \`${Member.tag}\` (${
         Member.id
-      })\n**Action**: ${Action}\n${duration}**Reason**: ${Reason}\n**Link**: [Click here](${getLink(
+      })\n**Action**: ${Action}\n${duration}**Reason**: ${Reason}\n**Link**: [Click here ›](${getLink(
         { value: interaction }
       )})`
     )
@@ -68,7 +68,7 @@ export async function modlogs(
     .setDescription(
       `**Moderator**: \`${interaction.user.tag}\` (${
         interaction.user.id
-      })\n**Action**: ${Action}\n${duration}**Reason**: ${Reason}\n**Link**: [Click here](${getLink(
+      })\n**Action**: ${Action}\n${duration}**Reason**: ${Reason}\n**Link**: [Click here ›](${getLink(
         { value: interaction }
       )})`
     )

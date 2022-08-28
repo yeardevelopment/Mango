@@ -104,7 +104,7 @@ export default new Command({
         });
       if (ms(time) > 2419200000)
         return interaction.reply({
-          content: `⚠ You cannot specify duration longer than 28 days.`,
+          content: `⚠ You cannot specify duration longer than 28 days. [Learn more ›](<https://discord.com/developers/docs/resources/guild#modify-guild-member>)`,
           ephemeral: true,
         });
       interaction.reply({

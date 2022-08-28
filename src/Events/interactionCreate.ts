@@ -241,11 +241,7 @@ export default new Event('interactionCreate', async (interaction) => {
           .setEmoji(`🖐️`)
           .setLabel(`Claim`)
           .setCustomId('claim');
-        let row = new ActionRowBuilder().addComponents([
-          bu1tton,
-          // lock,
-          // claim,
-        ]);
+        let row = new ActionRowBuilder().addComponents([bu1tton]);
         channel.send({
           content: `<@${interaction.user.id}>`,
           embeds: [embedticket],
@@ -320,30 +316,17 @@ export default new Event('interactionCreate', async (interaction) => {
               { ID: interaction.channelId },
               { Closed: true }
             );
-            const seconds = 5;
-            const startingCounter = 20;
-            let counter = startingCounter;
-            function getText(): string {
-              return `Closing the ticket  ${counter} seconds...`;
-            }
-            async function updateCounter({ msg }: { msg }): Promise<void> {
-              msg.edit(getText());
-              counter -= seconds;
-              if (counter <= 0) {
-                return;
-              }
-              setTimeout(() => {
-                updateCounter({ msg });
-              }, 1000 * seconds);
-            }
             const attachment = await createTranscript(interaction.channel, {
               limit: -1,
               returnBuffer: false,
               saveImages: true,
               fileName: `transcript-${interaction.channel.name}.html`,
             });
-            const msg = await interaction.channel?.send(getText());
-            updateCounter({ msg });
+            interaction.channel?.send({
+              content: `Closing the ticket <t:${Math.floor(
+                (Date.now() + 20000) / 1000
+              )}:R>...`,
+            });
             let member = client.users.cache.get(docs.Members[0]);
 
             const embed = new EmbedBuilder()
@@ -360,7 +343,7 @@ export default new Event('interactionCreate', async (interaction) => {
                 )}>`
               )
               .setColor('#ea664b')
-              .setTimestamp();
+              .setTimestamp(Date.now() + 20000);
             await (
               client.channels.cache.get(
                 ticketSystem.LogsChannel
@@ -496,7 +479,7 @@ export default new Event('interactionCreate', async (interaction) => {
           }
         } catch (err) {
           (msg as Message)?.channel.send({
-            content: `Session expired. To start the verification process again, please go back to ${interaction.channel}.`,
+            content: `<:expired:1011590508436525116> Session expired. To start the verification process again, please go back to ${interaction.channel}.`,
           });
         }
       }
