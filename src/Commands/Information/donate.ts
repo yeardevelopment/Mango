@@ -10,7 +10,7 @@ export default new Command({
       content:
         'We would be very thankful to you if you subscribed to Mango Premium. Subscribe by clicking the button below.',
       components: [
-        new ActionRowBuilder().setComponents(
+        new ActionRowBuilder().addComponents(
           new ButtonBuilder()
             .setLabel('Donate')
             .setEmoji({ name: 'patreon', id: '999782274180587540' })

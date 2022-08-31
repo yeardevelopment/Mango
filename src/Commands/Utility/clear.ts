@@ -25,8 +25,7 @@ export default new Command({
   run: async ({ interaction, args }) => {
     let amount = args.getInteger('amount');
     let target = args.getMember('target');
-    let reason = args.getString('reason');
-    if (!reason) reason = 'No reason provided.';
+    let reason = args.getString('reason') || 'No reason provided.';
 
     const messages = await interaction.channel.messages.fetch();
 

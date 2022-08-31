@@ -34,7 +34,7 @@ export default new Event('messageUpdate', async (oldMessage, newMessage) => {
               : newMessage.content
           }`
         )
-        .setColor('#009A44')
+        .setColor('#53a9e9')
         .setFooter({ text: `Message ID: ${newMessage.id}` })
         .setTimestamp(),
     ],

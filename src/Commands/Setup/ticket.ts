@@ -130,7 +130,7 @@ export default new Command({
               .setColor('#ea664b'),
           ],
           components: [
-            new ActionRowBuilder().setComponents(
+            new ActionRowBuilder().addComponents(
               new ButtonBuilder()
                 .setLabel('Create')
                 .setEmoji({ name: 'ticket', id: '997205867646685284' })
@@ -272,6 +272,10 @@ export default new Command({
                     data.Category
                       ? `<:on:997453570188259369> Tickets category set to <#${data.Category}>.`
                       : '<:off:997453568908988507> Tickets category is unset.'
+                  }\n${
+                    data.StaffRole
+                      ? `<:on:997453570188259369> Staff role set to <@&${data.StaffRole}>.`
+                      : '<:off:997453568908988507> No staff role set.'
                   }`
                 ),
             ],
@@ -299,6 +303,10 @@ export default new Command({
                     data.Category
                       ? `<:on:997453570188259369> Tickets category set to <#${data.Category}>.`
                       : '<:off:997453568908988507> Tickets category is unset.'
+                  }\n${
+                    data.StaffRole
+                      ? `<:on:997453570188259369> Staff role set to <@&${data.StaffRole}>.`
+                      : '<:off:997453568908988507> No staff role set.'
                   }`
                 ),
             ],

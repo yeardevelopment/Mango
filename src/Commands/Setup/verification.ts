@@ -121,7 +121,7 @@ export default new Command({
               .setColor('#ea664b'),
           ],
           components: [
-            new ActionRowBuilder().setComponents(
+            new ActionRowBuilder().addComponents(
               new ButtonBuilder()
                 .setLabel('Verify')
                 .setEmoji({ name: 'puzzle', id: '996733683593662485' })
@@ -232,8 +232,10 @@ export default new Command({
                           { long: true }
                         )}__.`
                       : '<:off:997453568908988507> Minimum account age is unset.'
-                  }\n<:verified:997446146282758144> ${
-                    data.Role ? `Role set to <@&${data.Role}>.` : 'No role set.'
+                  }\n${
+                    data.Role
+                      ? `<:on:997453570188259369> Role set to <@&${data.Role}>.`
+                      : '<:off:997453568908988507> No role set.'
                   }`
                 ),
             ],

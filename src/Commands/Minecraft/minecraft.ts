@@ -98,6 +98,7 @@ export default new Command({
 
             const embed = new EmbedBuilder()
               .setTitle(player_name)
+              .setImage(skin.render)
               .setThumbnail(skin.head)
               .setDescription(
                 `[Download](https://crafatar.com/skins/${player_id}.png)`

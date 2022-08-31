@@ -3,6 +3,8 @@ import {
   Client,
   ClientEvents,
   Collection,
+  GatewayIntentBits,
+  Partials,
 } from 'discord.js';
 import { CommandType } from '../typings/Command';
 import glob from 'glob';
@@ -19,7 +21,25 @@ export class ExtendedClient extends Client {
   modLogs = modlogs;
 
   constructor() {
-    super({ intents: 32767 });
+    super({
+      intents: [
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildBans,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+      ],
+      partials: [
+        Partials.GuildMember,
+        Partials.Channel,
+        Partials.Message,
+        Partials.User,
+      ],
+      allowedMentions: {
+        roles: [],
+      },
+    });
   }
 
   start() {

@@ -4,7 +4,6 @@ export default model(
   'config',
   new Schema({
     Guild: String,
-    MuteRole: String,
     CaseCount: {
       default: 0,
       type: Number,

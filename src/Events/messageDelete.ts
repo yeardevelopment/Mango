@@ -15,7 +15,7 @@ export default new Event('messageDelete', async (message) => {
 
   const Embed = new EmbedBuilder()
     .setTitle('📕 Message Deleted')
-    .setColor('#000000')
+    .setColor('#da2c43')
     .setFooter({ text: `Message ID: ${message.id}` })
     .setTimestamp();
 

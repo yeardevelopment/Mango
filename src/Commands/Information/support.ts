@@ -10,7 +10,7 @@ export default new Command({
       content:
         'Click the button below to join the official Mango support server.',
       components: [
-        new ActionRowBuilder().setComponents(
+        new ActionRowBuilder().addComponents(
           new ButtonBuilder()
             .setLabel('Support Server')
             .setEmoji({ name: 'support', id: '996734485120962591' })

@@ -71,8 +71,7 @@ export default new Command({
       }
       case 'on': {
         let time = args.getString('time');
-        let reason = args.getString('reason');
-        if (!reason) reason = 'No reason provided.';
+        let reason = args.getString('reason') || 'No reason provided.';
 
         if (interaction.channel.rateLimitPerUser === ms(time) / 1000)
           return interaction.reply({

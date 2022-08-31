@@ -213,9 +213,9 @@ export default new Command({
           value: `
                 **\`•\` Client**: <:icon_online:970322600930721802> ONLINE
                 **\`•\` Ping**: ${client.ws.ping} ms
-                **\`•\` Uptime**: <t:${Math.floor(
+                **\`•\` Up Since**: <t:${Math.floor(
                   client.readyTimestamp / 1000
-                )}:R>
+                )}> (<t:${Math.floor(client.readyTimestamp / 1000)}:R>)
                 `,
           inline: false,
         },

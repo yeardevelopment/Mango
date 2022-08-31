@@ -12,6 +12,13 @@ import Discord, {
   InteractionType,
   ButtonStyle,
   PermissionsBitField,
+  ModalBuilder,
+  TextInputBuilder,
+  TextInputStyle,
+  GuildTextBasedChannel,
+  PermissionOverwriteManager,
+  GuildChannel,
+  OverwriteType,
 } from 'discord.js';
 import ms from 'ms';
 import chalk from 'chalk';
@@ -138,119 +145,38 @@ export default new Event('interactionCreate', async (interaction) => {
       Toggled: true,
     });
     if (ticketSystem) {
-      async function ticket({ category }: { category: string }): Promise<any> {
+      if (interaction.customId === 'ticket') {
         if (!ticketSystem.StaffRole)
           return (interaction as ButtonInteraction).reply({
             content:
               '⚠️ The ticket system is not set up properly yet. Please contact staff with this information.',
             ephemeral: true,
           });
-        const parentChannel = ticketSystem.Category;
         const ticketChannel = await tickets.findOne({
           Guild: interaction.guildId,
           Member: interaction.user.id,
         });
         if (ticketChannel)
-          return (interaction as ButtonInteraction).reply({
+          return interaction.reply({
             content: `<:cancel:996733678279462932> You already have a ticket open: <#${ticketChannel.ID}>.`,
             ephemeral: true,
           });
-        await (interaction as ButtonInteraction).reply({
-          content: `<:loading:1011290361450221718> Your ticket is being processed. Please wait.`,
-          ephemeral: true,
-        });
-        let channel: TextBasedChannel | null = null;
-        try {
-          channel = await interaction.guild.channels.create({
-            name: `ticket-${interaction.user.username}`,
-            reason: 'Ticket opened',
-          });
-          await tickets.create({
-            Category: category,
-            ID: channel.id,
-            Member: interaction.user.id,
-            Members: [interaction.user.id],
-            Closed: false,
-            Claimed: false,
-            Locked: false,
-          });
-
-          await channel.setParent(parentChannel);
-          await channel.permissionOverwrites.set([
-            {
-              id: interaction.guildId,
-              deny: ['SendMessages', 'ViewChannel'],
-            },
-            {
-              id: interaction.user.id,
-              allow: [
-                'SendMessages',
-                'ViewChannel',
-                'AttachFiles',
-                'ReadMessageHistory',
-                'AddReactions',
-              ],
-            },
-            {
-              id: client.user.id,
-              allow: ['SendMessages', 'ViewChannel'],
-            },
-            {
-              id: ticketSystem.StaffRole || null,
-              allow: [
-                'SendMessages',
-                'ViewChannel',
-                'AttachFiles',
-                'ReadMessageHistory',
-                'AddReactions',
-              ],
-            },
-          ]);
-        } catch (error) {
-          console.error(error);
-          return (interaction as ButtonInteraction).editReply({
-            content:
-              '**⚠️ Failed to create a ticket.** Please try again later!',
-          });
-        }
-        await (interaction as ButtonInteraction).editReply({
-          content: `We will be right with you! ${channel}`,
-        });
-        const embedticket = new EmbedBuilder()
-          .setTitle(`Welcome to your ticket!`)
-          .addFields([{ name: 'Ticket Category', value: category }])
-          .addFields([
-            {
-              name: `Note`,
-              value: `Please be patient, support will be with you shortly.`,
-            },
-          ])
-          .setColor('#ea664b');
-        let bu1tton = new ButtonBuilder()
-          .setStyle(ButtonStyle.Danger)
-          .setEmoji(`💾`)
-          .setLabel(`Save & Close`)
-          .setCustomId('close');
-        let lock = new ButtonBuilder()
-          .setStyle(ButtonStyle.Primary)
-          .setEmoji(`🔒`)
-          .setLabel(`Lock/Unlock`)
-          .setCustomId('lock');
-        let claim = new ButtonBuilder()
-          .setStyle(ButtonStyle.Success)
-          .setEmoji(`🖐️`)
-          .setLabel(`Claim`)
-          .setCustomId('claim');
-        let row = new ActionRowBuilder().addComponents([bu1tton]);
-        channel.send({
-          content: `<@${interaction.user.id}>`,
-          embeds: [embedticket],
-          components: [row as ActionRowBuilder<ButtonBuilder>],
-        });
+        interaction.showModal(
+          new ModalBuilder()
+            .setTitle('Ticket System')
+            .setCustomId('ticket-modal')
+            .addComponents([
+              new ActionRowBuilder().addComponents([
+                new TextInputBuilder()
+                  .setLabel('Why are you opening this ticket?')
+                  .setCustomId('reason')
+                  .setMaxLength(100)
+                  .setRequired()
+                  .setStyle(TextInputStyle.Short),
+              ]) as ActionRowBuilder<TextInputBuilder>,
+            ])
+        );
       }
-
-      if (interaction.customId === 'ticket')
-        ticket({ category: '✉️ General Support' });
       if (interaction.customId === 'close') {
         if (
           !(interaction.member.roles as GuildMemberRoleManager).cache.has(
@@ -354,11 +280,106 @@ export default new Event('interactionCreate', async (interaction) => {
         setTimeout(() => {
           interaction.channel
             ?.delete('[Ticket System] Ticket Closed')
-            .then(async (channel) => {
+            .then(async (channel: GuildTextBasedChannel) => {
               const data = await tickets.findOne({ ID: channel.id });
               if (data) data.delete();
             });
         }, 20000);
+      }
+      if (interaction.customId === 'lock') {
+        if (interaction.channel.parentId !== ticketSystem.Category) return;
+        if (
+          !(interaction.member.roles as GuildMemberRoleManager).cache.has(
+            ticketSystem.StaffRole
+          )
+        )
+          return interaction.reply({
+            content: '⚠ Only staff can lock/unlock the ticket.',
+            ephemeral: true,
+          });
+        const data = await tickets.findOne({ ID: interaction.channel.id });
+        if (data.Locked === false) {
+          try {
+            await tickets.updateOne(
+              { ID: interaction.channel.id },
+              { Locked: true }
+            );
+            for (let member of data.Members) {
+              await (
+                interaction.channel as GuildChannel
+              ).permissionOverwrites.edit(
+                member,
+                {
+                  SendMessages: false,
+                  AddReactions: false,
+                },
+                { type: OverwriteType.Member }
+              );
+            }
+            interaction.channel?.send({
+              embeds: [
+                new Discord.EmbedBuilder()
+                  .setTitle(`Ticket Locked`)
+                  .setDescription(
+                    `This ticket has been locked by a staff member.`
+                  )
+                  .setColor('#ea664b'),
+              ],
+            });
+            interaction.reply({
+              content: `<:success:996733680422752347> Successfully locked the ticket.`,
+              ephemeral: true,
+            });
+          } catch (error) {
+            console.error(error);
+            interaction.reply({
+              content:
+                '**⚠️ Failed to lock the ticket.** Please try again later!',
+              ephemeral: true,
+            });
+          }
+        } else {
+          try {
+            await tickets.updateOne(
+              { ID: interaction.channel.id },
+              { Locked: false }
+            );
+            for (let member of data.Members) {
+              console.log(member);
+              await (
+                interaction.channel as GuildChannel
+              ).permissionOverwrites.edit(
+                '907914902348386304',
+                {
+                  SendMessages: true,
+                  AddReactions: true,
+                },
+                { type: OverwriteType.Member }
+              );
+            }
+            interaction.channel?.send({
+              embeds: [
+                new Discord.EmbedBuilder()
+                  .setTitle(`Ticket Unlocked`)
+                  .setDescription(
+                    `This ticket has been unlocked by a staff member.`
+                  )
+                  .setColor('#ea664b'),
+              ],
+            });
+            interaction.reply({
+              content: `<:success:996733680422752347> Successfully unlocked the ticket.`,
+              ephemeral: true,
+            });
+          } catch (error) {
+            console.error(error);
+            interaction.reply({
+              content:
+                '**⚠️ Failed to unlock the ticket.** Please try again later!',
+              ephemeral: true,
+            });
+          }
+        }
       }
     }
     if (verificationEnabled) {
@@ -484,5 +505,107 @@ export default new Event('interactionCreate', async (interaction) => {
         }
       }
     }
+  }
+  if (interaction.type === InteractionType.ModalSubmit) {
+    if (interaction.customId !== 'ticket-modal') return;
+    const ticketSystem = await ticket.findOne({
+      Guild: interaction.guildId,
+      Toggled: true,
+    });
+    const parentChannel = ticketSystem.Category;
+    await interaction.reply({
+      content: `<:loading:1011290361450221718> Your ticket is being processed. Please wait.`,
+      ephemeral: true,
+    });
+    let channel: TextBasedChannel | null = null;
+    try {
+      channel = await interaction.guild.channels.create({
+        name: `ticket-${interaction.user.username}`,
+        reason: 'Ticket opened',
+        permissionOverwrites: [
+          {
+            id: interaction.guildId,
+            deny: ['SendMessages', 'ViewChannel'],
+          },
+          {
+            id: interaction.user.id,
+            allow: [
+              'SendMessages',
+              'ViewChannel',
+              'AttachFiles',
+              'ReadMessageHistory',
+              'AddReactions',
+            ],
+          },
+          {
+            id: client.user.id,
+            allow: ['SendMessages', 'ViewChannel'],
+          },
+          {
+            id: ticketSystem.StaffRole || null,
+            allow: [
+              'SendMessages',
+              'ViewChannel',
+              'AttachFiles',
+              'ReadMessageHistory',
+              'AddReactions',
+            ],
+          },
+        ],
+      });
+      await tickets.create({
+        ID: channel.id,
+        Member: interaction.user.id,
+        Guild: interaction.guildId,
+        Members: [interaction.user.id],
+        Closed: false,
+        Claimed: false,
+        Locked: false,
+      });
+
+      await channel.setParent(parentChannel);
+    } catch (error) {
+      console.error(error);
+      return interaction.editReply({
+        content: '**⚠️ Failed to create a ticket.** Please try again later!',
+      });
+    }
+    await interaction.editReply({
+      content: `We will be right with you! ${channel}`,
+    });
+    const embedticket = new EmbedBuilder()
+      .setTitle(`Welcome to your ticket!`)
+      .addFields([
+        {
+          name: 'Open Reason',
+          value: interaction.fields.getTextInputValue('reason'),
+        },
+        {
+          name: 'Note',
+          value: 'Please be patient, support will be with you shortly.',
+        },
+      ])
+      .setColor('#ea664b');
+    let close = new ButtonBuilder()
+      .setStyle(ButtonStyle.Danger)
+      .setEmoji(`💾`)
+      .setLabel(`Save & Close`)
+      .setCustomId('close');
+    let lock = new ButtonBuilder()
+      .setStyle(ButtonStyle.Primary)
+      .setEmoji(`🔒`)
+      .setLabel(`Lock/Unlock`)
+      .setCustomId('lock');
+    let claim = new ButtonBuilder()
+      .setStyle(ButtonStyle.Success)
+      .setEmoji(`🖐️`)
+      .setLabel(`Claim`)
+      .setCustomId('claim');
+    let row = new ActionRowBuilder().addComponents([close, lock]);
+    channel.send({
+      content: `<@${interaction.user.id}>`,
+      embeds: [embedticket],
+      components: [row as ActionRowBuilder<ButtonBuilder>],
+    });
   }
 });

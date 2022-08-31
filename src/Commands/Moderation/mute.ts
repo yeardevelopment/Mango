@@ -4,13 +4,12 @@ import Discord, {
   GuildMember,
   GuildMemberRoleManager,
 } from 'discord.js';
-import config from '../../utils/models/config';
 import ms from 'ms';
 
 export default new Command({
   name: 'mute',
   description:
-    'Prevents a member from participating in text and voice channels',
+    'Temporarily prevents a member from participating in text and voice channels',
   options: [
     {
       name: 'member',
@@ -22,8 +21,8 @@ export default new Command({
     {
       name: 'time',
       type: ApplicationCommandOptionType.String,
-      description: 'Provide an optional duration of timeout; e.g. 1m, 1h, 1d',
-      required: false,
+      description: 'Provide the duration of the mute; e.g. 1m, 1h, 1d',
+      required: true,
     },
     {
       name: 'reason',
@@ -71,62 +70,35 @@ export default new Command({
 
     let reason = args.getString('reason') || 'No reason provided.';
 
-    if (!time) {
-      const data = await config.findOne({ Guild: interaction.guildId });
-      if (!data.MuteRole || !interaction.guild.roles.cache.get(data.MuteRole))
-        return interaction.reply({
-          content:
-            '⚠️ Mute role is not set up in this guild. Set it up using `/set mute-role` command.',
-        });
-      (target as GuildMember).roles.add(
-        data.MuteRole,
-        `Muted by ${interaction.user.tag} | Reason: ${reason}`
-      );
-      interaction.reply({
-        content: `🔇 **${interaction.user.tag}** muted **${
-          (target as GuildMember).user.tag
-        }** indefinitely.\nReason: *${reason}*`,
+    if (!ms(time))
+      return interaction.reply({
+        content: `⚠ Please specify a valid time.`,
+        ephemeral: true,
       });
-      await client.modLogs(
-        {
-          Action: 'Permanent Mute',
-          Color: '#ffff00',
-          Member: (target as GuildMember).user,
-          Reason: reason,
-        },
-        interaction
-      );
-    } else if (time) {
-      if (!ms(time))
-        return interaction.reply({
-          content: `⚠ Please specify a valid time.`,
-          ephemeral: true,
-        });
-      if (ms(time) > 2419200000)
-        return interaction.reply({
-          content: `⚠ You cannot specify duration longer than 28 days. [Learn more ›](<https://discord.com/developers/docs/resources/guild#modify-guild-member>)`,
-          ephemeral: true,
-        });
-      interaction.reply({
-        content: `🔇 **${interaction.user.tag}** muted **${
-          (target as GuildMember).user.tag
-        }** for ${ms(ms(time), { long: true })}.\nReason: *${reason}*`,
+    if (ms(time) > 2419200000)
+      return interaction.reply({
+        content: `⚠ You cannot specify duration longer than 28 days. [Learn more ›](<https://discord.com/developers/docs/resources/guild#modify-guild-member>)`,
+        ephemeral: true,
       });
-      (target as GuildMember).timeout(
-        ms(time),
-        `Muted by ${interaction.user.tag} | Reason: ${reason}`
-      );
+    interaction.reply({
+      content: `🔇 **${interaction.user.tag}** muted **${
+        (target as GuildMember).user.tag
+      }** for ${ms(ms(time), { long: true })}.\nReason: *${reason}*`,
+    });
+    (target as GuildMember).timeout(
+      ms(time),
+      `Muted by ${interaction.user.tag} | Reason: ${reason}`
+    );
 
-      await client.modLogs(
-        {
-          Action: 'Temporary Mute',
-          Color: '#82ffae',
-          Member: (target as GuildMember).user,
-          Duration: ms(ms(time), { long: true }),
-          Reason: reason,
-        },
-        interaction
-      );
-    }
+    await client.modLogs(
+      {
+        Action: 'Temporary Mute',
+        Color: '#82ffae',
+        Member: (target as GuildMember).user,
+        Duration: ms(ms(time), { long: true }),
+        Reason: reason,
+      },
+      interaction
+    );
   },
 });
