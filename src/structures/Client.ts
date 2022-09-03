@@ -36,9 +36,6 @@ export class ExtendedClient extends Client {
         Partials.Message,
         Partials.User,
       ],
-      allowedMentions: {
-        roles: [],
-      },
     });
   }
 

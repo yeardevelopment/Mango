@@ -7,6 +7,7 @@ export default model(
     ClaimedBy: String,
     Member: String,
     Guild: String,
+    OpenReason: String,
     Members: [String],
     Closed: Boolean,
     Claimed: Boolean,

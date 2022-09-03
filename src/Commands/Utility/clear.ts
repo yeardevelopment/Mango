@@ -81,6 +81,9 @@ export default new Command({
         await interaction.channel
           .send({
             content: `${finalResult}\n\n${deleteCount}`,
+            allowedMentions: {
+              roles: [],
+            },
           })
           .then((msg) => setTimeout(() => msg.delete(), 5000));
       } catch (error) {

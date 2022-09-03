@@ -13,17 +13,13 @@ export default new Event('ready', async (client) => {
   console.log(
     `The bot is ready to work.\nLogged in as ${client.user.tag}\nAPI Latency: ${client.ws.ping} ms\n`
   );
-  const arrayOfStatuses = [
-    `Release 🎉`,
-    `${client.users.cache.size} users`,
-    `${client.guilds.cache.size} servers`,
-  ];
+  const arrayOfStatuses = [`Release 🎉`, `${client.guilds.cache.size} servers`];
   let index = 0;
   setInterval(() => {
     if (index === arrayOfStatuses.length) index = 0;
-    const status1 = arrayOfStatuses[index];
+    const status = arrayOfStatuses[index];
     client.user.setPresence({
-      activities: [{ name: status1, type: ActivityType.Watching }],
+      activities: [{ name: status, type: ActivityType.Watching }],
       status: 'online',
     });
     index++;

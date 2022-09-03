@@ -229,33 +229,38 @@ export default new Event('interactionCreate', async (interaction) => {
             content: '⚠ Only staff can close the ticket.',
             ephemeral: true,
           });
-        await tickets
-          .findOne({ ID: interaction.channelId }, async (err, docs) => {
-            if (docs.Closed === true) {
-              return interaction.reply({
-                content: `This ticket is already being closed.`,
-                ephemeral: true,
-              });
-            }
-            interaction.deferUpdate();
-            await tickets.updateOne(
-              { ID: interaction.channelId },
-              { Closed: true }
-            );
-            const attachment = await createTranscript(interaction.channel, {
-              limit: -1,
-              returnBuffer: false,
-              saveImages: true,
-              fileName: `transcript-${interaction.channel.name}.html`,
-            });
-            interaction.channel?.send({
-              content: `Closing the ticket <t:${Math.floor(
-                (Date.now() + 20000) / 1000
-              )}:R>...`,
-            });
-            let member = client.users.cache.get(docs.Members[0]);
+        const data = await tickets.findOne({ ID: interaction.channelId });
+        if (data.Closed === true) {
+          return interaction.reply({
+            content: `This ticket is already being closed.`,
+            ephemeral: true,
+          });
+        }
+        interaction.deferUpdate();
+        await tickets.updateOne(
+          { ID: interaction.channelId },
+          { Closed: true }
+        );
+        const attachment = await createTranscript(interaction.channel, {
+          limit: -1,
+          returnBuffer: false,
+          saveImages: true,
+          fileName: `transcript-${interaction.channel.name}.html`,
+        });
+        interaction.channel?.send({
+          content: `Closing the ticket <t:${Math.floor(
+            (Date.now() + 20000) / 1000
+          )}:R>...`,
+        });
+        let member = client.users.cache.get(data.Member);
 
-            const embed = new EmbedBuilder()
+        await (
+          client.channels.cache.get(
+            ticketSystem.LogsChannel
+          ) as TextBasedChannel
+        )?.send({
+          embeds: [
+            new EmbedBuilder()
               .setTitle('Ticket Closed')
               .setDescription(
                 `**Ticket Name**: \`${interaction.channel.name}\` (${
@@ -264,19 +269,17 @@ export default new Event('interactionCreate', async (interaction) => {
                   member.id
                 })\n**Closed By**: \`${interaction.user.tag}\` (${
                   interaction.user.id
-                })\n**Open Time**: <t:${Math.floor(
+                })\n**Open Reason**: \`${
+                  data.OpenReason
+                }\`\n**Open Time**: <t:${Math.floor(
                   interaction.channel.createdTimestamp / 1000
                 )}>`
               )
               .setColor('#ea664b')
-              .setTimestamp(Date.now() + 20000);
-            await (
-              client.channels.cache.get(
-                ticketSystem.LogsChannel
-              ) as TextBasedChannel
-            )?.send({ embeds: [embed], files: [attachment] });
-          })
-          .clone();
+              .setTimestamp(Date.now() + 20000),
+          ],
+          files: [attachment],
+        });
         setTimeout(() => {
           interaction.channel
             ?.delete('[Ticket System] Ticket Closed')
@@ -522,6 +525,7 @@ export default new Event('interactionCreate', async (interaction) => {
       channel = await interaction.guild.channels.create({
         name: `ticket-${interaction.user.username}`,
         reason: 'Ticket opened',
+        parent: parentChannel,
         permissionOverwrites: [
           {
             id: interaction.guildId,
@@ -542,7 +546,7 @@ export default new Event('interactionCreate', async (interaction) => {
             allow: ['SendMessages', 'ViewChannel'],
           },
           {
-            id: ticketSystem.StaffRole || null,
+            id: ticketSystem.StaffRole,
             allow: [
               'SendMessages',
               'ViewChannel',
@@ -557,13 +561,12 @@ export default new Event('interactionCreate', async (interaction) => {
         ID: channel.id,
         Member: interaction.user.id,
         Guild: interaction.guildId,
+        OpenReason: interaction.fields.getTextInputValue('reason'),
         Members: [interaction.user.id],
         Closed: false,
         Claimed: false,
         Locked: false,
       });
-
-      await channel.setParent(parentChannel);
     } catch (error) {
       console.error(error);
       return interaction.editReply({
