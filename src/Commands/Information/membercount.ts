@@ -16,15 +16,15 @@ export default new Command({
             member.presence?.status === 'idle' ||
             member.presence?.status === 'dnd'
         );
-        const veryTotal = totalOnline.size;
-        const Embed = new EmbedBuilder()
-          .setTitle('Member Count')
-          .setDescription(
-            `**Total Members:** ${interaction.guild.memberCount}\n**Online Members:** ${veryTotal}`
-          )
-          .setColor('#ea664b');
         interaction.reply({
-          embeds: [Embed],
+          embeds: [
+            new EmbedBuilder()
+              .setTitle('Member Count')
+              .setDescription(
+                `**Total Members:** ${interaction.guild.memberCount}\n**Online Members:** ${totalOnline.size}`
+              )
+              .setColor('#ea664b'),
+          ],
         });
       });
   },

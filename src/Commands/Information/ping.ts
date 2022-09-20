@@ -10,21 +10,22 @@ export default new Command({
       .reply({ content: 'Calculating ping...' })
       .then((resultMessage) => {
         const ping: number = Date.now() - interaction.createdTimestamp;
-        const embed = new Discord.EmbedBuilder()
-          .setTitle('Pong!')
-          .setAuthor({
-            name: `${interaction.user.username}`,
-            iconURL: interaction.user.displayAvatarURL(),
-          })
-          .setDescription(
-            `:ping_pong: Bot Latency is ${ping} ms\n:hourglass: API Latency is ${Math.round(
-              client.ws.ping
-            )} ms`
-          )
-          .setColor('#ea664b');
         interaction.editReply({
           content: '\u200B',
-          embeds: [embed],
+          embeds: [
+            new Discord.EmbedBuilder()
+              .setTitle('Pong!')
+              .setAuthor({
+                name: `${interaction.user.username}`,
+                iconURL: interaction.user.displayAvatarURL(),
+              })
+              .setDescription(
+                `:ping_pong: Bot Latency is ${ping} ms\n:hourglass: API Latency is ${Math.round(
+                  client.ws.ping
+                )} ms`
+              )
+              .setColor('#ea664b'),
+          ],
         });
       });
   },

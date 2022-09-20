@@ -1,7 +1,6 @@
 import messageLogs from '../utils/models/messageLogs';
 import { EmbedBuilder, TextBasedChannel } from 'discord.js';
 import { Event } from '../structures/Event';
-import { getLink } from '../utils/functions/getLink';
 import { client } from '..';
 
 export default new Event('messageDelete', async (message) => {

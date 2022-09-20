@@ -37,6 +37,12 @@ export default new Command({
     let target = args.getMember('member');
     let time = args.getString('time');
 
+    if (target === null)
+      return interaction.reply({
+        content: `⚠ The user is not in the guild.`,
+        ephemeral: true,
+      });
+
     if (
       (target as GuildMember).roles.highest >= interaction.member.roles.highest
     )
@@ -45,28 +51,26 @@ export default new Command({
         ephemeral: true,
       });
 
-    if ((target as GuildMember).id === interaction.user.id) {
+    if ((target as GuildMember).id === interaction.user.id)
       return interaction.reply({
         content: '⚠ You cannot mute yourself.',
         ephemeral: true,
       });
-    }
-    if ((target as GuildMember).id === client.user.id) {
+
+    if ((target as GuildMember).id === client.user.id)
       return interaction.reply({
         content: '⚠ You cannot mute the bot.',
         ephemeral: true,
       });
-    }
 
     if (
       (target as GuildMember).isCommunicationDisabled() ||
       (target as GuildMember).roles.cache.some((r) => r.name === 'Muted')
-    ) {
+    )
       return interaction.reply({
         content: '⚠ The member is already muted.',
         ephemeral: true,
       });
-    }
 
     let reason = args.getString('reason') || 'No reason provided.';
 

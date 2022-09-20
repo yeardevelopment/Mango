@@ -23,18 +23,17 @@ export default new Command({
   run: async ({ interaction, client, args }) => {
     let target = args.getUser('user');
 
-    if (target.id === interaction.user.id) {
+    if (target.id === interaction.user.id)
       return interaction.reply({
         content: '⚠ You cannot unban yourself.',
         ephemeral: true,
       });
-    }
-    if (target.id === client.user.id) {
+
+    if (target.id === client.user.id)
       return interaction.reply({
         content: '⚠ You cannot unban the bot.',
         ephemeral: true,
       });
-    }
 
     let reason = args.getString('reason') || 'No reason provided.';
 
@@ -44,7 +43,7 @@ export default new Command({
           content: '⚠ No one is banned in this server.',
           ephemeral: true,
         });
-      let banned = bans.find((ban) => ban.user.id == target.id);
+      let banned = bans.find((ban) => ban.user.id === target.id);
       if (!banned)
         return interaction.reply({
           content: '⚠ The user is not banned.',

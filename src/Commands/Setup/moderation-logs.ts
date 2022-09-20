@@ -8,7 +8,7 @@ import {
 
 export default new Command({
   name: 'moderation-logs',
-  description: 'Logs moderation actions',
+  description: 'Moderation Logging System Command',
   permissions: 'ManageGuild',
   options: [
     {

@@ -27,7 +27,7 @@ export default new Command({
   run: async ({ interaction, client, args }) => {
     let target = interaction.options.getMember('member');
 
-    if (target == null)
+    if (target === null)
       return interaction.reply({
         content: `⚠ The user is not in the guild.`,
         ephemeral: true,
@@ -42,18 +42,17 @@ export default new Command({
         ephemeral: true,
       });
 
-    if ((target as GuildMember).id === interaction.user.id) {
+    if ((target as GuildMember).id === interaction.user.id)
       return interaction.reply({
         content: '⚠ You cannot kick yourself.',
         ephemeral: true,
       });
-    }
-    if ((target as GuildMember).id === client.user.id) {
+
+    if ((target as GuildMember).id === client.user.id)
       return interaction.reply({
         content: '⚠ You cannot kick the bot.',
         ephemeral: true,
       });
-    }
 
     let reason = args.getString('reason') || 'No reason provided.';
 

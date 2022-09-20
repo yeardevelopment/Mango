@@ -13,7 +13,7 @@ import ms from 'ms';
 
 export default new Command({
   name: 'verification',
-  description: 'Verification system management',
+  description: 'Verification System Command',
   options: [
     {
       name: 'panel',

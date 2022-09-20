@@ -12,7 +12,7 @@ import db from '../../utils/models/ticket';
 
 export default new Command({
   name: 'ticket',
-  description: 'Ticket system management',
+  description: 'Ticket System Command',
   options: [
     {
       name: 'panel',

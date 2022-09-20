@@ -8,14 +8,14 @@ export default new Command({
   run: async ({ interaction }) => {
     interaction.reply({
       content:
-        'We would be very thankful to you if you subscribed to Mango Premium. Subscribe by clicking the button below.',
+        'We would be very thankful to you if you subscribed to Mango Premium. You can ask for instructions in our support server linked down below.',
       components: [
         new ActionRowBuilder().addComponents(
           new ButtonBuilder()
-            .setLabel('Donate')
-            .setEmoji({ name: 'patreon', id: '999782274180587540' })
+            .setLabel('Support Server')
+            .setEmoji({ name: 'support', id: '996734485120962591' })
             .setStyle(ButtonStyle.Link)
-            .setURL('https://www.patreon.com/yeardevelopment'),
+            .setURL('https://discord.gg/QeKcwprdCY'),
           new ButtonBuilder()
             .setLabel('Invite Mango')
             .setEmoji({ name: 'invite', id: '997622250587033661' })

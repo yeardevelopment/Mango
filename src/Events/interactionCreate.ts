@@ -599,7 +599,7 @@ export default new Event('interactionCreate', async (interaction) => {
       .setEmoji(`🔒`)
       .setLabel(`Lock/Unlock`)
       .setCustomId('lock');
-    let claim = new ButtonBuilder()
+    let claim = new ButtonBuilder() // TODO: implement claim feature
       .setStyle(ButtonStyle.Success)
       .setEmoji(`🖐️`)
       .setLabel(`Claim`)

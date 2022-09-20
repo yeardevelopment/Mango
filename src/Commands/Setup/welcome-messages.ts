@@ -8,7 +8,7 @@ import db from '../../utils/models/welcomeMessages';
 
 export default new Command({
   name: 'welcome',
-  description: 'Welcomes new members to the guild',
+  description: 'Welcome System Command',
   options: [
     {
       name: 'toggle',

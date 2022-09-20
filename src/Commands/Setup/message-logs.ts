@@ -8,7 +8,7 @@ import {
 
 export default new Command({
   name: 'message-logs',
-  description: 'Logs deleted and edited messages to a channel',
+  description: 'Message Logging System Command',
   options: [
     {
       name: 'toggle',
@@ -52,7 +52,7 @@ export default new Command({
           );
           interaction.reply({
             content:
-              '<:success:996733680422752347> Successfully disabled message logs in this server.',
+              '<:success:996733680422752347> Successfully disabled message logging in this server.',
           });
         } else if (data && data.Toggled === false) {
           await db.findOneAndUpdate(
@@ -61,7 +61,7 @@ export default new Command({
           );
           interaction.reply({
             content:
-              '<:success:996733680422752347> Successfully enabled message logs in this server.',
+              '<:success:996733680422752347> Successfully enabled message logging in this server.',
           });
         } else {
           await db.create({
@@ -70,7 +70,7 @@ export default new Command({
           });
           interaction.reply({
             content:
-              '<:success:996733680422752347> Successfully enabled message logs in this server.',
+              '<:success:996733680422752347> Successfully enabled message logging in this server.',
           });
         }
         break;

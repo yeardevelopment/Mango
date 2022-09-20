@@ -44,7 +44,7 @@ export default new Command({
     let amount = args.getInteger('messages');
 
     interaction.guild.bans.fetch().then(async (bans) => {
-      let banned = bans.find((ban) => ban.user.id == target.id);
+      let banned = bans.find((ban) => ban.user.id === target.id);
       if (banned)
         return interaction.reply({
           content: '⚠ The user is already banned.',
@@ -59,18 +59,17 @@ export default new Command({
         ephemeral: true,
       });
 
-    if (target.id === interaction.user.id) {
+    if (target.id === interaction.user.id)
       return interaction.reply({
         content: '⚠ You cannot ban yourself.',
         ephemeral: true,
       });
-    }
-    if (target.id === client.user.id) {
+
+    if (target.id === client.user.id)
       return interaction.reply({
         content: '⚠ You cannot ban the bot.',
         ephemeral: true,
       });
-    }
 
     let reason = args.getString('reason') || 'No reason provided.';
 

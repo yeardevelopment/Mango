@@ -28,6 +28,12 @@ export default new Command({
   run: async ({ interaction, client, args }) => {
     let target = args.getMember('member');
 
+    if (target === null)
+      return interaction.reply({
+        content: `⚠ The user is not in the guild.`,
+        ephemeral: true,
+      });
+
     if (
       (target as GuildMember).roles.highest >= interaction.member.roles.highest
     )
