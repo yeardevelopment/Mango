@@ -1,4 +1,5 @@
 import { client } from '..';
+
 export function error(): void {
   client.on('error', (error) => {
     console.error('[Error Handling System] Discord Error');

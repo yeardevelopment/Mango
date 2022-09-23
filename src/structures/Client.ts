@@ -12,11 +12,15 @@ import { promisify } from 'util';
 import { RegisterCommandsOptions } from '../typings/client';
 import { modlogs } from '../utils/functions/modLogs';
 import { Event } from './Event';
+import { ButtonType } from '../typings/Button';
+import { ModalType } from '../typings/Modal';
 
 const globPromise = promisify(glob);
 
 export class ExtendedClient extends Client {
+  buttons: Collection<string, ButtonType> = new Collection();
   commands: Collection<string, CommandType> = new Collection();
+  modals: Collection<string, ModalType> = new Collection();
   config = import('../Configuration/config.json');
   modLogs = modlogs;
 
@@ -63,6 +67,7 @@ export class ExtendedClient extends Client {
     const commandFiles = await globPromise(
       `${__dirname}/../Commands/*/*{.ts,.js}`
     );
+
     commandFiles.forEach(async (filePath) => {
       const command: CommandType = await this.importFile(filePath);
       if (!command.name) return;
@@ -76,6 +81,26 @@ export class ExtendedClient extends Client {
         commands: slashCommands,
         guildId: process.env.guildId,
       });
+    });
+
+    // Buttons
+    const buttonFiles = await globPromise(
+      `${__dirname}/../Buttons/*/*{.ts,.js}`
+    );
+    buttonFiles.forEach(async (filePath) => {
+      const button: ButtonType = await this.importFile(filePath);
+      if (!button.id) return;
+
+      this.buttons.set(button.id, button);
+    });
+
+    // Modals
+    const modalFiles = await globPromise(`${__dirname}/../Modals/*/*{.ts,.js}`);
+    modalFiles.forEach(async (filePath) => {
+      const modal: ModalType = await this.importFile(filePath);
+      if (!modal.id) return;
+
+      this.modals.set(modal.id, modal);
     });
 
     // Event

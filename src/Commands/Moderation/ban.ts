@@ -76,7 +76,7 @@ export default new Command({
     let proceedButton = new Discord.ButtonBuilder()
       .setStyle(ButtonStyle.Success)
       .setEmoji({ name: 'success', id: '996733680422752347' })
-      .setLabel(`Proceed`)
+      .setLabel('Proceed')
       .setCustomId('proceed');
     let cancelButton = new Discord.ButtonBuilder()
       .setStyle(ButtonStyle.Danger)
