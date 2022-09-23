@@ -70,9 +70,8 @@ export default new Button({
           { Locked: false }
         );
         for (let member of data.Members) {
-          console.log(member);
           await (interaction.channel as GuildChannel).permissionOverwrites.edit(
-            '907914902348386304',
+            member,
             {
               SendMessages: true,
               AddReactions: true,

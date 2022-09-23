@@ -87,27 +87,27 @@ export class ExtendedClient extends Client {
     const buttonFiles = await globPromise(
       `${__dirname}/../Buttons/*/*{.ts,.js}`
     );
-    buttonFiles.forEach(async (filePath) => {
+    for (const filePath of buttonFiles) {
       const button: ButtonType = await this.importFile(filePath);
       if (!button.id) return;
 
       this.buttons.set(button.id, button);
-    });
+    }
 
     // Modals
     const modalFiles = await globPromise(`${__dirname}/../Modals/*/*{.ts,.js}`);
-    modalFiles.forEach(async (filePath) => {
+    for (const filePath of modalFiles) {
       const modal: ModalType = await this.importFile(filePath);
       if (!modal.id) return;
 
       this.modals.set(modal.id, modal);
-    });
+    }
 
     // Event
     const eventFiles = await globPromise(`${__dirname}/../Events/*{.ts,.js}`);
-    eventFiles.forEach(async (filePath) => {
+    for (const filePath of eventFiles) {
       const event: Event<keyof ClientEvents> = await this.importFile(filePath);
       this.on(event.event, event.run);
-    });
+    }
   }
 }
