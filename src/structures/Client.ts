@@ -14,6 +14,8 @@ import { modlogs } from '../utils/functions/modLogs';
 import { Event } from './Event';
 import { ButtonType } from '../typings/Button';
 import { ModalType } from '../typings/Modal';
+import { UserContextType } from '../typings/UserContext';
+import { MessageContextType } from '../typings/MessageContext';
 
 const globPromise = promisify(glob);
 
@@ -21,6 +23,8 @@ export class ExtendedClient extends Client {
   buttons: Collection<string, ButtonType> = new Collection();
   commands: Collection<string, CommandType> = new Collection();
   modals: Collection<string, ModalType> = new Collection();
+  userContexts: Collection<string, UserContextType> = new Collection();
+  messageContexts: Collection<string, MessageContextType> = new Collection();
   config = import('../Configuration/config.json');
   modLogs = modlogs;
 
@@ -32,6 +36,7 @@ export class ExtendedClient extends Client {
         GatewayIntentBits.GuildBans,
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildPresences,
         GatewayIntentBits.MessageContent,
       ],
       partials: [
@@ -51,41 +56,60 @@ export class ExtendedClient extends Client {
     return (await import(filePath))?.default;
   }
 
-  async registerCommands({ commands, guildId }: RegisterCommandsOptions) {
-    if (guildId) {
-      this.guilds.cache.get(guildId)?.commands.set(commands);
-      console.log(`Registering commands to ${guildId}`);
-    } else {
-      this.application?.commands.set(commands);
-      console.log('Registering global commands.');
-    }
+  async registerCommands({ commands }: RegisterCommandsOptions) {
+    this.application?.commands.set(commands);
+    console.log('Registering global commands.');
   }
 
   async registerModules() {
     // Commands
-    const slashCommands: ApplicationCommandDataResolvable[] = [];
-    const commandFiles = await globPromise(
-      `${__dirname}/../Commands/*/*{.ts,.js}`
+    const commands: ApplicationCommandDataResolvable[] = [];
+    const slashCommandFiles = await globPromise(
+      `${__dirname}/../Commands/Slash/*/*{.ts,.js}`
+    );
+    const userContextFiles = await globPromise(
+      `${__dirname}/../Commands/User Contexts/*/*{.ts,.js}`
+    );
+    const messageContextFiles = await globPromise(
+      `${__dirname}/../Commands/Message Contexts/*/*{.ts,.js}`
     );
 
-    commandFiles.forEach(async (filePath) => {
+    slashCommandFiles.forEach(async (filePath) => {
       const command: CommandType = await this.importFile(filePath);
       if (!command.name) return;
 
       this.commands.set(command.name, command);
-      slashCommands.push(command);
+      commands.push(command);
+    });
+
+    userContextFiles.forEach(async (filePath) => {
+      const userContext: UserContextType = await this.importFile(filePath);
+      if (!userContext.name) return;
+
+      this.userContexts.set(userContext.name, userContext);
+      commands.push(userContext);
+    });
+
+    messageContextFiles.forEach(async (filePath) => {
+      const messageContext: MessageContextType = await this.importFile(
+        filePath
+      );
+      if (!messageContext.name) return;
+
+      this.messageContexts.set(messageContext.name, messageContext);
+      commands.push(messageContext);
     });
 
     this.on('ready', () => {
       this.registerCommands({
-        commands: slashCommands,
+        commands,
         guildId: process.env.guildId,
       });
     });
 
     // Buttons
     const buttonFiles = await globPromise(
-      `${__dirname}/../Buttons/*/*{.ts,.js}`
+      `${__dirname}/../Components/Buttons/*/*{.ts,.js}`
     );
     for (const filePath of buttonFiles) {
       const button: ButtonType = await this.importFile(filePath);
@@ -95,7 +119,9 @@ export class ExtendedClient extends Client {
     }
 
     // Modals
-    const modalFiles = await globPromise(`${__dirname}/../Modals/*/*{.ts,.js}`);
+    const modalFiles = await globPromise(
+      `${__dirname}/../Components/Modals/*/*{.ts,.js}`
+    );
     for (const filePath of modalFiles) {
       const modal: ModalType = await this.importFile(filePath);
       if (!modal.id) return;

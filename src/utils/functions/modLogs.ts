@@ -1,4 +1,5 @@
 import {
+  ButtonInteraction,
   ColorResolvable,
   CommandInteraction,
   EmbedBuilder,

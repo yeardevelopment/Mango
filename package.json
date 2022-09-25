@@ -1,6 +1,6 @@
 {
   "name": "mango",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -29,8 +29,8 @@
     "captcha-canvas": "^3.2.1",
     "chalk": "^4.1.2",
     "chartjs-node-canvas": "^4.1.6",
-    "discord-html-transcripts": "^2.6.1",
-    "discord.js": "^14.4.0",
+    "discord-html-transcripts": "^3.0.0",
+    "discord.js": "^14.5.0",
     "dotenv": "^16.0.2",
     "glob": "^8.0.3",
     "mc-names": "^1.2.6",
@@ -42,7 +42,7 @@
   "devDependencies": {
     "@types/glob": "^8.0.0",
     "@types/ms": "^0.7.31",
-    "@types/node": "^18.7.19",
+    "@types/node": "^18.7.21",
     "@types/request": "^2.48.8",
     "@types/ws": "^8.5.3",
     "ts-node": "^10.9.1",

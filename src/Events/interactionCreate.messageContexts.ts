@@ -1,8 +1,6 @@
 import {
   Collection,
-  CommandInteractionOptionResolver,
   EmbedBuilder,
-  InteractionType,
   PermissionsBitField,
   CommandInteraction,
 } from 'discord.js';
@@ -11,16 +9,16 @@ import chalk from 'chalk';
 const Timeout = new Collection();
 import { client } from '..';
 import { Event } from '../structures/Event';
-import { ExtendedInteraction } from '../typings/Command';
+import { ExtendedInteraction } from '../typings/UserContext';
 import premiumGuilds from '../utils/models/premiumGuilds';
 import { capitalizeWords } from '../utils/functions/capitalizeWords';
 import errors from '../utils/models/errors';
 
 export default new Event('interactionCreate', async (interaction) => {
   if (!interaction.guild) return; // Interactions can only be called used within a guild
-  if (!interaction.isChatInputCommand()) return;
+  if (!interaction.isMessageContextMenuCommand()) return;
 
-  const command = client.commands.get(interaction.commandName);
+  const command = client.messageContexts.get(interaction.commandName);
   if (!command)
     return interaction.reply({
       embeds: [
@@ -93,9 +91,8 @@ export default new Event('interactionCreate', async (interaction) => {
 
   try {
     command.run({
-      args: interaction.options as CommandInteractionOptionResolver,
       client,
-      interaction: interaction as ExtendedInteraction,
+      interaction,
     });
     console.log(
       `${interaction.user.tag} (${

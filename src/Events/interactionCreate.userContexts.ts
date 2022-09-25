@@ -11,17 +11,17 @@ import chalk from 'chalk';
 const Timeout = new Collection();
 import { client } from '..';
 import { Event } from '../structures/Event';
-import { ExtendedInteraction } from '../typings/Command';
+import { ExtendedInteraction } from '../typings/UserContext';
 import premiumGuilds from '../utils/models/premiumGuilds';
 import { capitalizeWords } from '../utils/functions/capitalizeWords';
 import errors from '../utils/models/errors';
 
 export default new Event('interactionCreate', async (interaction) => {
   if (!interaction.guild) return; // Interactions can only be called used within a guild
-  if (!interaction.isChatInputCommand()) return;
+  if (!interaction.isUserContextMenuCommand()) return;
 
-  const command = client.commands.get(interaction.commandName);
-  if (!command)
+  const context = client.userContexts.get(interaction.commandName);
+  if (!context)
     return interaction.reply({
       embeds: [
         new EmbedBuilder()
@@ -37,7 +37,7 @@ export default new Event('interactionCreate', async (interaction) => {
       ephemeral: true,
     });
 
-  if (command.ownerOnly) {
+  if (context.ownerOnly) {
     if (!(await client.config).owners.includes(interaction.user.id))
       return interaction.reply({
         content: '⚠️ You cannot use this command.',
@@ -45,7 +45,7 @@ export default new Event('interactionCreate', async (interaction) => {
       });
   }
 
-  if (command.premiumOnly) {
+  if (context.premiumOnly) {
     const data = await premiumGuilds.findOne({ Guild: interaction.guildId });
     if (Date.now() > data.Expire) {
       data.delete();
@@ -63,14 +63,14 @@ export default new Event('interactionCreate', async (interaction) => {
   }
 
   if (
-    command.permissions &&
+    context.permissions &&
     !(interaction.member.permissions as PermissionsBitField).has(
-      command.permissions
+      context.permissions
     )
   )
     return interaction.reply({
       content: `**✋ Hold on!**\nYou need to have \`${capitalizeWords({
-        string: (command.permissions as string)
+        string: (context.permissions as string)
           .replaceAll(/([A-Z])/g, ' $1')
           .toLowerCase()
           .replaceAll('guild', 'server')
@@ -79,11 +79,11 @@ export default new Event('interactionCreate', async (interaction) => {
       ephemeral: true,
     });
 
-  if (command.timeout) {
-    if (Timeout.has(`${command.name}${interaction.user.id}`))
+  if (context.timeout) {
+    if (Timeout.has(`${context.name}${interaction.user.id}`))
       return await interaction.reply({
         content: `**🛑 Chill there!**\nYou are on a \`${ms(
-          (Timeout.get(`${command.name}${interaction.user.id}`) as number) -
+          (Timeout.get(`${context.name}${interaction.user.id}`) as number) -
             Date.now(),
           { long: true }
         )}\` cooldown.`,
@@ -92,25 +92,24 @@ export default new Event('interactionCreate', async (interaction) => {
   }
 
   try {
-    command.run({
-      args: interaction.options as CommandInteractionOptionResolver,
+    context.run({
       client,
       interaction: interaction as ExtendedInteraction,
     });
     console.log(
       `${interaction.user.tag} (${
         interaction.user.id
-      }) executed ${chalk.bold.green(command.name)}. Interaction ID: ${
+      }) executed ${chalk.bold.green(context.name)}. Interaction ID: ${
         interaction.id
       }`
     );
     Timeout.set(
-      `${command.name}${interaction.user.id}`,
-      Date.now() + command.timeout
+      `${context.name}${interaction.user.id}`,
+      Date.now() + context.timeout
     );
     setTimeout(() => {
-      Timeout.delete(`${command.name}${interaction.user.id}`);
-    }, command.timeout);
+      Timeout.delete(`${context.name}${interaction.user.id}`);
+    }, context.timeout);
   } catch (error) {
     await saveError({ error, interaction });
   }
