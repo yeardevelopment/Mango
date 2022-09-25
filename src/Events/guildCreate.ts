@@ -34,7 +34,7 @@ export default new Event('guildCreate', async (guild) => {
       new EmbedBuilder()
         .setTitle(':pray: Thank you for inviting me!')
         .setDescription(
-          "Mango is focused on efficiency and performance. It's designed to be an easy-to-use and user-friendly bot to provide you with the best experience. We aim to make it more and more comfortable for you to use our Services and we welcome any suggestions from you in our [Discord server](https://discord.gg/B8Fs6Qe6Eq).\n\n**It is highly recommended to set up the bot now using the `/set` command.**"
+          "Mango is focused on efficiency and performance. It's designed to be an easy-to-use and user-friendly bot to provide you with the best experience. We aim to make it more and more comfortable for you to use our Services and we welcome any suggestions from you in our [Discord server](https://discord.gg/B8Fs6Qe6Eq)."
         )
         .setColor('#ea664b')
         .setImage('attachment://thankyou.png')
