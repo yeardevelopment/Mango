@@ -40,7 +40,7 @@ export default new Command({
     },
   ],
   permissions: 'ManageGuild',
-  timeout: 10000,
+  timeout: 5000,
   run: async ({ interaction, args }) => {
     switch (args.getSubcommand()) {
       case 'toggle': {

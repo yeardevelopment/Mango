@@ -7,7 +7,7 @@ import { ChartJSNodeCanvas } from 'chartjs-node-canvas';
 export default new Command({
   name: 'status',
   description: 'Displays bot statistics',
-  timeout: 5000,
+  timeout: 7500,
   ownerOnly: true,
   run: async ({ interaction, client }) => {
     const docs = await DB.findOne({

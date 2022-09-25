@@ -62,7 +62,7 @@ export default new Command({
   ],
   description: 'Manages premium guilds',
   ownerOnly: true,
-  timeout: 10000,
+  timeout: 5000,
   run: async ({ interaction, client, args }) => {
     switch (args.getSubcommand()) {
       case 'add': {

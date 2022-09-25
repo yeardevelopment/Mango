@@ -24,7 +24,7 @@ export default new Command({
     },
   ],
   permissions: 'ModerateMembers',
-  timeout: 10000,
+  timeout: 5000,
   run: async ({ interaction, client, args }) => {
     let target = args.getMember('member');
 

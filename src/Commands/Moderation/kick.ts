@@ -23,7 +23,7 @@ export default new Command({
     },
   ],
   permissions: 'KickMembers',
-  timeout: 10000,
+  timeout: 5000,
   run: async ({ interaction, client, args }) => {
     let target = interaction.options.getMember('member');
 

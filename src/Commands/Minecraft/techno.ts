@@ -35,7 +35,7 @@ export default new Command({
       required: true,
     },
   ],
-  timeout: 10000,
+  timeout: 5000,
   run: async ({ interaction, args }) => {
     const username = args.getString('username');
 
