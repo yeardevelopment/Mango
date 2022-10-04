@@ -24,7 +24,7 @@ export default new Command({
             text: 'By using our Services, you agree to our Privacy Policy and Terms of Service.',
           })
           .setColor('#ea664b')
-          .setThumbnail('attachment://privacy.png'),
+          .setImage('attachment://privacy.png'),
       ],
       files: [
         new AttachmentBuilder(
