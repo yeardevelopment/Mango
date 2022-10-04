@@ -18,7 +18,7 @@ export default new Command({
         new EmbedBuilder()
           .setTitle('We Care About Your Privacy')
           .setDescription(
-            'We respect your privacy. Your personal data is encrypted and stored safely.\nIf you want to erase your data, you can forward a request to our email.'
+            'We respect your privacy. Your personal data is encrypted and stored safely.\nIf you want to erase your data, you can forward a request to our email: `yearlegal@gmail.com`.'
           )
           .setFooter({
             text: 'By using our Services, you agree to our Privacy Policy and Terms of Service.',
@@ -36,11 +36,6 @@ export default new Command({
       ],
       components: [
         new ActionRowBuilder().addComponents([
-          new ButtonBuilder()
-            .setLabel('Email Us')
-            .setEmoji({ name: 'email', id: '1023910440322998303' })
-            .setStyle(ButtonStyle.Link)
-            .setURL('mailto:yearlegal@gmail.com'),
           new ButtonBuilder()
             .setLabel('Terms & Conditions')
             .setEmoji({ name: 'terms', id: '996733685313323059' })
