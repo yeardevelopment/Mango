@@ -21,7 +21,7 @@ For support, join our [Official Discord Support server](https://discord.gg/B8Fs6
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Affero General Public License for more details.
 
-## Acknowledgements
+## Acknowledgments
 
 - [canvas](https://github.com/Automattic/node-canvas)
 - [captcha-canvas](https://github.com/Shashank3736/captcha-canvas)

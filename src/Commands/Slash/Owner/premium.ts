@@ -6,7 +6,7 @@ import Discord, {
 import premiumGuilds from '../../../utils/models/premiumGuilds';
 
 export default new Command({
-  name: 'premium',
+  name: 'manage-premium',
   options: [
     {
       name: 'add',
