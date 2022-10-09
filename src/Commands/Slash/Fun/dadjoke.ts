@@ -12,7 +12,7 @@
 //       url: 'https://icanhazdadjoke.com/',
 //       headers: {
 //         Accept: 'application/json',
-//         'User-Agent': 'Discord Bot (https://github.com/eightless/Mango)',
+//         'User-Agent': 'Discord Bot (https://github.com/yeardevelopment/Mango)',
 //       },
 //     };
 
