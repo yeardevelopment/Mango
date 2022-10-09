@@ -1,5 +1,5 @@
 import { Command } from '../../../structures/Command';
-import Discord, {
+import {
   ButtonStyle,
   Message,
   ButtonBuilder,
@@ -76,12 +76,12 @@ export default new Command({
 
     let reason = args.getString('reason') || 'No reason provided.';
 
-    let proceedButton = new Discord.ButtonBuilder()
+    let proceedButton = new ButtonBuilder()
       .setStyle(ButtonStyle.Success)
       .setEmoji({ name: 'success', id: '996733680422752347' })
       .setLabel('Proceed')
       .setCustomId('proceed');
-    let cancelButton = new Discord.ButtonBuilder()
+    let cancelButton = new ButtonBuilder()
       .setStyle(ButtonStyle.Danger)
       .setEmoji({ name: 'cancel', id: '996733678279462932' })
       .setLabel(`Cancel`)
@@ -142,7 +142,7 @@ export default new Command({
     });
 
     collector.on('end', async () => {
-      let row = new Discord.ActionRowBuilder().addComponents([
+      let row = new ActionRowBuilder().addComponents([
         ButtonBuilder.from(proceedButton).setDisabled(),
         ButtonBuilder.from(cancelButton).setDisabled(),
       ]);

@@ -2,8 +2,6 @@ import { Command } from '../../../structures/Command';
 import {
   EmbedBuilder,
   ApplicationCommandOptionType,
-  UserFlags,
-  AttachmentBuilder,
   Role,
   PermissionsBitField,
   PermissionsString,
@@ -30,7 +28,6 @@ export default new Command({
 
     const mentionable = (target as Role).mentionable !== true ? 'No' : 'Yes';
     const hoisted = (target as Role).hoist !== true ? 'No' : 'Yes';
-    const managed = (target as Role).editable !== true ? 'No' : 'Yes';
 
     let color = '';
     if ((target as Role).hexColor === '#000000') color = 'None';

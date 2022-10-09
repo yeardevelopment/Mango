@@ -1,5 +1,5 @@
 import { Command } from '../../../structures/Command';
-import Discord, {
+import {
   ApplicationCommandOptionType,
   GuildMember,
   GuildMemberRoleManager,

@@ -40,7 +40,7 @@ export default new Button({
     await tickets.updateOne({ ID: interaction.channelId }, { Closed: true });
     const attachment = await createTranscript(interaction.channel, {
       limit: -1,
-      returnType: ExportReturnType.BUFFER,
+      returnType: ExportReturnType.Attachment,
       saveImages: true,
       filename: `transcript-${interaction.channel.name}.html`,
     });

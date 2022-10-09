@@ -9,7 +9,6 @@ import chalk from 'chalk';
 const Timeout = new Collection();
 import { client } from '..';
 import { Event } from '../structures/Event';
-import { ExtendedInteraction } from '../typings/UserContext';
 import premiumGuilds from '../utils/models/premiumGuilds';
 import { capitalizeWords } from '../utils/functions/capitalizeWords';
 import errors from '../utils/models/errors';

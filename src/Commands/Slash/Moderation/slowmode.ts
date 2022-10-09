@@ -1,8 +1,5 @@
 import { Command } from '../../../structures/Command';
-import Discord, {
-  ApplicationCommandOptionType,
-  EmbedBuilder,
-} from 'discord.js';
+import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
 import ms from 'ms';
 
 export default new Command({

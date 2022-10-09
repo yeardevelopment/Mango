@@ -1,9 +1,5 @@
 import { Command } from '../../../structures/Command';
-import {
-  EmbedBuilder,
-  ApplicationCommandOptionType,
-  UserFlags,
-} from 'discord.js';
+import { EmbedBuilder, ApplicationCommandOptionType } from 'discord.js';
 import 'dotenv/config';
 import { listRoles } from '../../../utils/functions/listRoles';
 
@@ -23,14 +19,22 @@ export default new Command({
     await interaction.deferReply();
     const target = args.getUser('user') || interaction.user;
     await target.fetch();
-    await target.fetchFlags();
     const isMember = interaction.guild.members.cache.get(target.id);
 
     const statusType = {
-      idle: '<:idle:1023574537708769350>',
-      dnd: '<:dnd:1023574534386896936>',
-      online: '<:online:1023574536089767946>',
-      invisible: '<:offline:1023574532155519006>',
+      idle: 'Idle',
+      dnd: 'Do Not Disturb',
+      online: 'Online',
+      invisible: 'Offline',
+    };
+
+    const flags = {
+      CertifiedModerator: '<:certifiied_moderator:998581289370271764>',
+      Hypesquad: '<:hypesquad_events:998581293338067054>',
+      HypeSquadOnlineHouse1: '<:hypesquad_bravery:998581300342575185>',
+      HypeSquadOnlineHouse2: '<:hypesquad_brilliance:998581291828138014>',
+      HypeSquadOnlineHouse3: '<:hypesquad_balance:998581297817583686>',
+      PremiumEarlySupporter: '<:early_supporter:998583447461298276>',
     };
 
     const embed = new EmbedBuilder()
@@ -44,29 +48,9 @@ export default new Command({
       .setFooter({ text: `ID: ${target.id}` })
       .setDescription(
         `${
-          target.flags.has(UserFlags.CertifiedModerator)
-            ? '<:certifiied_moderator:998581289370271764>'
-            : ''
-        } ${
-          target.flags.has(UserFlags.Hypesquad)
-            ? '<:hypesquad_events:998581293338067054>'
-            : ''
-        } ${
-          target.flags.has(UserFlags.HypeSquadOnlineHouse1)
-            ? '<:hypesquad_bravery:998581300342575185>'
-            : ''
-        } ${
-          target.flags.has(UserFlags.HypeSquadOnlineHouse2)
-            ? '<:hypesquad_brilliance:998581291828138014>'
-            : ''
-        } ${
-          target.flags.has(UserFlags.HypeSquadOnlineHouse3)
-            ? '<:hypesquad_balance:998581297817583686>'
-            : ''
-        } ${
-          target.flags.has(UserFlags.PremiumEarlySupporter)
-            ? '<:early_supporter:998583447461298276>'
-            : ''
+          target.flags.toArray().length
+            ? target.flags.toArray().map((flag) => `${flags[flag]} `)
+            : 'None'
         } ${
           target.displayAvatarURL().endsWith('.gif') ||
           target.bannerURL() ||
@@ -85,8 +69,10 @@ export default new Command({
                 isMember.joinedTimestamp / 1000
               )}:R>)\n**Status**: ${
                 statusType[isMember.presence?.status || 'invisible']
-              }\n**Activity**: ${
-                isMember.presence?.activities[1] || 'None'
+              }\n**Activities**: ${
+                isMember.presence?.activities
+                  .map((activity) => activity.name)
+                  .join(', ') || 'None'
               }\n**Roles**: ${listRoles({ member: isMember })}`
             : ''
         }\n**Link**: [Click here ›](https://lookup.guru/${target.id})`

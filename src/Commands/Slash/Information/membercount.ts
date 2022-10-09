@@ -6,7 +6,7 @@ export default new Command({
   description:
     "Displays the server's members count along with online members count",
   timeout: 5000,
-  run: async ({ interaction, client }) => {
+  run: async ({ interaction }) => {
     await interaction.guild.members
       .fetch({ withPresences: true })
       .then((fetchedMembers) => {

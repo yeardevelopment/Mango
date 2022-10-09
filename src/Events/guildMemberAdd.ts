@@ -1,5 +1,5 @@
 import db from '../utils/models/welcomeMessages';
-import { AttachmentBuilder, EmbedBuilder, TextBasedChannel } from 'discord.js';
+import { AttachmentBuilder, TextBasedChannel } from 'discord.js';
 import { Event } from '../structures/Event';
 import { client } from '..';
 import Canvas from 'canvas';
@@ -30,20 +30,16 @@ export default new Event('guildMemberAdd', async (member) => {
     const avatar = await Canvas.loadImage(
       member.user.displayAvatarURL({ extension: 'jpg' })
     );
-    let fontSizeFormula: number;
-    if (member.user.tag.length >= 14) {
-      fontSizeFormula = -4 * member.user.tag.length + 135;
-      ctx.font = `${fontSizeFormula}px Montserrat`;
-      ctx.fillStyle = '#ffffff';
-      ctx.textAlign = 'center';
-      ctx.fillText(member.user.tag, 339, 570);
-    } else {
-      fontSizeFormula = -7 * member.user.tag.length + 149;
-      ctx.font = `${fontSizeFormula}px Montserrat`;
-      ctx.fillStyle = '#ffffff';
-      ctx.textAlign = 'center';
-      ctx.fillText(member.user.tag, 339, 570);
-    }
+
+    let fontsize: number = 85;
+    do {
+      fontsize--;
+      ctx.font = `${fontsize}px Montserrat`;
+    } while (ctx.measureText(member.user.tag).width > 550);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'center';
+    ctx.fillText(member.user.tag, 339, 570);
 
     ctx.font = '195px Panton';
     ctx.fillStyle = '#ffffff';

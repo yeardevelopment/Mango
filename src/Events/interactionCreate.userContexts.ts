@@ -1,8 +1,6 @@
 import {
   Collection,
-  CommandInteractionOptionResolver,
   EmbedBuilder,
-  InteractionType,
   PermissionsBitField,
   CommandInteraction,
 } from 'discord.js';

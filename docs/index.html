@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="main.js"></script>
+    <script
+      src="https://kit.fontawesome.com/c8e4d183c2.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="style.css" />
+    <title>Mango | The multifunctional bot</title>
+  </head>
+  <body>
+    <section id="about-bot">
+      <nav>
+        <div class="bot__logo"><img src="/assets/logo.png" alt="" />Mango</div>
+
+        <ul class="nav__link--list">
+          <li>
+            <a
+              class="nav__link--anchor link__hover-effect--orange"
+              href="#features"
+              >Features</a
+            >
+          </li>
+          <li
+            class="nav__link--anchor link__hover-effect--orange"
+            onclick="inProgress()"
+          >
+            Privacy
+          </li>
+          <li
+            class="nav__link--anchor link__hover-effect--orange"
+            onclick="inProgress()"
+          >
+            Terms
+          </li>
+          <li>
+            <a
+              target="_blank"
+              class="nav__link--anchor link__hover-effect--orange"
+              href="https://discord.com/api/oauth2/authorize?client_id=950781887230664725&permissions=1494716116054&scope=bot%20applications.commands"
+              >Invite</a
+            >
+          </li>
+          <li class="click">
+            <a class="nav__link--anchor" href="#" onclick="toggleContrast()"
+              ><i class="fas fa-adjust"></i
+            ></a>
+          </li>
+        </ul>
+      </nav>
+      <header class="header">
+        <div class="flex flex-1">
+          <div class="about-bot__info row">
+            <div class="about-bot__info--container">
+              <h1 class="about-bot__info--title">Meet Mango</h1>
+              <div class="wrapper" style="font-size: 25px">
+                <p class="about-bot__info--slogan">A</p>
+                <div class="words">
+                  <span>better</span>
+                  <span>simpler</span>
+                  <span>faster</span>
+                  <span>cooler</span>
+                  <span>comfier</span>
+                </div>
+                <p class="about-bot__info--slogan">way of server management.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button id="btnScrollToTop">
+          <a class="button-scroll" href="#"
+            ><i class="fas fa-angle-double-up"></i
+          ></a>
+        </button>
+      </header>
+    </section>
+
+    <section id="features">
+      <div class="container">
+        <h2 class="title">
+          Bot <strong class="text--orange">Features</strong>
+        </h2>
+        <div class="features__row">
+          <div class="features__col">
+            <i class="fa fa-bolt icon"></i>
+            <h3 class="sub__title">Fast</h3>
+            <p class="features__para">
+              Hosted on powerful and reliable hosting servers fully maintained
+              by us.
+            </p>
+          </div>
+          <div class="features__col">
+            <i class="fa fa-lock icon"></i>
+            <h3 class="sub__title">Secure</h3>
+            <p class="features__para">
+              We care about your security. Your data is stored encrypted in our
+              databases.
+            </p>
+          </div>
+          <div class="features__col">
+            <i class="fa fa-smile-o icon"></i>
+            <h3 class="sub__title">Happy Users</h3>
+            <p class="features__para">
+              Our bot left positive impressions with most users being one of the
+              most comfortable and intuitive.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- <section id="commands">
+      <h2 class="title">All <strong class="text--orange">Commands</strong></h2>
+      <div class="accordion">
+        <div>
+          <input
+            type="radio"
+            name="example_accordion"
+            id="Moderation"
+            class="accordion__input"
+          />
+          <label for="Moderation" class="accordion__label">Moderation</label>
+          <div class="accordion__content">
+            <p class="accordion__text">
+              <strong class="text--orange">ban</strong> - Bans a user from the
+              server
+              <br />
+              <strong class="text--orange">kick</strong> - Kicks a user from the
+              server
+              <br />
+              <strong class="text--orange">lock</strong> - Locks a specified
+              channel
+              <br />
+              <strong class="text--orange">role</strong> - Gives a user the
+              specified role
+              <br />
+              <strong class="text--orange">slowmode</strong> - Sets the slowmode
+              of a channel
+              <br />
+              <strong class="text--orange">unlock</strong> - Unlocks a specified
+              channel
+              <br />
+              <strong class="text--orange">unmute</strong> - Unmutes a user
+              <br />
+              <strong class="text--orange">mute</strong> - Mutes a user
+              <br />
+              <strong class="text--orange">warn</strong> - Warns a user
+              <br />
+              <strong class="text--orange">clear</strong> - clears a specified
+              amount of messages
+            </p>
+          </div>
+        </div>
+        <div>
+          <input
+            type="radio"
+            name="example_accordion"
+            id="Utility"
+            class="accordion__input"
+          />
+          <label for="Utility" class="accordion__label">Utility</label>
+          <div class="accordion__content">
+            <p class="accordion__text">
+              <strong class="text--orange">8ball</strong> - Ask a question to
+              the magic 8Ball.
+              <br />
+              <strong class="text--orange">asciiArt</strong> - Displays an ascii
+              art image.
+              <br />
+              <strong class="text--orange">avatar</strong>avatar - Displays the
+              avatar of a user.
+              <br />
+              <strong class="text--orange">help</strong> - Shows all the
+              commands
+              <br />
+              <strong class="text--orange">meme</strong> - Shows a meme from
+              reddit
+              <br />
+              <strong class="text--orange">serverinfo</strong> - Shows
+              information about a server
+              <br />
+              <strong class="text--orange">userinfo</strong> - Shows information
+              about a user
+            </p>
+          </div>
+        </div>
+        <div>
+          <input
+            type="radio"
+            name="example_accordion"
+            id="Systems"
+            class="accordion__input"
+          />
+          <label for="Systems" class="accordion__label">Systems</label>
+          <div class="accordion__content">
+            <p class="accordion__text">
+              <strong class="text--orange">ticket</strong> - Adds a member to a
+              ticket
+              <br />
+              <strong class="text--orange">ticket-setup</strong> - Sets up the
+              ticket system
+              <br />
+              <strong class="text--orange">voice</strong> - Control your private
+              voice channel
+              <br />
+              <strong class="text--orange">afk</strong> - Sets your status to
+              afk
+            </p>
+          </div>
+        </div>
+      </div>
+    </section> -->
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer__row">
+          <div class="footer__socials">
+            <a class="footer__socials-link" href="https://discord.gg/jKdyKUvsVk"
+              ><i class="fab fa-discord"></i
+            ></a>
+            <a
+              class="footer__socials-link"
+              href="https://discord.com/api/oauth2/authorize?client_id=950781887230664725&permissions=1494716116054&scope=bot%20applications.commands"
+              ><i class="fas fa-link"></i
+            ></a>
+          </div>
+          <div class="footer__list">
+            <a href="#" class="footer__link link__hover-effect--purple">Home</a>
+            <a href="#features" class="footer__link link__hover-effect--purple"
+              >Features</a
+            >
+            <a
+              href="#about"
+              class="footer__link link__hover-effect--purple"
+              onclick="toggleModal()"
+              >About</a
+            >
+          </div>
+          <div class="footer__copyright">
+            &copy; 2022 YEAR Development LLC<br />All rights reserved.<br /><br />Designed
+            by
+            <a
+              target="_blank"
+              href="https://discord.com/users/713008151661772812"
+              ><span class="text--orange">8less#0001</span></a
+            >.
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

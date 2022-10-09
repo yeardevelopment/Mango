@@ -1,9 +1,5 @@
 import { Command } from '../../../structures/Command';
-import Discord, {
-  ApplicationCommandOptionType,
-  GuildMember,
-  GuildMemberRoleManager,
-} from 'discord.js';
+import { ApplicationCommandOptionType, GuildMember } from 'discord.js';
 
 export default new Command({
   name: 'unmute',

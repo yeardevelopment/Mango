@@ -4,7 +4,7 @@ import { Event } from '../structures/Event';
 import { client } from '..';
 
 export default new Event('messageDelete', async (message) => {
-  if (message.author.bot || !message.guild) return;
+  if (message.author?.bot || !message.guild) return;
 
   const data = await messageLogs.findOne({
     Guild: message.guildId,

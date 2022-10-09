@@ -1,6 +1,10 @@
 # Mango
 
-An uprising multifunctional Discord bot written in TypeScript. Released.
+Meet Mango – the brand new Discord bot with tickets, verification, moderation, welcome messages, and many more!
+
+## Invite
+
+You can invite this bot to your server here and now. [Click here](https://discord.com/api/oauth2/authorize?client_id=950781887230664725&permissions=1494716116054&scope=applications.commands%20bot) to invite.
 
 ## Support
 
@@ -23,6 +27,7 @@ For support, join our [Official Discord Support server](https://discord.gg/B8Fs6
 
 ## Acknowledgments
 
+- [axios](https://github.com/axios/axios)
 - [canvas](https://github.com/Automattic/node-canvas)
 - [captcha-canvas](https://github.com/Shashank3736/captcha-canvas)
 - [chalk](https://github.com/chalk/chalk)
@@ -31,6 +36,7 @@ For support, join our [Official Discord Support server](https://discord.gg/B8Fs6
 - [dotenv](https://github.com/motdotla/dotenv)
 - [glob](https://github.com/isaacs/node-glob)
 - [mc-names](https://github.com/tekoh/mc-names)
+- [minecraft-server-util](https://github.com/PassTheMayo/minecraft-server-util)
 - [mongoose](https://github.com/Automattic/mongoose)
 - [ms](https://github.com/vercel/ms)
 - [request](https://github.com/request/request)

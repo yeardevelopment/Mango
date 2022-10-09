@@ -1,8 +1,7 @@
 import { Command } from '../../../structures/Command';
-import Discord, {
+import {
   ApplicationCommandOptionType,
   GuildMember,
-  GuildMemberRoleManager,
 } from 'discord.js';
 import ms from 'ms';
 

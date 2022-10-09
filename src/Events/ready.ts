@@ -1,4 +1,4 @@
-import Discord, { ActivityType } from 'discord.js';
+import { ActivityType } from 'discord.js';
 import mongoose from 'mongoose';
 import chalk from 'chalk';
 import 'dotenv/config';
@@ -13,7 +13,13 @@ export default new Event('ready', async (client) => {
   console.log(
     `The bot is ready to work.\nLogged in as ${client.user.tag}\nAPI Latency: ${client.ws.ping} ms\n`
   );
-  const arrayOfStatuses = [`Release 🎉`, `${client.guilds.cache.size} servers`];
+  const arrayOfStatuses = [
+    `Release 🎉`,
+    `${client.guilds.cache.size} servers`,
+    'Report System',
+    'Verification System',
+    'Ticket System',
+  ];
   let index = 0;
   setInterval(() => {
     if (index === arrayOfStatuses.length) index = 0;

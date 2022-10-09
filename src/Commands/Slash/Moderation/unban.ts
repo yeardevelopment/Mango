@@ -1,5 +1,5 @@
 import { Command } from '../../../structures/Command';
-import Discord, { ApplicationCommandOptionType } from 'discord.js';
+import { ApplicationCommandOptionType } from 'discord.js';
 
 export default new Command({
   name: 'unban',
