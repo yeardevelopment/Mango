@@ -11,7 +11,7 @@ import tickets from '../../../utils/models/tickets';
 
 export default new Button({
   id: 'close',
-  
+
   run: async ({ interaction }) => {
     const ticketSystem = await ticket.findOne({
       Guild: interaction.guildId,
@@ -49,7 +49,7 @@ export default new Button({
           .setDescription(
             'Are you sure you want to close this ticket?\nThis action cannot be undone.'
           )
-          .setColor('#ff0000'),
+          .setColor('#e03c3c'),
       ],
       ephemeral: true,
       fetchReply: true,

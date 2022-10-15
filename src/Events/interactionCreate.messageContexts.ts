@@ -29,7 +29,7 @@ export default new Event('interactionCreate', async (interaction) => {
           .setDescription(
             `An error occurred while trying to execute the command`
           )
-          .setColor('#ff0000'),
+          .setColor('#2F3136'),
       ],
       ephemeral: true,
     });
@@ -53,7 +53,7 @@ export default new Event('interactionCreate', async (interaction) => {
             .setDescription(
               'This command only works within servers that are subscribed to Mango Premium. You can ask owners to subscribe to it.'
             )
-            .setColor('#ff0000'),
+            .setColor('#e03c3c'),
         ],
       });
     }
@@ -133,7 +133,8 @@ async function saveError({
               })
               .setDescription(
                 `There was an error executing the interaction. Please [contact us](https://discord.gg/QeKcwprdCY) with this error ID: \`${document.id}\`.`
-              ),
+              )
+              .setColor('#2F3136'),
           ],
         });
       } else {
@@ -146,7 +147,8 @@ async function saveError({
               })
               .setDescription(
                 `There was an error executing the interaction. Please [contact us](https://discord.gg/QeKcwprdCY) with the following error ID: \`${document.id}\`.`
-              ),
+              )
+              .setColor('#2F3136'),
           ],
         });
       }

@@ -33,7 +33,12 @@ export default new Button({
         ephemeral: true,
       });
 
-    (message as Message)?.delete();
+    await (message as Message)?.delete().catch(() => {
+      interaction.reply({
+        content: '⚠ Could not delete the message.',
+        ephemeral: true,
+      });
+    });
 
     interaction.reply({
       content:

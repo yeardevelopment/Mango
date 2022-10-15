@@ -122,7 +122,8 @@ async function saveError({
               })
               .setDescription(
                 `There was an error executing the interaction. Please [contact us](https://discord.gg/QeKcwprdCY) with this error ID: \`${document.id}\`.`
-              ),
+              )
+              .setColor('#2F3136'),
           ],
         });
       } else {
@@ -135,7 +136,8 @@ async function saveError({
               })
               .setDescription(
                 `There was an error executing the interaction. Please [contact us](https://discord.gg/QeKcwprdCY) with the following error ID: \`${document.id}\`.`
-              ),
+              )
+              .setColor('#2F3136'),
           ],
         });
       }

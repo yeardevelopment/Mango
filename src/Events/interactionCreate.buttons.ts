@@ -19,7 +19,7 @@ export default new Event('interactionCreate', async (interaction) => {
           .setDescription(
             `An error occurred while trying to execute the button`
           )
-          .setColor('#ff0000'),
+          .setColor('#2F3136'),
       ],
       ephemeral: true,
     });

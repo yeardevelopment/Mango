@@ -43,6 +43,7 @@ export default new Button({
       returnType: ExportReturnType.Attachment,
       saveImages: true,
       filename: `transcript-${interaction.channel.name}.html`,
+      poweredBy: true,
     });
     interaction.channel?.send({
       content: `Closing the ticket <t:${Math.floor(

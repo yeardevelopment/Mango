@@ -14,6 +14,16 @@ export default new Event('messageDelete', async (message) => {
 
   const Embed = new EmbedBuilder()
     .setTitle('📕 Message Deleted')
+    .setFields([
+      {
+        name: 'Content:',
+        value: `\`\`\`${
+          message.content.length > 1015
+            ? `${message.content.slice(0, 1015)}...`
+            : message.content
+        }\`\`\``,
+      },
+    ])
     .setColor('#da2c43')
     .setFooter({ text: `Message ID: ${message.id}` })
     .setTimestamp();
@@ -24,23 +34,11 @@ export default new Event('messageDelete', async (message) => {
         message.author.id
       })\n**Channel**: ${message.channel} (${
         message.channelId
-      })\n**Content**: ${
-        message.content.length > 2048
-          ? `${message.content.slice(0, 2048)}...`
-          : message.content || 'None'
-      }\n**Attachments**: ${message.attachments.map((a) => a.url)}`
+      })\n**Attachments**: ${message.attachments.map((a) => a.url)}`
     );
   } else {
     Embed.setDescription(
-      `**Sent By**: \`${message.author.tag}\` (${
-        message.author.id
-      })\n**Channel**: ${message.channel} (${
-        message.channelId
-      })\n**Content**: ${
-        message.content.length > 2048
-          ? `${message.content.slice(0, 2048)}...`
-          : message.content || 'None'
-      }`
+      `**Sent By**: \`${message.author.tag}\` (${message.author.id})\n**Channel**: ${message.channel} (${message.channelId})`
     );
   }
 

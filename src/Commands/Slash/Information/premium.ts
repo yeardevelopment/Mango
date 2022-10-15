@@ -8,7 +8,7 @@ export default new Command({
   run: async ({ interaction }) => {
     interaction.reply({
       content:
-        'We would be very thankful to you if you subscribed to Mango Premium. You can ask for instructions in our support server linked down below.',
+        'We would be grateful to you if you subscribed to Mango Premium. You can ask for instructions in our support server linked down below.',
       components: [
         new ActionRowBuilder().addComponents(
           new ButtonBuilder()

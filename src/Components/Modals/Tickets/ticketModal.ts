@@ -83,27 +83,21 @@ export default new Modal({
           name: 'Open Reason',
           value: interaction.fields.getTextInputValue('reason'),
         },
-        {
-          name: 'Note',
-          value: 'Please be patient, support will be with you shortly.',
-        },
       ])
+      .setFooter({
+        text: 'Your ticket should be handled shortly. In the meantime, you may describe your question in more detail.',
+      })
       .setColor('#ea664b');
     let close = new ButtonBuilder()
       .setStyle(ButtonStyle.Danger)
-      .setEmoji(`💾`)
-      .setLabel(`Save & Close`)
+      .setEmoji('💾')
+      .setLabel('Save & Close')
       .setCustomId('close');
     let lock = new ButtonBuilder()
       .setStyle(ButtonStyle.Primary)
-      .setEmoji(`🔒`)
-      .setLabel(`Lock/Unlock`)
+      .setEmoji('🔒')
+      .setLabel('Lock/Unlock')
       .setCustomId('lock');
-    let claim = new ButtonBuilder() // TODO: implement claim feature
-      .setStyle(ButtonStyle.Success)
-      .setEmoji(`🖐️`)
-      .setLabel(`Claim`)
-      .setCustomId('claim');
     let row = new ActionRowBuilder().addComponents([close, lock]);
     channel.send({
       content: `<@${interaction.user.id}>`,
@@ -134,7 +128,8 @@ async function saveError({
               })
               .setDescription(
                 `There was an error executing the interaction. Please [contact us](https://discord.gg/QeKcwprdCY) with this error ID: \`${document.id}\`.`
-              ),
+              )
+              .setColor('#2F3136'),
           ],
         });
       } else {
@@ -147,7 +142,8 @@ async function saveError({
               })
               .setDescription(
                 `There was an error executing the interaction. Please [contact us](https://discord.gg/QeKcwprdCY) with the following error ID: \`${document.id}\`.`
-              ),
+              )
+              .setColor('#2F3136'),
           ],
         });
       }

@@ -106,12 +106,12 @@ export default new Command({
           .setDescription(
             `You can apply this skin to your account by going to [your Minecraft Profile](https://www.minecraft.net/en-us/msaprofile/mygames/editskin) and uploading the image below.`
           )
-          .setImage('attachment://modified.png')
+          .setImage('attachment://technobladed.png')
           .setColor('#ea664b')
           .setFooter({ text: `Minecraft Username: ${player_name}` });
 
         const attachment = new AttachmentBuilder(canvas.toBuffer(), {
-          name: 'modified.png',
+          name: 'technobladed.png',
         });
         interaction.reply({
           embeds: [embed],

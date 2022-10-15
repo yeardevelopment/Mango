@@ -18,7 +18,7 @@ export default new Command({
       return interaction.reply({
         embeds: [
           new EmbedBuilder()
-            .setColor('#ff0000')
+            .setColor('#e03c3c')
             .setTitle('🛑 No Data Found')
             .setDescription('Please wait for the information to be collected.'),
         ],

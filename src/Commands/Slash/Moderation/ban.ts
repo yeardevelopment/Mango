@@ -92,7 +92,7 @@ export default new Command({
     ]);
     let embed = new EmbedBuilder()
       .setTitle(`⚠ Are you sure?`)
-      .setColor('#ff0000')
+      .setColor('#e03c3c')
       .setDescription(
         `Are you sure you want to ban **${target.tag}** with reason: \`${reason}\`?`
       )
@@ -125,7 +125,7 @@ export default new Command({
             Member: target,
             Action: 'Ban',
             Reason: reason,
-            Color: '#ff0000',
+            Color: '#e03c3c',
           },
           interaction
         );

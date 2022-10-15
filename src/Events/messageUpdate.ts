@@ -20,20 +20,26 @@ export default new Event('messageUpdate', async (oldMessage, newMessage) => {
         .setTitle('📘 Message Edited')
         .setURL(getLink({ value: newMessage }))
         .setDescription(
-          `**Edited By**: \`${newMessage.author.tag}\` (${
-            newMessage.author.id
-          })\n**Channel**: ${newMessage.channel} (${
-            newMessage.channelId
-          })\n**Before**: ${
-            oldMessage.content.length > 1024
-              ? `${oldMessage.content.slice(0, 1024)}...`
-              : oldMessage.content
-          }\n**After**: ${
-            newMessage.content.length > 1024
-              ? `${newMessage.content.slice(0, 1024)}...`
-              : newMessage.content
-          }`
+          `**Edited By**: \`${newMessage.author.tag}\` (${newMessage.author.id})\n**Channel**: ${newMessage.channel} (${newMessage.channelId})`
         )
+        .addFields([
+          {
+            name: 'Before:',
+            value: `\`\`\`${
+              oldMessage.content.length > 1015
+                ? `${oldMessage.content.slice(0, 1015)}...`
+                : oldMessage.content
+            }\`\`\``,
+          },
+          {
+            name: 'After:',
+            value: `\`\`\`${
+              newMessage.content.length > 1015
+                ? `${newMessage.content.slice(0, 1015)}...`
+                : newMessage.content
+            }\`\`\``,
+          },
+        ])
         .setColor('#53a9e9')
         .setFooter({ text: `Message ID: ${newMessage.id}` })
         .setTimestamp(),
