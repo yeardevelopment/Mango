@@ -8,7 +8,6 @@ import {
   ModalSubmitInteraction,
 } from 'discord.js';
 import { Button } from '../../../structures/Button';
-import errors from '../../../utils/models/errors';
 import ticket from '../../../utils/models/ticket';
 import tickets from '../../../utils/models/tickets';
 
@@ -60,9 +59,7 @@ export default new Button({
             '<:success:996733680422752347> Successfully locked the ticket.',
           ephemeral: true,
         });
-      } catch (error) {
-        await saveError({ error, interaction });
-      }
+      } catch (error) {}
     } else {
       try {
         await tickets.updateOne(
@@ -94,52 +91,7 @@ export default new Button({
             '<:success:996733680422752347> Successfully unlocked the ticket.',
           ephemeral: true,
         });
-      } catch (error) {
-        await saveError({ error, interaction });
-      }
+      } catch (error) {}
     }
   },
 });
-
-async function saveError({
-  error,
-  interaction,
-}: {
-  error: any;
-  interaction: ButtonInteraction;
-}) {
-  await errors
-    .create({ Error: error, User: interaction.user.id })
-    .then((document) => {
-      if (interaction.replied) {
-        interaction.editReply({
-          content: null,
-          embeds: [
-            new EmbedBuilder()
-              .setAuthor({
-                name: 'Error Occurred',
-                iconURL: 'https://i.imgur.com/n3QHYJM.png',
-              })
-              .setDescription(
-                `There was an error executing the interaction. Please [contact us](https://discord.gg/QeKcwprdCY) with this error ID: \`${document.id}\`.`
-              )
-              .setColor('#2F3136'),
-          ],
-        });
-      } else {
-        interaction.reply({
-          embeds: [
-            new EmbedBuilder()
-              .setAuthor({
-                name: 'Error Occurred',
-                iconURL: 'https://i.imgur.com/n3QHYJM.png',
-              })
-              .setDescription(
-                `There was an error executing the interaction. Please [contact us](https://discord.gg/QeKcwprdCY) with the following error ID: \`${document.id}\`.`
-              )
-              .setColor('#2F3136'),
-          ],
-        });
-      }
-    });
-}

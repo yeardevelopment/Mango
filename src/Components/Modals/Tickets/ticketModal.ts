@@ -7,7 +7,6 @@ import {
   ModalSubmitInteraction,
 } from 'discord.js';
 import { Modal } from '../../../structures/Modal';
-import errors from '../../../utils/models/errors';
 import ticket from '../../../utils/models/ticket';
 import tickets from '../../../utils/models/tickets';
 
@@ -70,9 +69,7 @@ export default new Modal({
         Claimed: false,
         Locked: false,
       });
-    } catch (error) {
-      await saveError({ error, interaction });
-    }
+    } catch (error) {}
     await interaction.editReply({
       content: `We will be right with you! ${channel}`,
     });
@@ -106,46 +103,3 @@ export default new Modal({
     });
   },
 });
-
-async function saveError({
-  error,
-  interaction,
-}: {
-  error: any;
-  interaction: ModalSubmitInteraction;
-}) {
-  await errors
-    .create({ Error: error, User: interaction.user.id })
-    .then((document) => {
-      if (interaction.replied) {
-        interaction.editReply({
-          content: null,
-          embeds: [
-            new EmbedBuilder()
-              .setAuthor({
-                name: 'Error Occurred',
-                iconURL: 'https://i.imgur.com/n3QHYJM.png',
-              })
-              .setDescription(
-                `There was an error executing the interaction. Please [contact us](https://discord.gg/QeKcwprdCY) with this error ID: \`${document.id}\`.`
-              )
-              .setColor('#2F3136'),
-          ],
-        });
-      } else {
-        interaction.reply({
-          embeds: [
-            new EmbedBuilder()
-              .setAuthor({
-                name: 'Error Occurred',
-                iconURL: 'https://i.imgur.com/n3QHYJM.png',
-              })
-              .setDescription(
-                `There was an error executing the interaction. Please [contact us](https://discord.gg/QeKcwprdCY) with the following error ID: \`${document.id}\`.`
-              )
-              .setColor('#2F3136'),
-          ],
-        });
-      }
-    });
-}

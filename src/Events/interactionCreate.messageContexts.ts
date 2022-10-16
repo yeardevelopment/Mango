@@ -11,14 +11,14 @@ import { client } from '..';
 import { Event } from '../structures/Event';
 import premiumGuilds from '../utils/models/premiumGuilds';
 import { capitalizeWords } from '../utils/functions/capitalizeWords';
-import errors from '../utils/models/errors';
+import commands from '../utils/models/commands';
 
 export default new Event('interactionCreate', async (interaction) => {
   if (!interaction.guild) return; // Interactions can only be called used within a guild
   if (!interaction.isMessageContextMenuCommand()) return;
 
-  const command = client.messageContexts.get(interaction.commandName);
-  if (!command)
+  const context = client.messageContexts.get(interaction.commandName);
+  if (!context)
     return interaction.reply({
       embeds: [
         new EmbedBuilder()
@@ -34,7 +34,7 @@ export default new Event('interactionCreate', async (interaction) => {
       ephemeral: true,
     });
 
-  if (command.ownerOnly) {
+  if (context.ownerOnly) {
     if (!(await client.config).owners.includes(interaction.user.id))
       return interaction.reply({
         content: '⚠️ You cannot use this command.',
@@ -42,7 +42,7 @@ export default new Event('interactionCreate', async (interaction) => {
       });
   }
 
-  if (command.premiumOnly) {
+  if (context.premiumOnly) {
     const data = await premiumGuilds.findOne({ Guild: interaction.guildId });
     if (Date.now() > data.Expire) {
       data.delete();
@@ -60,14 +60,14 @@ export default new Event('interactionCreate', async (interaction) => {
   }
 
   if (
-    command.permissions &&
+    context.permissions &&
     !(interaction.member.permissions as PermissionsBitField).has(
-      command.permissions
+      context.permissions
     )
   )
     return interaction.reply({
       content: `**✋ Hold on!**\nYou need to have \`${capitalizeWords({
-        string: (command.permissions as string)
+        string: (context.permissions as string)
           .replaceAll(/([A-Z])/g, ' $1')
           .toLowerCase()
           .replaceAll('guild', 'server')
@@ -76,11 +76,11 @@ export default new Event('interactionCreate', async (interaction) => {
       ephemeral: true,
     });
 
-  if (command.timeout) {
-    if (Timeout.has(`${command.name}${interaction.user.id}`))
+  if (context.timeout) {
+    if (Timeout.has(`${context.name}${interaction.user.id}`))
       return await interaction.reply({
         content: `**🛑 Chill there!**\nYou are on a \`${ms(
-          (Timeout.get(`${command.name}${interaction.user.id}`) as number) -
+          (Timeout.get(`${context.name}${interaction.user.id}`) as number) -
             Date.now(),
           { long: true }
         )}\` cooldown.`,
@@ -89,68 +89,75 @@ export default new Event('interactionCreate', async (interaction) => {
   }
 
   try {
-    command.run({
+    context.run({
       client,
       interaction,
+    });
+    await commands.create({
+      User: interaction.user.id,
+      Guild: interaction.guildId,
+      Interaction: interaction.id,
+      Command: context.name,
+      Parameters: interaction.options.data,
+      Success: true,
+      Error: null,
     });
     console.log(
       `${interaction.user.tag} (${
         interaction.user.id
-      }) executed ${chalk.bold.green(command.name)}. Interaction ID: ${
+      }) executed ${chalk.bold.green(context.name)}. Interaction ID: ${
         interaction.id
       }`
     );
     Timeout.set(
-      `${command.name}${interaction.user.id}`,
-      Date.now() + command.timeout
+      `${context.name}${interaction.user.id}`,
+      Date.now() + context.timeout
     );
     setTimeout(() => {
-      Timeout.delete(`${command.name}${interaction.user.id}`);
-    }, command.timeout);
+      Timeout.delete(`${context.name}${interaction.user.id}`);
+    }, context.timeout);
   } catch (error) {
-    await saveError({ error, interaction });
+    await commands
+      .create({
+        User: interaction.user.id,
+        Guild: interaction.guildId,
+        Interaction: interaction.id,
+        Command: context.name,
+        Parameters: interaction.options.data,
+        Success: false,
+        Error: error,
+      })
+      .then((document) => {
+        if (interaction.replied) {
+          interaction.editReply({
+            content: null,
+            embeds: [
+              new EmbedBuilder()
+                .setAuthor({
+                  name: 'Error Occurred',
+                  iconURL: 'https://i.imgur.com/n3QHYJM.png',
+                })
+                .setDescription(
+                  `There was an error executing the interaction. Please [contact us](https://discord.gg/QeKcwprdCY) with this error ID: \`${interaction.id}\`.`
+                )
+                .setColor('#2F3136'),
+            ],
+          });
+        } else {
+          interaction.reply({
+            embeds: [
+              new EmbedBuilder()
+                .setAuthor({
+                  name: 'Error Occurred',
+                  iconURL: 'https://i.imgur.com/n3QHYJM.png',
+                })
+                .setDescription(
+                  `There was an error executing the interaction. Please [contact us](https://discord.gg/QeKcwprdCY) with the following error ID: \`${interaction.id}\`.`
+                )
+                .setColor('#2F3136'),
+            ],
+          });
+        }
+      });
   }
 });
-
-async function saveError({
-  error,
-  interaction,
-}: {
-  error: any;
-  interaction: CommandInteraction;
-}) {
-  await errors
-    .create({ Error: error, User: interaction.user.id })
-    .then((document) => {
-      if (interaction.replied) {
-        interaction.editReply({
-          content: null,
-          embeds: [
-            new EmbedBuilder()
-              .setAuthor({
-                name: 'Error Occurred',
-                iconURL: 'https://i.imgur.com/n3QHYJM.png',
-              })
-              .setDescription(
-                `There was an error executing the interaction. Please [contact us](https://discord.gg/QeKcwprdCY) with this error ID: \`${document.id}\`.`
-              )
-              .setColor('#2F3136'),
-          ],
-        });
-      } else {
-        interaction.reply({
-          embeds: [
-            new EmbedBuilder()
-              .setAuthor({
-                name: 'Error Occurred',
-                iconURL: 'https://i.imgur.com/n3QHYJM.png',
-              })
-              .setDescription(
-                `There was an error executing the interaction. Please [contact us](https://discord.gg/QeKcwprdCY) with the following error ID: \`${document.id}\`.`
-              )
-              .setColor('#2F3136'),
-          ],
-        });
-      }
-    });
-}

@@ -13,7 +13,7 @@ import { Event } from '../structures/Event';
 import { ExtendedInteraction } from '../typings/Command';
 import premiumGuilds from '../utils/models/premiumGuilds';
 import { capitalizeWords } from '../utils/functions/capitalizeWords';
-import errors from '../utils/models/errors';
+import commands from '../utils/models/commands';
 
 export default new Event('interactionCreate', async (interaction) => {
   if (!interaction.guild) return; // Interactions can only be called used within a guild
@@ -96,6 +96,15 @@ export default new Event('interactionCreate', async (interaction) => {
       client,
       interaction: interaction as ExtendedInteraction,
     });
+    await commands.create({
+      User: interaction.user.id,
+      Guild: interaction.guildId,
+      Interaction: interaction.id,
+      Command: `/${command.name}`,
+      Parameters: interaction.options.data,
+      Success: true,
+      Error: null,
+    });
     console.log(
       `${interaction.user.tag} (${
         interaction.user.id
@@ -111,49 +120,47 @@ export default new Event('interactionCreate', async (interaction) => {
       Timeout.delete(`${command.name}${interaction.user.id}`);
     }, command.timeout);
   } catch (error) {
-    await saveError({ error, interaction });
+    await commands
+      .create({
+        User: interaction.user.id,
+        Guild: interaction.guildId,
+        Interaction: interaction.id,
+        Command: `/${command.name}`,
+        Parameters: interaction.options.data,
+        Success: false,
+        Error: error,
+      })
+      .then((document) => {
+        if (interaction.replied) {
+          interaction.editReply({
+            content: null,
+            embeds: [
+              new EmbedBuilder()
+                .setAuthor({
+                  name: 'Error Occurred',
+                  iconURL: 'https://i.imgur.com/n3QHYJM.png',
+                })
+                .setDescription(
+                  `There was an error executing the interaction. Please [contact us](https://discord.gg/QeKcwprdCY) with this error ID: \`${interaction.id}\`.`
+                )
+                .setColor('#2F3136'),
+            ],
+          });
+        } else {
+          interaction.reply({
+            embeds: [
+              new EmbedBuilder()
+                .setAuthor({
+                  name: 'Error Occurred',
+                  iconURL: 'https://i.imgur.com/n3QHYJM.png',
+                })
+                .setDescription(
+                  `There was an error executing the interaction. Please [contact us](https://discord.gg/QeKcwprdCY) with the following error ID: \`${interaction.id}\`.`
+                )
+                .setColor('#2F3136'),
+            ],
+          });
+        }
+      });
   }
 });
-
-async function saveError({
-  error,
-  interaction,
-}: {
-  error: any;
-  interaction: CommandInteraction;
-}) {
-  await errors
-    .create({ Error: error, User: interaction.user.id })
-    .then((document) => {
-      if (interaction.replied) {
-        interaction.editReply({
-          content: null,
-          embeds: [
-            new EmbedBuilder()
-              .setAuthor({
-                name: 'Error Occurred',
-                iconURL: 'https://i.imgur.com/n3QHYJM.png',
-              })
-              .setDescription(
-                `There was an error executing the interaction. Please [contact us](https://discord.gg/QeKcwprdCY) with this error ID: \`${document.id}\`.`
-              )
-              .setColor('#2F3136'),
-          ],
-        });
-      } else {
-        interaction.reply({
-          embeds: [
-            new EmbedBuilder()
-              .setAuthor({
-                name: 'Error Occurred',
-                iconURL: 'https://i.imgur.com/n3QHYJM.png',
-              })
-              .setDescription(
-                `There was an error executing the interaction. Please [contact us](https://discord.gg/QeKcwprdCY) with the following error ID: \`${document.id}\`.`
-              )
-              .setColor('#2F3136'),
-          ],
-        });
-      }
-    });
-}
