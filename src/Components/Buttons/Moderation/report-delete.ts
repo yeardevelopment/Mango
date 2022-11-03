@@ -29,7 +29,7 @@ export default new Button({
         (interaction.member.roles as GuildMemberRoleManager).highest
     )
       return interaction.reply({
-        content: '⚠ You do not have enough permissions to mute the member.',
+        content: '⚠ You do not have enough permissions to delete the message.',
         ephemeral: true,
       });
 
