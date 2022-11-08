@@ -24,7 +24,7 @@ export default new Button({
       });
 
     if (
-      interaction.guild.ownerId !== (user as GuildMember).user.id &&
+      // interaction.guild.ownerId !== (user as GuildMember).user.id &&
       (user as GuildMember).roles.highest >=
         (interaction.member.roles as GuildMemberRoleManager).highest
     )

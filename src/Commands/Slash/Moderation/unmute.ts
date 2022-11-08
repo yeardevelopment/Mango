@@ -30,7 +30,7 @@ export default new Command({
       });
 
     if (
-      interaction.guild.ownerId !== (target as GuildMember).user.id &&
+      // interaction.guild.ownerId !== (target as GuildMember).user.id &&
       (target as GuildMember).roles.highest >= interaction.member.roles.highest
     )
       return interaction.reply({
