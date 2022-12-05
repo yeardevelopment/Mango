@@ -1,3 +1,16 @@
+// Mango Bot - multifunctional Discord application service.
+// Copyright (C) 2022  YEAR Development
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published
+// by the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+
 import { createTranscript } from 'discord-html-transcripts';
 import { ExportReturnType } from 'discord-html-transcripts/dist/types';
 import {
@@ -5,6 +18,7 @@ import {
   TextBasedChannel,
   EmbedBuilder,
   GuildTextBasedChannel,
+  time,
 } from 'discord.js';
 import { client } from '../../..';
 import { Button } from '../../../structures/Button';
@@ -65,11 +79,9 @@ export default new Button({
               member.id
             })\n**Closed By**: \`${interaction.user.tag}\` (${
               interaction.user.id
-            })\n**Open Reason**: \`${
-              data.OpenReason
-            }\`\n**Open Time**: <t:${Math.floor(
-              interaction.channel.createdTimestamp / 1000
-            )}>`
+            })\n**Open Reason**: \`${data.OpenReason}\`\n**Open Time**: ${time(
+              interaction.channel.createdAt
+            )}`
           )
           .setColor('#ea664b')
           .setTimestamp(Date.now() + 20000),

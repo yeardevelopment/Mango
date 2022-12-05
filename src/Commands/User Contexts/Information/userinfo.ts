@@ -1,5 +1,23 @@
+// Mango Bot - multifunctional Discord application service.
+// Copyright (C) 2022  YEAR Development
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published
+// by the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+
 import { UserContext } from '../../../structures/UserContext';
-import { EmbedBuilder, UserFlags, ApplicationCommandType } from 'discord.js';
+import {
+  EmbedBuilder,
+  UserFlags,
+  ApplicationCommandType,
+  time,
+} from 'discord.js';
 import { listRoles } from '../../../utils/functions/listRoles';
 
 export default new UserContext({
@@ -50,13 +68,13 @@ export default new UserContext({
             : ''
         } ${
           isMember?.premiumSince ? '<:booster:998584842121904198>' : ''
-        }\n\n**Tag**: \`${target.tag}\`\n**Account Created**: <t:${Math.floor(
-          target.createdTimestamp / 1000
-        )}> (<t:${Math.floor(target.createdTimestamp / 1000)}:R>)${
+        }\n\n**Tag**: \`${target.tag}\`\n**Account Created**: ${time(
+          target.createdAt
+        )} (<t:${Math.floor(target.createdTimestamp / 1000)}:R>)${
           isMember
-            ? `\n**Joined the Server**: <t:${Math.floor(
-                isMember.joinedTimestamp / 1000
-              )}> (<t:${Math.floor(
+            ? `\n**Joined the Server**: ${time(
+                isMember.joinedAt
+              )} (<t:${Math.floor(
                 isMember.joinedTimestamp / 1000
               )}:R>)\n**Status**: ${
                 statusType[isMember.presence?.status || 'invisible']

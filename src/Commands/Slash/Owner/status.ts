@@ -1,4 +1,17 @@
-import { AttachmentBuilder, EmbedBuilder } from 'discord.js';
+// Mango Bot - multifunctional Discord application service.
+// Copyright (C) 2022  YEAR Development
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published
+// by the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+
+import { AttachmentBuilder, EmbedBuilder, time } from 'discord.js';
 import { connection } from 'mongoose';
 import { Command } from '../../../structures/Command';
 import DB from '../../../utils/models/clientStatus';
@@ -213,9 +226,7 @@ export default new Command({
           value: `
                 **\`•\` Client**: <:icon_online:970322600930721802> ONLINE
                 **\`•\` Ping**: ${client.ws.ping} ms
-                **\`•\` Up Since**: <t:${Math.floor(
-                  client.readyTimestamp / 1000
-                )}> (<t:${Math.floor(client.readyTimestamp / 1000)}:R>)
+                **\`•\` Up Since**: ${time(client.readyAt)} (<t:${Math.floor(client.readyTimestamp / 1000)}:R>)
                 `,
           inline: false,
         },

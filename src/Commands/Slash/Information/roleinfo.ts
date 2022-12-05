@@ -1,3 +1,16 @@
+// Mango Bot - multifunctional Discord application service.
+// Copyright (C) 2022  YEAR Development
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published
+// by the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+
 import { Command } from '../../../structures/Command';
 import {
   EmbedBuilder,
@@ -5,6 +18,7 @@ import {
   Role,
   PermissionsBitField,
   PermissionsString,
+  time,
 } from 'discord.js';
 import 'dotenv/config';
 import { capitalizeWords } from '../../../utils/functions/capitalizeWords';
@@ -65,9 +79,9 @@ export default new Command({
           (target as Role).position
         }\n**Hoisted**: ${hoisted}\n**Mentionable**: ${mentionable}\n**Users in Role**: ${
           (target as Role).members.size
-        }\n**Role Created**: <t:${Math.floor(
-          (target as Role).createdTimestamp / 1000
-        )}> (<t:${Math.floor(
+        }\n**Role Created**: ${time(
+          (target as Role).createdAt
+        )} (<t:${Math.floor(
           (target as Role).createdTimestamp / 1000
         )}:R>)\n**Key Permissions**: ${
           capitalizeWords({
