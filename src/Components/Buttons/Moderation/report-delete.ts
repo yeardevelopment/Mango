@@ -37,7 +37,7 @@ export default new Button({
     );
     if (
       isMember &&
-      // interaction.guild.ownerId !== (message as Message)?.author.id &&
+      interaction.guild.ownerId !== (message as Message)?.author.id &&
       (message as Message)?.member.roles.highest.position >=
         (interaction.member.roles as GuildMemberRoleManager).highest.position
     )

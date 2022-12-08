@@ -33,7 +33,7 @@ export default new Button({
     const isMember = interaction.guild.members.cache.get(user.id);
     if (
       isMember &&
-      // interaction.guild.ownerId !== user.id &&
+      interaction.guild.ownerId !== user.id &&
       isMember.roles.highest.position >=
         (interaction.member.roles as GuildMemberRoleManager).highest.position
     )

@@ -67,7 +67,7 @@ export default new Command({
     const isMember = interaction.guild.members.cache.get(target.id);
     if (
       isMember &&
-      // interaction.guild.ownerId !== target.id &&
+      interaction.guild.ownerId !== target.id &&
       isMember.roles.highest.position >=
         interaction.member.roles.highest.position
     )
