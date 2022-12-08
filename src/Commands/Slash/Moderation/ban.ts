@@ -94,12 +94,12 @@ export default new Command({
       .setStyle(ButtonStyle.Success)
       .setEmoji({ name: 'success', id: '996733680422752347' })
       .setLabel('Proceed')
-      .setCustomId('proceed');
+      .setCustomId('ban-proceed');
     let cancelButton = new ButtonBuilder()
       .setStyle(ButtonStyle.Danger)
       .setEmoji({ name: 'cancel', id: '996733678279462932' })
       .setLabel(`Cancel`)
-      .setCustomId('back');
+      .setCustomId('ban-cancel');
     let row = new ActionRowBuilder().addComponents([
       proceedButton,
       cancelButton,
