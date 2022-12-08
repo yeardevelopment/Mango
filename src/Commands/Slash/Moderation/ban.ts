@@ -68,7 +68,8 @@ export default new Command({
     if (
       isMember &&
       // interaction.guild.ownerId !== target.id &&
-      isMember.roles.highest >= interaction.member.roles.highest
+      isMember.roles.highest.position >=
+        interaction.member.roles.highest.position
     )
       return interaction.reply({
         content: '⚠ You do not have enough permissions to ban the member.',

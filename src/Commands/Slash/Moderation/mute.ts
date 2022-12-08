@@ -12,10 +12,7 @@
 // GNU Affero General Public License for more details.
 
 import { Command } from '../../../structures/Command';
-import {
-  ApplicationCommandOptionType,
-  GuildMember,
-} from 'discord.js';
+import { ApplicationCommandOptionType, GuildMember } from 'discord.js';
 import ms from 'ms';
 
 export default new Command({
@@ -57,7 +54,8 @@ export default new Command({
 
     if (
       // interaction.guild.ownerId !== (target as GuildMember).user.id &&
-      (target as GuildMember).roles.highest >= interaction.member.roles.highest
+      (target as GuildMember).roles.highest.position >=
+      interaction.member.roles.highest.position
     )
       return interaction.reply({
         content: '⚠ You do not have enough permissions to mute the member.',

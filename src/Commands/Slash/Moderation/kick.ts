@@ -48,8 +48,8 @@ export default new Command({
 
     if (
       // interaction.guild.ownerId !== (target as GuildMember).user.id &&
-      (target.roles as GuildMemberRoleManager).highest >=
-      interaction.member.roles.highest
+      (target.roles as GuildMemberRoleManager).highest.position >=
+      interaction.member.roles.highest.position
     )
       return interaction.reply({
         content: '⚠ You do not have enough permissions to kick the member.',

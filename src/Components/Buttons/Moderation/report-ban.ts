@@ -34,8 +34,8 @@ export default new Button({
     if (
       isMember &&
       // interaction.guild.ownerId !== user.id &&
-      isMember.roles.highest >=
-        (interaction.member.roles as GuildMemberRoleManager).highest
+      isMember.roles.highest.position >=
+        (interaction.member.roles as GuildMemberRoleManager).highest.position
     )
       return interaction.reply({
         content: '⚠ You do not have enough permissions to ban the member.',

@@ -38,8 +38,8 @@ export default new Button({
     if (
       isMember &&
       // interaction.guild.ownerId !== (message as Message)?.author.id &&
-      (message as Message)?.member.roles.highest >=
-        (interaction.member.roles as GuildMemberRoleManager).highest
+      (message as Message)?.member.roles.highest.position >=
+        (interaction.member.roles as GuildMemberRoleManager).highest.position
     )
       return interaction.reply({
         content: '⚠ You do not have enough permissions to delete the message.',

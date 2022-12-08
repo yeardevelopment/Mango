@@ -38,8 +38,8 @@ export default new Button({
 
     if (
       // interaction.guild.ownerId !== (user as GuildMember).user.id &&
-      (user as GuildMember).roles.highest >=
-        (interaction.member.roles as GuildMemberRoleManager).highest
+      (user as GuildMember).roles.highest.position >=
+      (interaction.member.roles as GuildMemberRoleManager).highest.position
     )
       return interaction.reply({
         content: '⚠ You do not have enough permissions to mute the member.',
