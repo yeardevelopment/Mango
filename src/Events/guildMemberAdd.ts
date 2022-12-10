@@ -45,15 +45,21 @@ export default new Event('guildMemberAdd', async (member) => {
     member.user.displayAvatarURL({ extension: 'jpg' })
   );
 
+  let name: string = member.user.tag;
+  if (member.user.username.length >= 18)
+    name = `${member.user.username.slice(0, 18)}...#${
+      member.user.discriminator
+    }`;
+
   let fontsize: number = 85;
   do {
     fontsize--;
     ctx.font = `${fontsize}px Montserrat`;
-  } while (ctx.measureText(member.user.tag).width > 550);
+  } while (ctx.measureText(name).width > 550);
 
   ctx.fillStyle = '#ffffff';
   ctx.textAlign = 'center';
-  ctx.fillText(member.user.tag, 339, 570);
+  ctx.fillText(name, 339, 570);
 
   ctx.font = '195px Panton';
   ctx.fillStyle = '#ffffff';
