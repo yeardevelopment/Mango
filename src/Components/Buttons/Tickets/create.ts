@@ -23,7 +23,7 @@ import ticket from '../../../utils/models/ticket';
 import tickets from '../../../utils/models/tickets';
 
 export default new Button({
-  id: 'ticket',
+  id: 'ticket-create',
   run: async ({ interaction }) => {
     const ticketSystem = await ticket.findOne({
       Guild: interaction.guildId,

@@ -23,7 +23,7 @@ import ticket from '../../../utils/models/ticket';
 import tickets from '../../../utils/models/tickets';
 
 export default new Button({
-  id: 'close',
+  id: 'ticket-close',
 
   run: async ({ interaction }) => {
     const ticketSystem = await ticket.findOne({
@@ -52,7 +52,7 @@ export default new Button({
         .setStyle(ButtonStyle.Success)
         .setEmoji({ name: 'success', id: '996733680422752347' })
         .setLabel('Proceed')
-        .setCustomId('sure'),
+        .setCustomId('ticket-proceed'),
     ]);
     interaction.reply({
       components: [row as ActionRowBuilder<ButtonBuilder>],

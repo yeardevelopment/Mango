@@ -147,7 +147,7 @@ export default new Command({
                 .setLabel('Create')
                 .setEmoji({ name: 'ticket', id: '997205867646685284' })
                 .setStyle(ButtonStyle.Primary)
-                .setCustomId('ticket')
+                .setCustomId('ticket-create')
             ) as ActionRowBuilder<ButtonBuilder>,
           ],
         });

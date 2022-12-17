@@ -102,12 +102,12 @@ export default new Modal({
       .setStyle(ButtonStyle.Danger)
       .setEmoji('💾')
       .setLabel('Save & Close')
-      .setCustomId('close');
+      .setCustomId('ticket-close');
     let lock = new ButtonBuilder()
       .setStyle(ButtonStyle.Primary)
       .setEmoji('🔒')
       .setLabel('Lock/Unlock')
-      .setCustomId('lock');
+      .setCustomId('ticket-lock');
     let row = new ActionRowBuilder().addComponents([close, lock]);
     channel.send({
       content: `<@${interaction.user.id}>`,
