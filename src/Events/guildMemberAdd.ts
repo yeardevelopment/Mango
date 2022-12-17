@@ -26,10 +26,10 @@ export default new Event('guildMemberAdd', async (member) => {
       content: data.Text.replace(/@/g, `<@${member.id}>`),
     });
 
-  Canvas.registerFont(join(__dirname, `../../Fonts/Panton-BlackCaps.otf`), {
+  Canvas.registerFont(join(__dirname, `../assets/Fonts/Panton-BlackCaps.otf`), {
     family: 'Panton',
   });
-  Canvas.registerFont(join(__dirname, `../../Fonts/Montserrat-SemiBold.ttf`), {
+  Canvas.registerFont(join(__dirname, `../assets/Fonts/Montserrat-SemiBold.ttf`), {
     family: 'Montserrat',
   });
 
@@ -37,7 +37,7 @@ export default new Event('guildMemberAdd', async (member) => {
   const ctx = canvas.getContext('2d');
 
   const background = await Canvas.loadImage(
-    join(__dirname, `../../Images/welcome.png`)
+    join(__dirname, `../assets/Images/welcome.png`)
   );
   ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 

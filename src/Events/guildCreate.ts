@@ -37,7 +37,7 @@ export default new Event('guildCreate', async (guild) => {
   const channel = chats ? chats : guild.systemChannel;
 
   const attachment = new AttachmentBuilder(
-    join(__dirname, `../../Images/thankyou.png`),
+    join(__dirname, `../assets/Images/thankyou.png`),
     {
       name: 'thankyou.png',
     }

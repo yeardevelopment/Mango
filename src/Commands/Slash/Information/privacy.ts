@@ -41,7 +41,7 @@ export default new Command({
       ],
       files: [
         new AttachmentBuilder(
-          join(__dirname, `../../../../Images/privacy.png`),
+          join(__dirname, `../../../assets/Images/privacy.png`),
           {
             name: 'privacy.png',
           }
