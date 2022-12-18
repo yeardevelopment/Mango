@@ -42,7 +42,7 @@
   "devDependencies": {
     "@types/glob": "^8.0.0",
     "@types/ms": "^0.7.31",
-    "@types/node": "^18.11.16",
+    "@types/node": "^18.11.17",
     "@types/request": "^2.48.8",
     "@types/ws": "^8.5.3",
     "ts-node": "^10.9.1",
