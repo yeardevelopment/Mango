@@ -35,7 +35,7 @@ export default new Event('interactionCreate', async (interaction) => {
             iconURL: 'https://i.imgur.com/n3QHYJM.png',
           })
           .setDescription(
-            `An error occurred while trying to execute the button`
+            `There was an error executing the button. Please [contact us](https://discord.gg/QeKcwprdCY) for support.`
           )
           .setColor('#2F3136'),
       ],

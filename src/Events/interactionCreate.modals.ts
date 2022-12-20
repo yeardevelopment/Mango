@@ -28,7 +28,7 @@ export default new Event('interactionCreate', async (interaction) => {
             name: `Unable to execute the modal`,
             iconURL: 'https://i.imgur.com/n3QHYJM.png',
           })
-          .setDescription(`An error occurred while trying to execute the modal`)
+          .setDescription(`There was an error executing the modal. Please [contact us](https://discord.gg/QeKcwprdCY) for support.`)
           .setColor('#2F3136'),
       ],
       ephemeral: true,
