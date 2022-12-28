@@ -83,10 +83,10 @@ export default new Command({
           `https://mc-heads.net/skin/${player_name}.png`
         );
         const crown = await loadImage(
-          join(__dirname, `../../../assets/Images/crown.png`)
+          join(__dirname, `../../../../assets/Images/crown.png`)
         );
         const coat = await loadImage(
-          join(__dirname, `../../../assets/Images/coat.png`)
+          join(__dirname, `../../../../assets/Images/coat.png`)
         );
 
         const canvas = createCanvas(64, 64);
