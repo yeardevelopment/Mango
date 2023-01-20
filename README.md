@@ -13,7 +13,7 @@ For support, join our [Official Discord Support server](https://discord.gg/B8Fs6
 ## License
 
     Mango Bot - multifunctional Discord application service.
-    Copyright (C) 2022  YEAR Development
+    Copyright (C) 2023  YEAR Development
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published

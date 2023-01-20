@@ -1,5 +1,5 @@
 // Mango Bot - multifunctional Discord application service.
-// Copyright (C) 2022  YEAR Development
+// Copyright (C) 2023  YEAR Development
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published
@@ -55,7 +55,8 @@ export default new Button({
 
     if (Verifying.has(`${interaction.guildId}-${interaction.user.id}`))
       return interaction.reply({
-        content: '<:cancel:996733678279462932> You already have a verification session running in your DMs.',
+        content:
+          '<:cancel:996733678279462932> You already have a verification session running in your DMs.',
         ephemeral: true,
       });
 

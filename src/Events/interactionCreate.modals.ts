@@ -1,5 +1,5 @@
 // Mango Bot - multifunctional Discord application service.
-// Copyright (C) 2022  YEAR Development
+// Copyright (C) 2023  YEAR Development
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published
@@ -28,7 +28,9 @@ export default new Event('interactionCreate', async (interaction) => {
             name: `Unable to execute the modal`,
             iconURL: 'https://i.imgur.com/n3QHYJM.png',
           })
-          .setDescription(`There was an error executing the modal. Please [contact us](https://discord.gg/QeKcwprdCY) for support.`)
+          .setDescription(
+            `There was an error executing the modal. Please [contact us](https://discord.gg/QeKcwprdCY) for support.`
+          )
           .setColor('#2F3136'),
       ],
       ephemeral: true,

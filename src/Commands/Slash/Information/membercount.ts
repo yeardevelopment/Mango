@@ -1,5 +1,5 @@
 // Mango Bot - multifunctional Discord application service.
-// Copyright (C) 2022  YEAR Development
+// Copyright (C) 2023  YEAR Development
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published
@@ -20,25 +20,29 @@ export default new Command({
     "Displays the server's members count along with online members count",
   timeout: 5000,
   run: async ({ interaction }) => {
-    await interaction.guild.members
-      .fetch({ withPresences: true })
-      .then((fetchedMembers) => {
-        const totalOnline = fetchedMembers.filter(
-          (member) =>
-            member.presence?.status === 'online' ||
-            member.presence?.status === 'idle' ||
-            member.presence?.status === 'dnd'
-        );
-        interaction.reply({
-          embeds: [
-            new EmbedBuilder()
-              .setTitle('Member Count')
-              .setDescription(
-                `**Total Members**: ${interaction.guild.memberCount}\n**Online Members**: ${totalOnline.size}`
-              )
-              .setColor('#ea664b'),
-          ],
-        });
-      });
+    // Fetch all members with presences
+    const members = await interaction.guild.members.fetch({
+      withPresences: true,
+    });
+
+    // Filter out the online members
+    const onlineMembers = members.filter(
+      (member) =>
+        member.presence?.status === 'online' ||
+        member.presence?.status === 'idle' ||
+        member.presence?.status === 'dnd'
+    );
+
+    // Send an embed with the member count information
+    interaction.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setTitle('Member Count')
+          .setDescription(
+            `**Total Members**: ${interaction.guild.memberCount}\n**Online Members**: ${onlineMembers.size}`
+          )
+          .setColor('#ea664b'),
+      ],
+    });
   },
 });

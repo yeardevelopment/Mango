@@ -1,5 +1,5 @@
 // Mango Bot - multifunctional Discord application service.
-// Copyright (C) 2022  YEAR Development
+// Copyright (C) 2023  YEAR Development
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published
@@ -19,6 +19,7 @@ export default new Command({
   description: 'Support Mango by subscribing to Mango Premium',
   timeout: 5000,
   run: async ({ interaction }) => {
+    // Send the embed
     interaction.reply({
       content:
         'We would be grateful to you if you subscribed to Mango Premium. You can ask for instructions in our support server linked down below.',

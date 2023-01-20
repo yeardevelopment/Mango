@@ -1,5 +1,5 @@
 // Mango Bot - multifunctional Discord application service.
-// Copyright (C) 2022  YEAR Development
+// Copyright (C) 2023  YEAR Development
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published
@@ -26,12 +26,18 @@ export default new Event('guildMemberAdd', async (member) => {
       content: data.Text.replace(/@/g, `<@${member.id}>`),
     });
 
-  Canvas.registerFont(join(__dirname, `../../assets/Fonts/Panton-BlackCaps.otf`), {
-    family: 'Panton',
-  });
-  Canvas.registerFont(join(__dirname, `../../assets/Fonts/Montserrat-SemiBold.ttf`), {
-    family: 'Montserrat',
-  });
+  Canvas.registerFont(
+    join(__dirname, `../../assets/Fonts/Panton-BlackCaps.otf`),
+    {
+      family: 'Panton',
+    }
+  );
+  Canvas.registerFont(
+    join(__dirname, `../../assets/Fonts/Montserrat-SemiBold.ttf`),
+    {
+      family: 'Montserrat',
+    }
+  );
 
   const canvas = Canvas.createCanvas(1772, 633);
   const ctx = canvas.getContext('2d');

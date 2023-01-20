@@ -1,5 +1,5 @@
 // Mango Bot - multifunctional Discord application service.
-// Copyright (C) 2022  YEAR Development
+// Copyright (C) 2023  YEAR Development
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published
@@ -76,7 +76,9 @@ export default new Command({
           target.createdAt
         )} (<t:${Math.floor(target.createdTimestamp / 1000)}:R>)${
           isMember
-            ? `\n**Joined the Server**: ${time(isMember.joinedAt)} (<t:${Math.floor(
+            ? `\n**Joined the Server**: ${time(
+                isMember.joinedAt
+              )} (<t:${Math.floor(
                 isMember.joinedTimestamp / 1000
               )}:R>)\n**Status**: ${
                 statusType[isMember.presence?.status || 'invisible']

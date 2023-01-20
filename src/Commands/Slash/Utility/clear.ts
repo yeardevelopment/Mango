@@ -1,5 +1,5 @@
 // Mango Bot - multifunctional Discord application service.
-// Copyright (C) 2022  YEAR Development
+// Copyright (C) 2023  YEAR Development
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published
@@ -85,20 +85,20 @@ export default new Command({
         const userMessageMap = Object.entries(results);
 
         const finalResult = `${deletedMessages.size} message${
-          deletedMessages.size > 1 ? 's' : ''
-        } ${deletedMessages.size > 1 ? 'were' : 'was'} removed.`;
+          deletedMessages.size > 1 ? 's were' : ' was'
+        } removed.`;
         const deleteCount = `${userMessageMap
           .map(([user, messages]) => `**${user}**: ${messages}`)
           .join('\n')}`;
 
-        await interaction.channel
-          .send({
-            content: `${finalResult}\n\n${deleteCount}`,
-            allowedMentions: {
-              roles: [],
-            },
-          })
-          .then((msg) => setTimeout(() => msg.delete(), 5000));
+        const summaryMessage = await interaction.channel.send({
+          content: `${finalResult}\n\n${deleteCount}`,
+          allowedMentions: {
+            roles: [],
+            users: [],
+          },
+        });
+        setTimeout(() => summaryMessage.delete(), 5000);
       } catch (error) {
         console.error(error);
       }

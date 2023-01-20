@@ -1,5 +1,5 @@
 // Mango Bot - multifunctional Discord application service.
-// Copyright (C) 2022  YEAR Development
+// Copyright (C) 2023  YEAR Development
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published
@@ -226,7 +226,9 @@ export default new Command({
           value: `
                 **\`•\` Client**: <:icon_online:970322600930721802> ONLINE
                 **\`•\` Ping**: ${client.ws.ping} ms
-                **\`•\` Up Since**: ${time(client.readyAt)} (<t:${Math.floor(client.readyTimestamp / 1000)}:R>)
+                **\`•\` Up Since**: ${time(client.readyAt)} (<t:${Math.floor(
+            client.readyTimestamp / 1000
+          )}:R>)
                 `,
           inline: false,
         },
