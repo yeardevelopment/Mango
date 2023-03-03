@@ -32,7 +32,7 @@
     "discord-html-transcripts": "^3.1.2",
     "discord.js": "^14.7.1",
     "dotenv": "^16.0.3",
-    "glob": "^8.0.3",
+    "glob": "^9.2.1",
     "mc-names": "^1.2.6",
     "minecraft-server-util": "^5.3.1",
     "mongoose": "^6.8.2",
