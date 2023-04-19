@@ -21,7 +21,6 @@ import {
 } from 'discord.js';
 import { CommandType } from '../typings/Command';
 import { glob } from 'glob';
-import { promisify } from 'util';
 import { RegisterCommandsOptions } from '../typings/client';
 import { modlogs } from '../utils/functions/modLogs';
 import { Event } from './Event';
@@ -29,8 +28,6 @@ import { ButtonType } from '../typings/Button';
 import { ModalType } from '../typings/Modal';
 import { UserContextType } from '../typings/UserContext';
 import { MessageContextType } from '../typings/MessageContext';
-
-const globPromise = promisify(glob);
 export class ExtendedClient extends Client {
   buttons: Collection<string, ButtonType> = new Collection();
   commands: Collection<string, CommandType> = new Collection();
