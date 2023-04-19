@@ -34,10 +34,11 @@ export default new UserContext({
       idle: 'Idle',
       dnd: 'Do Not Disturb',
       online: 'Online',
-      invisible: 'Offline',
+      offline: 'Offline',
     };
 
     const flags = {
+      ActiveDeveloper: '<:active_dev:1098348295362969630>',
       CertifiedModerator: '<:certifiied_moderator:998581289370271764>',
       Hypesquad: '<:hypesquad_events:998581293338067054>',
       HypeSquadOnlineHouse1: '<:hypesquad_bravery:998581300342575185>',
@@ -77,7 +78,7 @@ export default new UserContext({
               )} (<t:${Math.floor(
                 isMember.joinedTimestamp / 1000
               )}:R>)\n**Status**: ${
-                statusType[isMember.presence?.status || 'invisible']
+                statusType[isMember.presence?.status || 'offline']
               }\n**Activities**: ${
                 isMember.presence?.activities
                   .map((activity) => activity.name)

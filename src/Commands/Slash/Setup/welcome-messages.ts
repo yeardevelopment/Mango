@@ -205,6 +205,10 @@ export default new Command({
                     data.Text
                       ? `<:on:997453570188259369> Message set to \`${data.Text}\`.`
                       : '<:off:997453568908988507> Message is unset.'
+                  }\n${
+                    data.Image
+                      ? `<:on:997453570188259369> Welcome image is __enabled__.`
+                      : '<:off:997453568908988507> Welcome image is disabled.'
                   }`
                 ),
             ],
