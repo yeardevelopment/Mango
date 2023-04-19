@@ -12,7 +12,7 @@
 // GNU Affero General Public License for more details.
 
 import { Command } from '../../../structures/Command';
-import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
+import { ApplicationCommandOptionType, EmbedBuilder, TextChannel } from 'discord.js';
 import ms from 'ms';
 
 export default new Command({
@@ -60,12 +60,12 @@ export default new Command({
     switch (args.getSubcommand()) {
       case 'off': {
         let reason = args.getString('reason') || 'No reason provided.';
-        if (interaction.channel.rateLimitPerUser === 0)
+        if ((interaction.channel as TextChannel).rateLimitPerUser === 0)
           return interaction.reply({
             content: `⚠ Slowmode is already turned off in this channel.`,
             ephemeral: true,
           });
-        interaction.channel.setRateLimitPerUser(0);
+          (interaction.channel as TextChannel).setRateLimitPerUser(0);
         await interaction.reply({
           embeds: [
             new EmbedBuilder()
@@ -83,7 +83,7 @@ export default new Command({
         let time = args.getString('time');
         let reason = args.getString('reason') || 'No reason provided.';
 
-        if (interaction.channel.rateLimitPerUser === ms(time) / 1000)
+        if ((interaction.channel as TextChannel).rateLimitPerUser === ms(time) / 1000)
           return interaction.reply({
             content: `⚠ There is already slowmode of ${
               ms(time) / 1000
@@ -91,7 +91,7 @@ export default new Command({
             ephemeral: true,
           });
 
-        interaction.channel.setRateLimitPerUser(ms(time) / 1000);
+          (interaction.channel as TextChannel).setRateLimitPerUser(ms(time) / 1000);
         await interaction.reply({
           embeds: [
             new EmbedBuilder()

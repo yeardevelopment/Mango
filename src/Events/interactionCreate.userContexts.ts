@@ -59,7 +59,7 @@ export default new Event('interactionCreate', async (interaction) => {
   if (context.premiumOnly) {
     const data = await premiumGuilds.findOne({ Guild: interaction.guildId });
     if (Date.now() > data.Expire) {
-      data.delete();
+      data.deleteOne();
       return interaction.reply({
         embeds: [
           new EmbedBuilder()

@@ -23,5 +23,5 @@ export default new Event('channelDelete', async (channel) => {
     ID: channel.id,
   });
 
-  if (data) await data.remove();
+  if (data) await data.deleteOne();
 });

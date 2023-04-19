@@ -12,7 +12,7 @@
 // GNU Affero General Public License for more details.
 
 import {
-  TextBasedChannel,
+  TextChannel,
   EmbedBuilder,
   ButtonBuilder,
   ButtonStyle,
@@ -35,7 +35,7 @@ export default new Modal({
       content: `<:loading:1011290361450221718> Your ticket is being processed. Please wait.`,
       ephemeral: true,
     });
-    let channel: TextBasedChannel | null = null;
+    let channel: TextChannel | null = null;
     try {
       channel = await interaction.guild.channels.create({
         name: `ticket-${interaction.user.username}`,

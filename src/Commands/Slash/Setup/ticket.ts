@@ -19,7 +19,7 @@ import {
   ButtonStyle,
   ChannelType,
   EmbedBuilder,
-  TextBasedChannel,
+  TextChannel,
 } from 'discord.js';
 import db from '../../../utils/models/ticket';
 
@@ -134,7 +134,7 @@ export default new Command({
           'Create a ticket by clicking the button below.';
         const title = args.getString('title') || 'Create a Ticket';
 
-        (channel as TextBasedChannel).send({
+        (channel as TextChannel).send({
           embeds: [
             new EmbedBuilder()
               .setTitle(title)

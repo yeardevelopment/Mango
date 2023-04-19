@@ -15,9 +15,9 @@ import { createTranscript } from 'discord-html-transcripts';
 import { ExportReturnType } from 'discord-html-transcripts/dist/types';
 import {
   GuildMemberRoleManager,
-  TextBasedChannel,
+  TextChannel,
   EmbedBuilder,
-  GuildTextBasedChannel,
+  GuildBasedChannel,
   time,
 } from 'discord.js';
 import { client } from '../../..';
@@ -59,7 +59,7 @@ export default new Button({
       filename: `transcript-${interaction.channel.name}.html`,
       poweredBy: true,
     });
-    interaction.channel?.send({
+    (interaction.channel as TextChannel)?.send({
       content: `Closing the ticket <t:${Math.floor(
         (Date.now() + 20000) / 1000
       )}:R>...`,
@@ -67,7 +67,7 @@ export default new Button({
     let member = client.users.cache.get(data.Member);
 
     await (
-      client.channels.cache.get(ticketSystem.LogsChannel) as TextBasedChannel
+      client.channels.cache.get(ticketSystem.LogsChannel) as TextChannel
     )?.send({
       embeds: [
         new EmbedBuilder()
@@ -91,9 +91,9 @@ export default new Button({
     setTimeout(() => {
       interaction.channel
         ?.delete('[Ticket System] Ticket Closed')
-        .then(async (channel: GuildTextBasedChannel) => {
+        .then(async (channel: GuildBasedChannel) => {
           const data = await tickets.findOne({ ID: channel.id });
-          if (data) data.delete();
+          if (data) data.deleteOne();
         });
     }, 20000);
   },

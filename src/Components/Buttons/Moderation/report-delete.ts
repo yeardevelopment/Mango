@@ -11,7 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Affero General Public License for more details.
 
-import { GuildMemberRoleManager, Message, TextBasedChannel } from 'discord.js';
+import { GuildMemberRoleManager, Message, TextChannel } from 'discord.js';
 import { Button } from '../../../structures/Button';
 
 export default new Button({
@@ -22,7 +22,7 @@ export default new Button({
     const channelId = interaction.message.embeds[0].footer.text.match(regex)[2];
     const messageId = interaction.message.embeds[0].footer.text.match(regex)[1];
     const message = await (
-      interaction.guild.channels.cache.get(channelId) as TextBasedChannel
+      interaction.guild.channels.cache.get(channelId) as TextChannel
     )?.messages
       .fetch(messageId)
       .catch(() => {

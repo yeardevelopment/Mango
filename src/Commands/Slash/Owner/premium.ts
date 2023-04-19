@@ -117,7 +117,7 @@ export default new Command({
             content: `⚠️ Mango Premium is not enabled in this server.`,
             ephemeral: true,
           });
-        data.delete();
+        data.deleteOne();
         interaction.reply({
           content: `Successfully disabled Mango Premium in the server.`,
         });

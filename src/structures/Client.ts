@@ -20,7 +20,7 @@ import {
   Partials,
 } from 'discord.js';
 import { CommandType } from '../typings/Command';
-import glob from 'glob';
+import { glob } from 'glob';
 import { promisify } from 'util';
 import { RegisterCommandsOptions } from '../typings/client';
 import { modlogs } from '../utils/functions/modLogs';
@@ -31,7 +31,6 @@ import { UserContextType } from '../typings/UserContext';
 import { MessageContextType } from '../typings/MessageContext';
 
 const globPromise = promisify(glob);
-
 export class ExtendedClient extends Client {
   buttons: Collection<string, ButtonType> = new Collection();
   commands: Collection<string, CommandType> = new Collection();
@@ -77,13 +76,13 @@ export class ExtendedClient extends Client {
   async registerModules() {
     // Commands
     const commands: ApplicationCommandDataResolvable[] = [];
-    const slashCommandFiles = await globPromise(
+    const slashCommandFiles = await glob(
       `${__dirname}/../Commands/Slash/*/*{.ts,.js}`
     );
-    const userContextFiles = await globPromise(
+    const userContextFiles = await glob(
       `${__dirname}/../Commands/User Contexts/*/*{.ts,.js}`
     );
-    const messageContextFiles = await globPromise(
+    const messageContextFiles = await glob(
       `${__dirname}/../Commands/Message Contexts/*/*{.ts,.js}`
     );
 
@@ -121,7 +120,7 @@ export class ExtendedClient extends Client {
     });
 
     // Buttons
-    const buttonFiles = await globPromise(
+    const buttonFiles = await glob(
       `${__dirname}/../Components/Buttons/*/*{.ts,.js}`
     );
     for (const filePath of buttonFiles) {
@@ -132,7 +131,7 @@ export class ExtendedClient extends Client {
     }
 
     // Modals
-    const modalFiles = await globPromise(
+    const modalFiles = await glob(
       `${__dirname}/../Components/Modals/*/*{.ts,.js}`
     );
     for (const filePath of modalFiles) {
@@ -143,7 +142,7 @@ export class ExtendedClient extends Client {
     }
 
     // Event
-    const eventFiles = await globPromise(`${__dirname}/../Events/*{.ts,.js}`);
+    const eventFiles = await glob(`${__dirname}/../Events/*{.ts,.js}`);
     for (const filePath of eventFiles) {
       const event: Event<keyof ClientEvents> = await this.importFile(filePath);
       this.on(event.event, event.run);

@@ -12,7 +12,7 @@
 // GNU Affero General Public License for more details.
 
 import messageLogs from '../utils/models/messageLogs';
-import { EmbedBuilder, TextBasedChannel } from 'discord.js';
+import { EmbedBuilder, TextChannel } from 'discord.js';
 import { Event } from '../structures/Event';
 import { getLink } from '../utils/functions/getLink';
 import { client } from '..';
@@ -27,7 +27,7 @@ export default new Event('messageUpdate', async (oldMessage, newMessage) => {
   });
   if (!data || !data?.Channel) return;
 
-  (client.channels.cache.get(data.Channel) as TextBasedChannel).send({
+  (client.channels.cache.get(data.Channel) as TextChannel).send({
     embeds: [
       new EmbedBuilder()
         .setTitle('📘 Message Edited')

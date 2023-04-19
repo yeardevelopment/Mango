@@ -19,7 +19,7 @@ import {
   ActionRowBuilder,
   TextInputBuilder,
   TextInputStyle,
-  TextBasedChannel,
+  TextChannel,
   ButtonBuilder,
   ButtonStyle,
 } from 'discord.js';
@@ -94,7 +94,7 @@ export default new UserContext({
         (
           interaction.guild.channels.cache.get(
             reportSystem.Channel
-          ) as TextBasedChannel
+          ) as TextChannel
         ).send({
           embeds: [
             new EmbedBuilder()

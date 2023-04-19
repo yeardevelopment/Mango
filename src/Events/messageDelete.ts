@@ -12,7 +12,7 @@
 // GNU Affero General Public License for more details.
 
 import messageLogs from '../utils/models/messageLogs';
-import { EmbedBuilder, TextBasedChannel } from 'discord.js';
+import { EmbedBuilder, TextChannel } from 'discord.js';
 import { Event } from '../structures/Event';
 import { client } from '..';
 
@@ -55,7 +55,7 @@ export default new Event('messageDelete', async (message) => {
     );
   }
 
-  (client.channels.cache.get(data.Channel) as TextBasedChannel).send({
+  (client.channels.cache.get(data.Channel) as TextChannel).send({
     embeds: [Embed],
   });
 });

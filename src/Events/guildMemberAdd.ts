@@ -12,7 +12,7 @@
 // GNU Affero General Public License for more details.
 
 import db from '../utils/models/welcomeMessages';
-import { AttachmentBuilder, TextBasedChannel } from 'discord.js';
+import { AttachmentBuilder, TextChannel } from 'discord.js';
 import { Event } from '../structures/Event';
 import { client } from '..';
 import Canvas from 'canvas';
@@ -22,7 +22,7 @@ export default new Event('guildMemberAdd', async (member) => {
   const data = await db.findOne({ Guild: member.guild.id, Toggled: true });
   if (!data || !data?.Channel || !data?.Text) return;
   if (!data.Image)
-    return (client.channels.cache.get(data.Channel) as TextBasedChannel)?.send({
+    return (client.channels.cache.get(data.Channel) as TextChannel)?.send({
       content: data.Text.replace(/@/g, `<@${member.id}>`),
     });
 
@@ -95,7 +95,7 @@ export default new Event('guildMemberAdd', async (member) => {
     name: 'welcome.png',
   });
 
-  (client.channels.cache.get(data.Channel) as TextBasedChannel)?.send({
+  (client.channels.cache.get(data.Channel) as TextChannel)?.send({
     content: data.Text.replace(/@/g, `<@${member.id}>`),
     files: [attachment],
   });

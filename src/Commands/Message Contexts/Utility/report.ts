@@ -19,7 +19,7 @@ import {
   ActionRowBuilder,
   TextInputBuilder,
   TextInputStyle,
-  TextBasedChannel,
+  TextChannel,
   ButtonBuilder,
   ButtonStyle,
 } from 'discord.js';
@@ -85,9 +85,7 @@ export default new MessageContext({
       ephemeral: true,
     });
     (
-      modalSubmit.guild.channels.cache.get(
-        reportSystem.Channel
-      ) as TextBasedChannel
+      modalSubmit.guild.channels.cache.get(reportSystem.Channel) as TextChannel
     ).send({
       embeds: [
         new EmbedBuilder()

@@ -17,7 +17,7 @@ import {
   ButtonBuilder,
   ButtonStyle,
   EmbedBuilder,
-  TextBasedChannel,
+  TextChannel,
 } from 'discord.js';
 import { join } from 'path';
 import { client } from '..';
@@ -43,7 +43,7 @@ export default new Event('guildCreate', async (guild) => {
     }
   );
 
-  (channel as TextBasedChannel)?.send({
+  (channel as TextChannel)?.send({
     embeds: [
       new EmbedBuilder()
         .setTitle(':pray: Thank you for inviting me!')

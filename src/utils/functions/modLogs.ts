@@ -12,11 +12,10 @@
 // GNU Affero General Public License for more details.
 
 import {
-  ButtonInteraction,
   ColorResolvable,
   CommandInteraction,
   EmbedBuilder,
-  TextBasedChannel,
+  TextChannel,
   User,
 } from 'discord.js';
 import { getLink } from './getLink';
@@ -74,7 +73,7 @@ export async function modlogs(
     .setThumbnail(Member.displayAvatarURL());
 
   await (
-    interaction.guild.channels.cache.get(data.Channel) as TextBasedChannel
+    interaction.guild.channels.cache.get(data.Channel) as TextChannel
   )?.send({ embeds: [logsEmbed] });
 
   let dmEmbed = new EmbedBuilder()

@@ -27,7 +27,7 @@ export default new Event('ready', async (client) => {
     `The bot is ready to work.\nLogged in as ${client.user.tag}\nAPI Latency: ${client.ws.ping} ms\n`
   );
   const arrayOfStatuses = [
-    `Release 🎉`,
+    `Finally Up! 🎉`,
     `${client.guilds.cache.size} servers`,
     'Report System',
     'Verification System',

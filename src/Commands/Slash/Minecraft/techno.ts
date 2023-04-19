@@ -17,9 +17,9 @@ import {
   EmbedBuilder,
   AttachmentBuilder,
 } from 'discord.js';
-import request from 'request';
 import { loadImage, createCanvas } from 'canvas';
 import { join } from 'path';
+import axios from 'axios';
 
 export default new Command({
   name: 'techno',
@@ -68,75 +68,68 @@ export default new Command({
 
     const uuidURL = `https://api.mojang.com/users/profiles/minecraft/${username}`;
 
-    request(uuidURL, async (err, response, body): Promise<any> => {
-      if (err) {
-        return interaction.reply({
-          content: `⚠ There is no Minecraft player with that username.`,
-          ephemeral: true,
-        });
-      }
-      try {
-        body = JSON.parse(body);
-        let player_name: string = body.name;
+    try {
+      const response = await axios.get(uuidURL);
+      const data = response.data;
+      let player_name: string = data.name;
 
-        const skin = await loadImage(
-          `https://mc-heads.net/skin/${player_name}.png`
-        );
-        const crown = await loadImage(
-          join(__dirname, `../../../../assets/Images/crown.png`)
-        );
-        const coat = await loadImage(
-          join(__dirname, `../../../../assets/Images/coat.png`)
-        );
+      const skin = await loadImage(
+        `https://mc-heads.net/skin/${player_name}.png`
+      );
+      const crown = await loadImage(
+        join(__dirname, `../../../../assets/Images/crown.png`)
+      );
+      const coat = await loadImage(
+        join(__dirname, `../../../../assets/Images/coat.png`)
+      );
 
-        const canvas = createCanvas(64, 64);
-        const ctx = canvas.getContext('2d');
+      const canvas = createCanvas(64, 64);
+      const ctx = canvas.getContext('2d');
 
-        ctx.drawImage(skin, 0, 0, 64, 64);
+      ctx.drawImage(skin, 0, 0, 64, 64);
 
-        switch (args.getString('option')) {
-          case 'crown': {
-            ctx.drawImage(crown, 0, 0, 64, 64);
-            break;
-          }
-          case 'coat': {
-            ctx.drawImage(coat, 0, 0, 64, 64);
-            break;
-          }
-          case 'both': {
-            ctx.drawImage(coat, 0, 0, 64, 64);
-            ctx.drawImage(crown, 0, 0, 64, 64);
-            break;
-          }
+      switch (args.getString('option')) {
+        case 'crown': {
+          ctx.drawImage(crown, 0, 0, 64, 64);
+          break;
         }
-
-        const embed = new EmbedBuilder()
-          .setTitle(`Successfully Technobladed Your Skin`)
-          .setAuthor({
-            name: interaction.user.username,
-            iconURL: interaction.user.displayAvatarURL(),
-          })
-          .setDescription(
-            `You can apply this skin to your account by going to [your Minecraft Profile](https://www.minecraft.net/en-us/msaprofile/mygames/editskin) and uploading the image below.`
-          )
-          .setImage('attachment://technobladed.png')
-          .setColor('#ea664b')
-          .setFooter({ text: `Minecraft Username: ${player_name}` });
-
-        const attachment = new AttachmentBuilder(canvas.toBuffer(), {
-          name: 'technobladed.png',
-        });
-        interaction.reply({
-          embeds: [embed],
-          files: [attachment],
-        });
-      } catch (error) {
-        console.error(error);
-        interaction.reply({
-          content: `⚠ An error occurred while trying to generate this skin.`,
-          ephemeral: true,
-        });
+        case 'coat': {
+          ctx.drawImage(coat, 0, 0, 64, 64);
+          break;
+        }
+        case 'both': {
+          ctx.drawImage(coat, 0, 0, 64, 64);
+          ctx.drawImage(crown, 0, 0, 64, 64);
+          break;
+        }
       }
-    });
+
+      const embed = new EmbedBuilder()
+        .setTitle(`Successfully Technobladed Your Skin`)
+        .setAuthor({
+          name: interaction.user.username,
+          iconURL: interaction.user.displayAvatarURL(),
+        })
+        .setDescription(
+          `You can apply this skin to your account by going to [your Minecraft Profile](https://www.minecraft.net/en-us/msaprofile/mygames/editskin) and uploading the image below.`
+        )
+        .setImage('attachment://technobladed.png')
+        .setColor('#ea664b')
+        .setFooter({ text: `Minecraft Username: ${player_name}` });
+
+      const attachment = new AttachmentBuilder(canvas.toBuffer(), {
+        name: 'technobladed.png',
+      });
+      interaction.reply({
+        embeds: [embed],
+        files: [attachment],
+      });
+    } catch (error) {
+      console.error(error);
+      interaction.reply({
+        content: `⚠ An error occurred while trying to generate this skin.`,
+        ephemeral: true,
+      });
+    }
   },
 });

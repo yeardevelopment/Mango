@@ -18,6 +18,7 @@ import {
   EmbedBuilder,
   Message,
   Collection,
+  TextChannel,
 } from 'discord.js';
 import ms from 'ms';
 import { Button } from '../../../structures/Button';
@@ -127,7 +128,7 @@ export default new Button({
           });
         }
       };
-      let res = await (msg as Message).channel.awaitMessages({
+      let res = await ((msg as Message).channel as TextChannel).awaitMessages({
         filter,
         max: 1,
         time: 120000,
@@ -138,13 +139,13 @@ export default new Button({
           .setTitle(`Verification Success`)
           .setColor('#009A44')
           .setDescription('You successfully passed the verification.');
-        (msg as Message).channel.send({
+          ((msg as Message).channel as TextChannel).send({
           embeds: [successEmbed],
         });
         (interaction.member.roles as GuildMemberRoleManager).add(data.Role);
       }
     } catch (error) {
-      (msg as Message)?.channel.send({
+      ((msg as Message).channel as TextChannel).send({
         content: `<:expired:1011590508436525116> Session expired. To start the verification process again, please go back to ${interaction.channel}.`,
       });
     }

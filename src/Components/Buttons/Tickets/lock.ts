@@ -16,9 +16,7 @@ import {
   GuildChannel,
   OverwriteType,
   EmbedBuilder,
-  ButtonInteraction,
-  CommandInteraction,
-  ModalSubmitInteraction,
+  TextChannel,
 } from 'discord.js';
 import { Button } from '../../../structures/Button';
 import ticket from '../../../utils/models/ticket';
@@ -59,7 +57,7 @@ export default new Button({
             { type: OverwriteType.Member }
           );
         }
-        interaction.channel?.send({
+        (interaction.channel as TextChannel)?.send({
           embeds: [
             new EmbedBuilder()
               .setTitle('Ticket Locked')
@@ -89,7 +87,7 @@ export default new Button({
             { type: OverwriteType.Member }
           );
         }
-        interaction.channel?.send({
+        (interaction.channel as TextChannel)?.send({
           embeds: [
             new EmbedBuilder()
               .setTitle('Ticket Unlocked')

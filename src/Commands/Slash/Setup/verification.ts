@@ -19,7 +19,7 @@ import {
   ButtonStyle,
   ChannelType,
   EmbedBuilder,
-  TextBasedChannel,
+  TextChannel,
 } from 'discord.js';
 import db from '../../../utils/models/verification';
 import ms from 'ms';
@@ -123,7 +123,7 @@ export default new Command({
           args.getString('description') ||
           'Verify yourself in order to gain full access to the server.\nStart the verification process by clicking the button below.';
 
-        (channel as TextBasedChannel).send({
+        (channel as TextChannel).send({
           embeds: [
             new EmbedBuilder()
               .setTitle(title)

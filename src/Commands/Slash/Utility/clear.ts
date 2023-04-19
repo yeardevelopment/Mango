@@ -12,7 +12,7 @@
 // GNU Affero General Public License for more details.
 
 import { Command } from '../../../structures/Command';
-import { ApplicationCommandOptionType, GuildMember } from 'discord.js';
+import { ApplicationCommandOptionType, GuildMember, TextChannel } from 'discord.js';
 
 export default new Command({
   name: 'clear',
@@ -40,7 +40,7 @@ export default new Command({
     let target = args.getMember('target');
     let reason = args.getString('reason') || 'No reason provided.';
 
-    const messages = await interaction.channel.messages.fetch();
+    const messages = await (interaction.channel as TextChannel).messages.fetch();
 
     if (target) {
       let i = 0;
@@ -51,7 +51,7 @@ export default new Command({
           i++;
         }
       });
-      await interaction.channel.bulkDelete(filtered, true).then((messages) => {
+      await (interaction.channel as TextChannel).bulkDelete(filtered, true).then((messages) => {
         interaction.reply({
           content: `<:success:996733680422752347> Successfully cleared **${
             messages.size
@@ -63,10 +63,10 @@ export default new Command({
     } else {
       try {
         await interaction.reply({ content: 'Clearing...', ephemeral: true });
-        const fetch = await interaction.channel.messages.fetch({
+        const fetch = await (interaction.channel as TextChannel).messages.fetch({
           limit: amount,
         });
-        const deletedMessages = await interaction.channel.bulkDelete(
+        const deletedMessages = await (interaction.channel as TextChannel).bulkDelete(
           fetch,
           true
         );
@@ -91,7 +91,7 @@ export default new Command({
           .map(([user, messages]) => `**${user}**: ${messages}`)
           .join('\n')}`;
 
-        const summaryMessage = await interaction.channel.send({
+        const summaryMessage = await (interaction.channel as TextChannel).send({
           content: `${finalResult}\n\n${deleteCount}`,
           allowedMentions: {
             roles: [],

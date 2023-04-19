@@ -19,7 +19,7 @@ import {
   ButtonStyle,
   EmbedBuilder,
 } from 'discord.js';
-import request from 'request';
+import axios from 'axios';
 import { Account, getNameHistory, getSkin } from 'mc-names';
 import * as MC from 'minecraft-server-util';
 
@@ -95,49 +95,41 @@ export default new Command({
 
         const uuidURL = `https://api.mojang.com/users/profiles/minecraft/${username}`;
 
-        request(uuidURL, async (err, response, body): Promise<any> => {
-          if (err) {
-            return interaction.reply({
-              content: `⚠ There is no Minecraft player with that nickname.`,
-              ephemeral: true,
-            });
-          }
+        try {
+          const response = await axios.get(uuidURL);
+          const body = response.data;
+          const skin = await getSkin(username);
+          let player_id = body.id;
+          let player_name: string = body.name;
 
-          try {
-            body = JSON.parse(body);
-            const skin = await getSkin(username);
-            let player_id = body.id;
-            let player_name: string = body.name;
+          const embed = new EmbedBuilder()
+            .setTitle(player_name)
+            .setImage(skin.render)
+            .setThumbnail(skin.head)
+            .setDescription(
+              `[Download](https://crafatar.com/skins/${player_id}.png)`
+            )
+            .setColor('#ea664b');
 
-            const embed = new EmbedBuilder()
-              .setTitle(player_name)
-              .setImage(skin.render)
-              .setThumbnail(skin.head)
-              .setDescription(
-                `[Download](https://crafatar.com/skins/${player_id}.png)`
-              )
-              .setColor('#ea664b');
+          const button = new ButtonBuilder()
+            .setStyle(ButtonStyle.Link)
+            .setLabel('NameMC')
+            .setEmoji({ name: 'namemc', id: '998590285942624399' })
+            .setURL(`https://namemc.com/profile/${username}`);
 
-            const button = new ButtonBuilder()
-              .setStyle(ButtonStyle.Link)
-              .setLabel('NameMC')
-              .setEmoji({ name: 'namemc', id: '998590285942624399' })
-              .setURL(`https://namemc.com/profile/${username}`);
+          const row = new ActionRowBuilder().addComponents([button]);
 
-            const row = new ActionRowBuilder().addComponents([button]);
-
-            await interaction.reply({
-              embeds: [embed],
-              components: [row as ActionRowBuilder<ButtonBuilder>],
-            });
-          } catch (error) {
-            console.error(error);
-            await interaction.reply({
-              content: `⚠ There is no Minecraft player with that nickname.`,
-              ephemeral: true,
-            });
-          }
-        });
+          await interaction.reply({
+            embeds: [embed],
+            components: [row as ActionRowBuilder<ButtonBuilder>],
+          });
+        } catch (error) {
+          console.error(error);
+          await interaction.reply({
+            content: `⚠ There is no Minecraft player with that nickname.`,
+            ephemeral: true,
+          });
+        }
         break;
       }
 
@@ -182,46 +174,39 @@ export default new Command({
 
         const uuidURL = `https://api.mojang.com/users/profiles/minecraft/${username}`;
 
-        request(uuidURL, async (err, response, body): Promise<any> => {
-          if (err) {
-            return interaction.reply({
-              content: `⚠ There is no Minecraft player with that nickname.`,
-              ephemeral: true,
-            });
-          }
+        try {
+          const response = await axios.get(uuidURL);
+          const body = response.data;
+          const history = await getNameHistory(username);
 
-          try {
-            const history = await getNameHistory(username);
+          const embed = new EmbedBuilder()
+            .setTitle('Minecraft Name History')
+            .setDescription(
+              String(
+                (history as Account).history.map((name) => `${name}\n`)
+              ).replaceAll(',', '')
+            )
+            .setColor('#ea664b');
 
-            const embed = new EmbedBuilder()
-              .setTitle('Minecraft Name History')
-              .setDescription(
-                String(
-                  (history as Account).history.map((name) => `${name}\n`)
-                ).replaceAll(',', '')
-              )
-              .setColor('#ea664b');
+          const button = new ButtonBuilder()
+            .setStyle(ButtonStyle.Link)
+            .setLabel('NameMC')
+            .setEmoji({ name: 'namemc', id: '998590285942624399' })
+            .setURL(`https://namemc.com/profile/${username}`);
 
-            const button = new ButtonBuilder()
-              .setStyle(ButtonStyle.Link)
-              .setLabel('NameMC')
-              .setEmoji({ name: 'namemc', id: '998590285942624399' })
-              .setURL(`https://namemc.com/profile/${username}`);
+          const row = new ActionRowBuilder().addComponents([button]);
 
-            const row = new ActionRowBuilder().addComponents([button]);
-
-            await interaction.reply({
-              embeds: [embed],
-              components: [row as ActionRowBuilder<ButtonBuilder>],
-            });
-          } catch (error) {
-            console.error(error);
-            interaction.reply({
-              content: `⚠ There is no Minecraft player with that nickname.`,
-              ephemeral: true,
-            });
-          }
-        });
+          await interaction.reply({
+            embeds: [embed],
+            components: [row as ActionRowBuilder<ButtonBuilder>],
+          });
+        } catch (error) {
+          console.error(error);
+          interaction.reply({
+            content: `⚠ There is no Minecraft player with that nickname.`,
+            ephemeral: true,
+          });
+        }
         break;
       }
     }
