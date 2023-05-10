@@ -31,7 +31,6 @@ export default new MessageContext({
   type: ApplicationCommandType.Message,
   timeout: 5000,
   run: async ({ interaction }) => {
-    const target = interaction.targetMessage;
     const reportSystem = await report.findOne({
       Guild: interaction.guildId,
       Toggled: true,
@@ -46,6 +45,8 @@ export default new MessageContext({
           '⚠️ The report system is not set up properly yet. Please contact staff with this information.',
         ephemeral: true,
       });
+
+    const target = interaction.targetMessage;
 
     if (target.author.id === interaction.user.id)
       return interaction.reply({

@@ -27,7 +27,7 @@ export default new Event('messageDelete', async (message) => {
 
   const Embed = new EmbedBuilder()
     .setTitle('📕 Message Deleted')
-    .setFields([
+    .addFields([
       {
         name: 'Content:',
         value: `\`\`\`${

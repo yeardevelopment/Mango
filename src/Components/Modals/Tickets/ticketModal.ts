@@ -108,7 +108,12 @@ export default new Modal({
       .setEmoji('🔒')
       .setLabel('Lock/Unlock')
       .setCustomId('ticket-lock');
-    let row = new ActionRowBuilder().addComponents([close, lock]);
+    let involve = new ButtonBuilder()
+      .setStyle(ButtonStyle.Secondary)
+      .setEmoji('🙋')
+      .setLabel('Involve')
+      .setCustomId('ticket-involve');
+    let row = new ActionRowBuilder().addComponents([close, lock, involve]);
     channel.send({
       content: `<@${interaction.user.id}>`,
       embeds: [embedticket],

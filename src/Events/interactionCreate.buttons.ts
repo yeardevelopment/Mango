@@ -13,11 +13,7 @@
 
 import { Event } from '../structures/Event';
 import { client } from '..';
-import {
-  ButtonInteraction,
-  EmbedBuilder,
-  PermissionsBitField,
-} from 'discord.js';
+import { EmbedBuilder, PermissionsBitField } from 'discord.js';
 import { capitalizeWords } from '../utils/functions/capitalizeWords';
 import buttons from '../utils/models/buttons';
 

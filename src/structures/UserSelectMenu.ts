@@ -11,24 +11,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Affero General Public License for more details.
 
-import {
-  MessageApplicationCommandData,
-  MessageContextMenuCommandInteraction,
-  PermissionResolvable,
-} from 'discord.js';
-import { ExtendedClient } from '../structures/Client';
+import { UserSelectMenuType } from '../typings/UserSelectMenu';
 
-interface RunOptions {
-  client: ExtendedClient;
-  interaction: MessageContextMenuCommandInteraction;
+export class UserSelectMenu {
+  constructor(userSelectMenuOptions: UserSelectMenuType) {
+    Object.assign(this, userSelectMenuOptions);
+  }
 }
-
-type RunFunction = (options: RunOptions) => any;
-
-export type MessageContextType = {
-  timeout?: number;
-  premiumOnly?: boolean;
-  ownerOnly?: boolean;
-  permissions?: PermissionResolvable;
-  run: RunFunction;
-} & MessageApplicationCommandData;

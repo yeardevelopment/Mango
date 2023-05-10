@@ -13,58 +13,45 @@
 
 import {
   GuildMemberRoleManager,
+  UserSelectMenuBuilder,
   ActionRowBuilder,
   ButtonBuilder,
-  ButtonStyle,
-  EmbedBuilder,
 } from 'discord.js';
 import { Button } from '../../../structures/Button';
 import ticket from '../../../utils/models/ticket';
-import tickets from '../../../utils/models/tickets';
 
 export default new Button({
-  id: 'ticket-close',
+  id: 'ticket-involve',
   run: async ({ interaction }) => {
     const ticketSystem = await ticket.findOne({
       Guild: interaction.guildId,
       Toggled: true,
     });
     if (!ticketSystem) return;
+    if (interaction.channel.parentId !== ticketSystem.Category) return;
     if (
       !(interaction.member.roles as GuildMemberRoleManager).cache.has(
         ticketSystem.StaffRole
       )
     )
       return interaction.reply({
-        content: '⚠ Only staff can close the ticket.',
+        content: '⚠ Only staff can involve people into the ticket.',
         ephemeral: true,
       });
-    const docs = await tickets.findOne({ ID: interaction.channelId });
-    if (docs.Closed === true) {
-      return interaction.reply({
-        content: 'This ticket is already being closed.',
-        ephemeral: true,
-      });
-    }
-    let row = new ActionRowBuilder().addComponents([
-      new ButtonBuilder()
-        .setStyle(ButtonStyle.Success)
-        .setEmoji({ name: 'success', id: '996733680422752347' })
-        .setLabel('Proceed')
-        .setCustomId('ticket-proceed'),
-    ]);
+
+    const menu = new UserSelectMenuBuilder()
+      .setCustomId('ticket-member-involve')
+      .setPlaceholder('Choose a member to involve to the ticket')
+      .setMinValues(1)
+      .setMaxValues(1);
+
     interaction.reply({
-      components: [row as ActionRowBuilder<ButtonBuilder>],
-      embeds: [
-        new EmbedBuilder()
-          .setTitle('⚠ Are you sure?')
-          .setDescription(
-            'Are you sure you want to close this ticket?\nThis action cannot be undone.'
-          )
-          .setColor('#e03c3c'),
+      components: [
+        new ActionRowBuilder().addComponents(
+          menu
+        ) as ActionRowBuilder<ButtonBuilder>,
       ],
       ephemeral: true,
-      fetchReply: true,
     });
   },
 });

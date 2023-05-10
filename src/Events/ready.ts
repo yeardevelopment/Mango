@@ -46,9 +46,7 @@ export default new Event('ready', async (client) => {
 
   if (!process.env.MONGO_URI) return;
   await mongoose
-    .connect(process.env.MONGO_URI || '', {
-      keepAlive: true,
-    })
+    .connect(process.env.MONGO_URI || '')
     .then(() => {
       console.log(
         chalk.bold.green('✔ Successfully connected to the database.')

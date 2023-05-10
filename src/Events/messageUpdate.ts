@@ -19,7 +19,7 @@ import { client } from '..';
 
 export default new Event('messageUpdate', async (oldMessage, newMessage) => {
   if (oldMessage.content === newMessage.content) return;
-  if (oldMessage.author.bot || !oldMessage.guild) return;
+  if (oldMessage.author?.bot || !oldMessage.guild) return;
 
   const data = await messageLogs.findOne({
     Guild: oldMessage.guildId,

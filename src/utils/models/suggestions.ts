@@ -11,24 +11,13 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Affero General Public License for more details.
 
-import {
-  MessageApplicationCommandData,
-  MessageContextMenuCommandInteraction,
-  PermissionResolvable,
-} from 'discord.js';
-import { ExtendedClient } from '../structures/Client';
+import { Schema, model } from 'mongoose';
 
-interface RunOptions {
-  client: ExtendedClient;
-  interaction: MessageContextMenuCommandInteraction;
-}
-
-type RunFunction = (options: RunOptions) => any;
-
-export type MessageContextType = {
-  timeout?: number;
-  premiumOnly?: boolean;
-  ownerOnly?: boolean;
-  permissions?: PermissionResolvable;
-  run: RunFunction;
-} & MessageApplicationCommandData;
+export default model(
+  'suggestions',
+  new Schema({
+    Guild: String,
+    Toggled: { type: Boolean, default: false },
+    Channel: String,
+  })
+);

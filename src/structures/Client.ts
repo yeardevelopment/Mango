@@ -28,12 +28,14 @@ import { ButtonType } from '../typings/Button';
 import { ModalType } from '../typings/Modal';
 import { UserContextType } from '../typings/UserContext';
 import { MessageContextType } from '../typings/MessageContext';
+import { UserSelectMenuType } from '../typings/UserSelectMenu';
 export class ExtendedClient extends Client {
   buttons: Collection<string, ButtonType> = new Collection();
   commands: Collection<string, CommandType> = new Collection();
   modals: Collection<string, ModalType> = new Collection();
   userContexts: Collection<string, UserContextType> = new Collection();
   messageContexts: Collection<string, MessageContextType> = new Collection();
+  userSelectMenus: Collection<string, UserSelectMenuType> = new Collection();
   config = import('../Configuration/config.json');
   modLogs = modlogs;
 
@@ -125,6 +127,17 @@ export class ExtendedClient extends Client {
       if (!button.id) return;
 
       this.buttons.set(button.id, button);
+    }
+
+    // Select Menus
+    const userSelectMenuFiles = await glob(
+      `${__dirname}/../Components/User Select Menus/*/*{.ts,.js}`
+    );
+    for (const filePath of userSelectMenuFiles) {
+      const userSelectMenu: UserSelectMenuType = await this.importFile(filePath);
+      if (!userSelectMenu.id) return;
+
+      this.userSelectMenus.set(userSelectMenu.id, userSelectMenu);
     }
 
     // Modals
