@@ -1,5 +1,5 @@
 // Mango Bot - multifunctional Discord application service.
-// Copyright (C) 2023  YEAR Development
+// Copyright (C) 2024  YEAR Development
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published
@@ -134,7 +134,9 @@ export class ExtendedClient extends Client {
       `${__dirname}/../Components/User Select Menus/*/*{.ts,.js}`
     );
     for (const filePath of userSelectMenuFiles) {
-      const userSelectMenu: UserSelectMenuType = await this.importFile(filePath);
+      const userSelectMenu: UserSelectMenuType = await this.importFile(
+        filePath
+      );
       if (!userSelectMenu.id) return;
 
       this.userSelectMenus.set(userSelectMenu.id, userSelectMenu);

@@ -1,5 +1,5 @@
 // Mango Bot - multifunctional Discord application service.
-// Copyright (C) 2023  YEAR Development
+// Copyright (C) 2024  YEAR Development
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published
@@ -12,7 +12,11 @@
 // GNU Affero General Public License for more details.
 
 import { Command } from '../../../structures/Command';
-import { ApplicationCommandOptionType, GuildMember, TextChannel } from 'discord.js';
+import {
+  ApplicationCommandOptionType,
+  GuildMember,
+  TextChannel,
+} from 'discord.js';
 
 export default new Command({
   name: 'clear',
@@ -40,7 +44,9 @@ export default new Command({
     let target = args.getMember('target');
     let reason = args.getString('reason') || 'No reason provided.';
 
-    const messages = await (interaction.channel as TextChannel).messages.fetch();
+    const messages = await (
+      interaction.channel as TextChannel
+    ).messages.fetch();
 
     if (target) {
       let i = 0;
@@ -51,25 +57,28 @@ export default new Command({
           i++;
         }
       });
-      await (interaction.channel as TextChannel).bulkDelete(filtered, true).then((messages) => {
-        interaction.reply({
-          content: `<:success:996733680422752347> Successfully cleared **${
-            messages.size
-          } message${messages.size > 1 ? 's' : ''}** from **${
-            (target as GuildMember).user.tag
-          }**.`,
+      await (interaction.channel as TextChannel)
+        .bulkDelete(filtered, true)
+        .then((messages) => {
+          interaction.reply({
+            content: `<:success:996733680422752347> Successfully cleared **${
+              messages.size
+            } message${messages.size > 1 ? 's' : ''}** from **${
+              (target as GuildMember).user.tag
+            }**.`,
+          });
         });
-      });
     } else {
       try {
         await interaction.reply({ content: 'Clearing...', ephemeral: true });
-        const fetch = await (interaction.channel as TextChannel).messages.fetch({
-          limit: amount,
-        });
-        const deletedMessages = await (interaction.channel as TextChannel).bulkDelete(
-          fetch,
-          true
+        const fetch = await (interaction.channel as TextChannel).messages.fetch(
+          {
+            limit: amount,
+          }
         );
+        const deletedMessages = await (
+          interaction.channel as TextChannel
+        ).bulkDelete(fetch, true);
 
         const results = {};
         for (const [, deleted] of deletedMessages) {

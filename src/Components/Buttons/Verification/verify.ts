@@ -1,5 +1,5 @@
 // Mango Bot - multifunctional Discord application service.
-// Copyright (C) 2023  YEAR Development
+// Copyright (C) 2024  YEAR Development
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published
@@ -139,7 +139,7 @@ export default new Button({
           .setTitle(`Verification Success`)
           .setColor('#009A44')
           .setDescription('You successfully passed the verification.');
-          ((msg as Message).channel as TextChannel).send({
+        ((msg as Message).channel as TextChannel).send({
           embeds: [successEmbed],
         });
         (interaction.member.roles as GuildMemberRoleManager).add(data.Role);

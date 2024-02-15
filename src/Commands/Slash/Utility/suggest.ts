@@ -1,5 +1,5 @@
 // Mango Bot - multifunctional Discord application service.
-// Copyright (C) 2023  YEAR Development
+// Copyright (C) 2024  YEAR Development
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published
@@ -51,7 +51,9 @@ export default new Command({
           new ActionRowBuilder().addComponents([
             new TextInputBuilder()
               .setLabel('Description')
-              .setPlaceholder('Describe your idea in more detail; the more context, the better.')
+              .setPlaceholder(
+                'Describe your idea in more detail; the more context, the better.'
+              )
               .setCustomId('suggestion-description')
               .setMaxLength(200)
               .setRequired()
